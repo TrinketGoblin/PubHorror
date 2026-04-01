@@ -14,18 +14,19 @@
 
         :root {
             --bg: #050000;
-            --panel: rgba(20, 0, 0, 0.85);
+            --panel: rgba(20, 0, 0, 0.9);
             --accent: #8b0000;
             --highlight: #ff4d4d;
+            --discord: #5865F2;
             --text: #e0e0e0;
-            /* Dyslexic-friendly spacing */
-            --lh: 1.9; 
-            --ls: 0.04rem;
+            /* Extra spacing for OpenDyslexic height */
+            --lh: 2.0; 
+            --ls: 0.05rem;
         }
 
         body {
             background: var(--bg);
-            background-image: radial-gradient(circle at 50% 0%, #2a0000 0%, #050000 80%);
+            background-image: radial-gradient(circle at 50% 0%, #2a0000 0%, #050000 85%);
             color: var(--text);
             font-family: 'OpenDyslexic', sans-serif;
             line-height: var(--lh);
@@ -34,27 +35,35 @@
             padding: 0;
         }
 
-        /* Fixed Header Spacing */
+        /* Fixed Header Logic */
         header {
-            text-align: center;
-            padding: 80px 20px 60px 20px; /* Massive bottom padding to prevent overlap */
+            position: fixed;
+            top: 0;
             width: 100%;
-            background: linear-gradient(to bottom, #000 0%, transparent 100%);
+            text-align: center;
+            padding: 30px 0;
+            background: rgba(5, 0, 0, 0.95);
+            border-bottom: 2px solid var(--accent);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
         }
 
         h1 {
             font-family: 'Creepster', cursive;
-            font-size: clamp(3rem, 10vw, 5rem);
+            font-size: 3.5rem;
             color: var(--accent);
-            text-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
             margin: 0;
-            letter-spacing: 10px;
+            letter-spacing: 8px;
         }
 
-        .container {
+        /* This creates the gap so Step 1 isn't covered by the fixed header */
+        .content-wrapper {
+            padding-top: 180px; 
             max-width: 800px;
             margin: 0 auto;
-            padding: 40px 20px 100px 20px; /* Extra top padding for safety */
+            padding-left: 20px;
+            padding-right: 20px;
         }
 
         .card {
@@ -62,107 +71,115 @@
             border: 1px solid #440000;
             border-radius: 12px;
             padding: 40px;
-            margin-bottom: 50px; /* Space between cards */
-            box-shadow: 0 15px 35px rgba(0,0,0,0.9);
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
         }
 
         h2 {
             color: var(--highlight);
-            font-size: 1.7rem;
+            font-size: 1.6rem;
             margin-top: 0;
-            margin-bottom: 30px;
-            border-left: 5px solid var(--accent);
+            margin-bottom: 25px;
+            border-left: 6px solid var(--accent);
             padding-left: 15px;
         }
 
-        ul {
-            padding-left: 20px;
-            margin: 0;
-        }
+        ul { padding-left: 20px; margin: 0; }
+        li { margin-bottom: 20px; }
 
-        li {
-            margin-bottom: 25px; /* Significant vertical gap between steps */
-        }
-
-        code {
-            background: #330000;
-            color: #fff;
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-size: 0.9em;
-            border: 1px solid var(--accent);
-        }
-
-        strong {
-            color: #fff;
-            text-decoration: underline decoration-red;
-        }
-
-        .btn-container {
-            text-align: center;
+        /* Button Styling */
+        .button-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
             margin-top: 20px;
+            padding-bottom: 80px;
         }
 
         .btn {
-            display: inline-block;
-            background: var(--accent);
-            color: white;
-            padding: 20px 50px;
+            display: inline-flex;
+            align-items: center;
+            padding: 15px 30px;
             text-decoration: none;
+            color: white;
             border-radius: 8px;
             font-weight: bold;
-            border: 2px solid var(--highlight);
-            transition: all 0.3s;
+            transition: 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .btn-github {
+            background: #24292e;
+            border-color: #444;
+        }
+
+        .btn-discord {
+            background: var(--discord);
+            border-color: #7289da;
         }
 
         .btn:hover {
-            background: var(--highlight);
-            box-shadow: 0 0 30px var(--accent);
-            transform: scale(1.02);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+            filter: brightness(1.2);
         }
 
+        footer {
+            text-align: center;
+            padding-bottom: 40px;
+            font-size: 0.9rem;
+            opacity: 0.6;
+        }
     </style>
 </head>
 <body>
 
 <header>
     <h1>PUBHORROR</h1>
-    <p style="opacity: 0.8; font-size: 1.1rem;">The accessible horror movie manager</p>
 </header>
 
-<div class="container">
+<div class="content-wrapper">
     
     <div class="card">
-        <h2>1. Connection</h2>
+        <h2>1. Initial Setup</h2>
         <ul>
-            <li>Launch the program and click <strong>Settings (⚙️)</strong>.</li>
-            <li>Select <strong>Set Library Path</strong> to link your movie folder.</li>
-            <li>Add your <strong>TMDB API Key</strong> to enable automatic trailer fetching.</li>
+            <li>Launch the application and locate the <strong>Settings (⚙️)</strong> icon.</li>
+            <li>Click <strong>Set Library Path</strong> and select the folder where your movies are stored.</li>
+            <li>Paste your <strong>TMDB API Key</strong> in settings to enable automatic trailer fetching.</li>
         </ul>
     </div>
 
     <div class="card">
-        <h2>2. Import</h2>
+        <h2>2. Managing Files</h2>
         <ul>
-            <li>Use the <strong>Plus (+)</strong> icon to add files.</li>
-            <li>Choose <strong>Import Folder</strong> for bulk scanning of your directory.</li>
-            <li>Right-click any poster to <strong>Refresh Metadata</strong> if the cover art is missing.</li>
+            <li>Use the <strong>Plus (+)</strong> button to add individual files or entire folders.</li>
+            <li>Click <strong>Import Folder</strong> to bulk-scan your library for media.</li>
+            <li>The app supports formats like <code>.mp4</code>, <code>.mkv</code>, and even <code>.ac3</code> audio files.</li>
         </ul>
     </div>
 
     <div class="card">
-        <h2>3. Viewing</h2>
+        <h2>3. Customization</h2>
         <ul>
-            <li>Click a poster to see the <strong>Scare Details</strong> and notes.</li>
-            <li>Hit <strong>Play</strong> to open the movie in your default player.</li>
-            <li>Toggle <strong>Fullscreen</strong> in the options for a cinema experience.</li>
+            <li>Adjust the <strong>Font Size Slider</strong> for better readability.</li>
+            <li>Choose from <strong>Horror</strong>, <strong>Midnight</strong>, or <strong>Forest</strong> themes in the options bar.</li>
+            <li>Right-click movies to edit notes or export jump-scare timestamps.</li>
         </ul>
     </div>
 
-    <div class="btn-container">
-        <a href="https://github.com/YourUsername/PubHorror/releases" class="btn">View on GitHub</a>
+    <div class="button-group">
+        <a href="https://github.com/TrinketGoblin/PubHorror/releases" class="btn btn-github">
+            View Repository
+        </a>
+        <a href="https://discord.gg/NvfEq4myu3" class="btn btn-discord">
+            Join the Discord to Test and Report Bugs
+        </a>
     </div>
 
+    <footer>
+        Built for the horror community. All rights reserved.
+    </footer>
 </div>
 
 </body>
