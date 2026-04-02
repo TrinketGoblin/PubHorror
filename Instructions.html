@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PubHorror | Guide</title>
+    <title>PubHorror | Local Media Manager</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
     <style>
@@ -19,14 +19,13 @@
             --highlight: #ff4d4d;
             --discord: #5865F2;
             --text: #e0e0e0;
-            /* Extra spacing for OpenDyslexic height */
-            --lh: 2.0; 
-            --ls: 0.05rem;
+            --lh: 2.1; 
+            --ls: 0.06rem;
         }
 
         body {
             background: var(--bg);
-            background-image: radial-gradient(circle at 50% 0%, #2a0000 0%, #050000 85%);
+            background-image: radial-gradient(circle at 50% 0%, #2a0000 0%, #050000 90%);
             color: var(--text);
             font-family: 'OpenDyslexic', sans-serif;
             line-height: var(--lh);
@@ -35,35 +34,51 @@
             padding: 0;
         }
 
-        /* Fixed Header Logic */
         header {
             position: fixed;
             top: 0;
             width: 100%;
             text-align: center;
-            padding: 30px 0;
+            padding: 20px 0;
             background: rgba(5, 0, 0, 0.95);
             border-bottom: 2px solid var(--accent);
             z-index: 1000;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px);
         }
 
         h1 {
             font-family: 'Creepster', cursive;
-            font-size: 3.5rem;
+            font-size: clamp(2rem, 7vw, 3rem);
             color: var(--accent);
             text-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
             margin: 0;
             letter-spacing: 8px;
         }
 
-        /* This creates the gap so Step 1 isn't covered by the fixed header */
         .content-wrapper {
-            padding-top: 180px; 
-            max-width: 800px;
+            padding-top: 140px; 
+            max-width: 850px;
             margin: 0 auto;
             padding-left: 20px;
             padding-right: 20px;
+        }
+
+        .intro-card {
+            background: linear-gradient(145deg, #1a0000, #0a0000);
+            border: 2px solid var(--accent);
+            border-radius: 15px;
+            padding: 35px;
+            margin-bottom: 40px;
+            box-shadow: 0 0 30px rgba(139, 0, 0, 0.3);
+        }
+
+        .disclaimer-box {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 25px;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .card {
@@ -87,49 +102,40 @@
         ul { padding-left: 20px; margin: 0; }
         li { margin-bottom: 20px; }
 
-        /* Button Styling */
         .button-group {
             display: flex;
             gap: 20px;
             justify-content: center;
             flex-wrap: wrap;
-            margin-top: 20px;
+            margin-top: 40px;
             padding-bottom: 80px;
         }
 
         .btn {
             display: inline-flex;
             align-items: center;
-            padding: 15px 30px;
+            padding: 15px 35px;
             text-decoration: none;
             color: white;
-            border-radius: 8px;
+            border-radius: 10px;
             font-weight: bold;
             transition: 0.3s;
             border: 2px solid transparent;
         }
 
-        .btn-github {
-            background: #24292e;
-            border-color: #444;
-        }
-
-        .btn-discord {
-            background: var(--discord);
-            border-color: #7289da;
-        }
+        .btn-github { background: #24292e; border-color: #444; }
+        .btn-discord { background: var(--discord); border-color: #7289da; }
 
         .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+            transform: translateY(-5px);
             filter: brightness(1.2);
         }
 
         footer {
             text-align: center;
             padding-bottom: 40px;
-            font-size: 0.9rem;
-            opacity: 0.6;
+            font-size: 0.8rem;
+            opacity: 0.5;
         }
     </style>
 </head>
@@ -141,44 +147,63 @@
 
 <div class="content-wrapper">
     
+    <div class="intro-card">
+        <p>
+            PubHorror is a program built to watch home movies <strong>entirely locally</strong>! 
+            While it features a horror aesthetic, it is designed for <strong>any and all media</strong>—not just horror. 
+            Rate your films, watch entire series, and mark jump scares to your heart's content.
+        </p>
+        
+        <p style="color: var(--highlight); margin-top: 15px;">
+            Check the Discord for the <strong>v1.1.0 - v1.9.0 Roadmap</strong>: 
+            Content warnings, Collections, and Watch Parties are coming soon!
+        </p>
+
+        <div class="disclaimer-box">
+            <strong>Legal Notice:</strong> This software is a personal organization tool. 
+            <strong>We do not encourage or condone piracy</strong> or any form of law-breaking. 
+            Users are responsible for ensuring they have the legal right to the content they add to their library.
+        </div>
+    </div>
+
     <div class="card">
-        <h2>1. Initial Setup</h2>
+        <h2>Step 1: Link Your Files</h2>
         <ul>
-            <li>Launch the application and locate the <strong>Settings (⚙️)</strong> icon.</li>
-            <li>Click <strong>Set Library Path</strong> and select the folder where your movies are stored.</li>
-            <li>Paste your <strong>TMDB API Key</strong> in settings to enable automatic trailer fetching.</li>
+            <li>Open <strong>Settings (⚙️)</strong> and click <strong>Set Library Path</strong>.</li>
+            <li>Select the folder containing your media files (Movies, TV Shows, or Home Videos).</li>
+            <li>Add a TMDB API Key in settings to enable automatic metadata and trailer fetching.</li>
         </ul>
     </div>
 
     <div class="card">
-        <h2>2. Managing Files</h2>
+        <h2>Step 2: Scan & Import</h2>
         <ul>
-            <li>Use the <strong>Plus (+)</strong> button to add individual files or entire folders.</li>
-            <li>Click <strong>Import Folder</strong> to bulk-scan your library for media.</li>
-            <li>The app supports formats like <code>.mp4</code>, <code>.mkv</code>, and even <code>.ac3</code> audio files.</li>
+            <li>Click the <strong>Plus (+)</strong> icon to begin adding media.</li>
+            <li>Use <strong>Import Folder</strong> to automatically index your directory.</li>
+            <li>Supported formats include <code>.mp4</code>, <code>.mkv</code>, <code>.avi</code>, <code>.mov</code>, and <code>.ac3</code>.</li>
         </ul>
     </div>
 
     <div class="card">
-        <h2>3. Customization</h2>
+        <h2>Step 3: Track & Personalize</h2>
         <ul>
-            <li>Adjust the <strong>Font Size Slider</strong> for better readability.</li>
-            <li>Choose from <strong>Horror</strong>, <strong>Midnight</strong>, or <strong>Forest</strong> themes in the options bar.</li>
-            <li>Right-click movies to edit notes or export jump-scare timestamps.</li>
+            <li>Mark <strong>Jump Scares</strong> and take time-stamped notes on your films.</li>
+            <li>Adjust the <strong>Font Size Slider</strong> for the best viewing experience.</li>
+            <li>Switch between <strong>Horror</strong>, <strong>Midnight</strong>, and <strong>Forest</strong> themes.</li>
         </ul>
     </div>
 
     <div class="button-group">
-        <a href="https://github.com/TrinketGoblin/PubHorror/releases" class="btn btn-github">
-            View Repository
+        <a href="https://github.com/TrinketGoblin/PubHorror/tree/main" class="btn btn-github">
+            Source Code
         </a>
         <a href="https://discord.gg/NvfEq4myu3" class="btn btn-discord">
-            Join the Discord to Test and Report Bugs
+            Community Discord
         </a>
     </div>
 
     <footer>
-        Built for the horror community. All rights reserved.
+        PubHorror | Strictly Local. Strictly Yours.
     </footer>
 </div>
 
