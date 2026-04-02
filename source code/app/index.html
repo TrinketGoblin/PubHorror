@@ -231,30 +231,9 @@ h2 { color: var(--accent); font-family: OpenDyslexic, sans-serif; }
 }
 #grid-size, #font-size-slider { width: 80px; accent-color: var(--accent); cursor: pointer; }
 
-/* ── Alpha Jump ───────────────────────────────────────── */
+/* alpha jump removed */
 
-#alpha-jump {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2px;
-    padding: 6px 0 8px 0;
-    border-top: 1px solid var(--bg-input);
-}
-#alpha-jump span {
-    display: inline-block;
-    padding: 2px 6px;
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text-main);
-    opacity: 0.6;
-    cursor: pointer;
-    border-radius: 3px;
-    font-size: 0.75em;
-    transition: background 0.15s, color 0.15s, opacity 0.15s;
-}
-#alpha-jump span:hover { background: var(--accent); color: #fff; border-color: var(--highlight); opacity: 1; }
-
-/* sg-chip styles are defined in the Genre Chips section below */
+/* sg-chip styles defined below in Genre Chips section */
 
 /* ── Buttons (general) ────────────────────────────────── */
 
@@ -784,7 +763,7 @@ video {
 /* ── Editor collection checkboxes ────────────────────── */
 #edit-collections-wrap {
     display: flex; flex-direction: column; gap: 5px;
-    max-height: 120px; overflow-y: auto;
+    max-height: 100px; overflow-y: auto;
     padding: 6px 8px;
     background: var(--bg-input); border: 1px solid var(--border);
 }
@@ -940,6 +919,152 @@ video {
 }
 .meta-link:hover { color: var(--highlight); }
 
+/* ── Content Warning Badges ───────────────────────────── */
+.cw-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    margin-top: 4px;
+}
+.cw-badge {
+    font-size: 9px;
+    padding: 2px 6px;
+    background: rgba(139,0,0,0.3);
+    border: 1px solid var(--accent);
+    color: var(--highlight);
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* ── Content Warning Playback Modal ───────────────────── */
+#cw-modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.97);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 4000;
+}
+#cw-modal .cw-box {
+    background: var(--bg-main);
+    border: 2px solid var(--accent);
+    padding: 40px;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 0 60px rgba(139,0,0,0.4);
+}
+#cw-modal .cw-box h2 { color: var(--accent); margin-top: 0; font-size: 1.4em; }
+#cw-modal .cw-list {
+    list-style: none;
+    padding: 0;
+    margin: 16px 0 24px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+}
+#cw-modal .cw-list li {
+    background: rgba(139,0,0,0.25);
+    border: 1px solid var(--accent);
+    color: var(--highlight);
+    padding: 5px 14px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+#cw-modal .cw-actions { display: flex; gap: 12px; justify-content: center; }
+
+/* ── Auto-Next Episode Overlay ────────────────────────── */
+#autonext-overlay {
+    position: absolute;
+    bottom: 120px;
+    right: 24px;
+    background: rgba(0,0,0,0.88);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 20;
+    min-width: 240px;
+    border-radius: 4px;
+}
+#autonext-overlay .an-label {
+    font-size: 11px;
+    color: var(--text-main);
+    opacity: 0.7;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+#autonext-overlay .an-title {
+    font-size: 0.95em;
+    color: var(--highlight);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+#autonext-bar-wrap {
+    width: 100%;
+    height: 3px;
+    background: var(--bg-input);
+    border-radius: 2px;
+}
+#autonext-bar {
+    height: 100%;
+    background: var(--accent);
+    width: 100%;
+    border-radius: 2px;
+    transition: width 1s linear;
+}
+#autonext-overlay .an-actions { display: flex; gap: 8px; }
+#autonext-overlay .an-actions button {
+    flex: 1; margin: 0; padding: 6px 10px; font-size: 12px;
+}
+
+/* ── Episode list progress indicators ─────────────────── */
+.ep-btn-wrap { position: relative; }
+.ep-progress-bar {
+    position: absolute;
+    bottom: 0; left: 0;
+    height: 2px;
+    background: var(--accent);
+    box-shadow: 0 0 4px var(--glow);
+    border-radius: 0 0 0 0;
+    pointer-events: none;
+}
+.ep-watched-tick {
+    position: absolute;
+    top: 6px; right: 8px;
+    font-size: 11px;
+    color: var(--accent);
+    pointer-events: none;
+}
+
+/* ── Backup History in Settings ───────────────────────── */
+#backup-list {
+    max-height: 180px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 8px;
+}
+.backup-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    font-size: 0.8em;
+}
+.backup-row .br-label { flex: 1; color: var(--text-main); }
+.backup-row .br-count { color: var(--accent); min-width: 60px; text-align: right; }
+.backup-row .br-btn { margin: 0; padding: 4px 10px; font-size: 11px; }
+
 </style>
 </head>
 
@@ -952,6 +1077,10 @@ video {
     <h1>🎞 PubHorror</h1>
 
     <input id="search" placeholder="🔍  Search titles, directors, cast…" oninput="applyFilters()">
+
+    <select id="filter-collection" onmousedown="refreshCollectionFilter()" onchange="applyFilters()" style="padding:8px 10px; background:var(--bg-input); border:1px solid var(--border); color:var(--highlight); font-family:OpenDyslexic,sans-serif; font-size:0.85em; flex-shrink:0;">
+        <option value="">All Collections</option>
+    </select>
 
     <div id="action-icons">
         <!-- Add Dropdown (click-based) -->
@@ -981,9 +1110,6 @@ video {
 
         <div class="opt-separator" style="height: 20px; width: 1px; background: var(--border); margin: 0 4px;"></div>
 
-        <select id="filter-collection" onchange="applyFilters()">
-            <option value="">All Collections</option>
-        </select>
         <select id="filter-status" onchange="applyFilters()">
             <option value="">All Statuses</option>
             <option value="unwatched">Unwatched</option>
@@ -1043,8 +1169,7 @@ video {
     </div>
 </div>
 
-<!-- ── Alpha Jump ─────────────────────────────────────── -->
-<div id="alpha-jump"></div>
+<!-- genre chips below -->
 
 <!-- ── Genre Chips ─────────────────────────────────────── -->
 <div id="genre-chips"></div>
@@ -1053,15 +1178,6 @@ video {
 
 <!-- ── Toast Notification ─────────────────────────────── -->
 <div id="toast"></div>
-
-<!-- ── Queue (inline compact) ─────────────────────────── -->
-<div id="queue-section" style="display:none; margin: 12px 0; display:none;">
-    <div style="display:flex; gap:8px; align-items:center;">
-        <span style="color:var(--accent); font-size:12px; white-space:nowrap;">🎞 Queue:</span>
-        <select id="queue-dropdown" style="flex:1; padding:5px 8px; background:var(--bg-input); border:1px solid var(--border); color:var(--highlight); font-family:OpenDyslexic,sans-serif; font-size:12px;"></select>
-        <button onclick="playFromQueue()" style="margin:0; padding:5px 10px; font-size:12px;">▶ Play</button>
-    </div>
-</div>
 
 
 
@@ -1111,6 +1227,17 @@ video {
         </div>
         
         <button class="close" onclick="closePlayer()">Close</button>
+
+        <!-- Auto-next episode overlay -->
+        <div id="autonext-overlay">
+            <div class="an-label">Up next in <span id="autonext-countdown">10</span>s</div>
+            <div class="an-title" id="autonext-title"></div>
+            <div id="autonext-bar-wrap"><div id="autonext-bar"></div></div>
+            <div class="an-actions">
+                <button onclick="autonextPlayNow()" style="background:var(--accent);">▶ Play Now</button>
+                <button onclick="autonextCancel()" style="background:var(--bg-input); border-color:var(--border);">✕ Cancel</button>
+            </div>
+        </div>
     </div>
     <div id="player-sidebar">
         <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -1152,6 +1279,16 @@ video {
             <div style="display:flex; gap:10px;">
                 <button onclick="exportBackup()" style="flex:1;">📤 Export Backup</button>
                 <button onclick="importBackup()" style="flex:1;">📥 Import Backup</button>
+            </div>
+            <hr style="border:0.5px solid #333; width:100%;">
+            <div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <label>Recent Auto-Backups:</label>
+                    <span id="last-backup-label" style="font-size:0.75em; color:var(--accent); opacity:0.8;"></span>
+                </div>
+                <div id="backup-list">
+                    <div style="color:var(--text-main); opacity:0.4; font-size:0.85em; padding:8px 0;">Loading backups…</div>
+                </div>
             </div>
         </div>
         <div class="modal-actions" style="margin-top:20px;">
@@ -1217,12 +1354,13 @@ video {
                 <div id="rescan-status" style="font-size:11px; color:#556655; display:none;"></div>
                 <input id="edit-director" placeholder="Director">
                 <input id="edit-cast" placeholder="Cast (comma separated)">
-                <input id="edit-categories" placeholder="Categories / Genres (comma separated)">
+                <input id="edit-categories" placeholder="Categories (comma separated)">
+                <input id="edit-content-warnings" placeholder="Content warnings e.g. Gore, Flashing Lights, Animal Death">
                 <textarea id="edit-desc" placeholder="Description" rows="3"></textarea>
                 <textarea id="edit-notes" placeholder="Notes" rows="2"></textarea>
                 <div style="font-size:0.8em; color:var(--text-main); opacity:0.7; margin-top:4px;">Collections:</div>
                 <div id="edit-collections-wrap">
-                    <span style="font-size:0.8em; color:var(--text-main); opacity:0.4;">No collections yet — create some in Options → Collections</span>
+                    <span style="font-size:0.8em; color:var(--text-main); opacity:0.4;">No collections yet — create some in Options → 📚 Collections</span>
                 </div>
             </div>
         </div>
@@ -1230,6 +1368,19 @@ video {
             <button onclick="saveMovie()">Save</button>
             <button onclick="deleteMovie()" style="background:var(--bg-input); border-color:var(--accent);">Delete</button>
             <button onclick="closeEditor()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Content Warning Modal ──────────────────────────── -->
+<div id="cw-modal">
+    <div class="cw-box">
+        <h2>⚠ Content Warning</h2>
+        <p style="color:var(--text-main); opacity:0.8; margin:0 0 8px 0; font-size:0.9em;">This title contains:</p>
+        <ul class="cw-list" id="cw-list"></ul>
+        <div class="cw-actions">
+            <button id="cw-play-btn" style="background:var(--accent);">▶ Play Anyway</button>
+            <button onclick="closeCwModal()" style="background:var(--bg-input); border-color:var(--border);">Cancel</button>
         </div>
     </div>
 </div>
@@ -1264,16 +1415,19 @@ video {
 
 // ── Global State ────────────────────────────────────────
 let movies = [];
-let collections = [];   // [{id, name, movie_ids[]}]
+let collections = [];          // [{id, name, movie_ids[]}]
 let filteredMovies = [];
 let detectedDrives = new Set();
 let playingMovieObj = null;
 let playingMovieId = null;
 let editingMovie = null;
 let lastSearchQuery = "";
-let favCounts = {};  // {movieId: completeCount}
+let favCounts = {};
 let _appFullscreen = false;
-let activeGenreFilter = null;   // tracks genre chip selection (pure JS, no DOM dependency)
+let _autonextTimer = null;
+let _autonextPending = null;
+let _lastAutoBackupTime = null;
+let activeGenreFilter = null;  // pure JS — no DOM dependency
 
 // No browser-native fullscreen listeners needed — fullscreen is managed exclusively
 // through pywebview.api.toggle_fullscreen() and the _appFullscreen flag.
@@ -1283,15 +1437,20 @@ window.addEventListener("pywebviewready", async function() {
     await init();
     await checkForDVDs();
     setInterval(checkForDVDs, 10000);
+    triggerSilentBackup();
+    setInterval(triggerSilentBackup, 30 * 60 * 1000);
 });
 
 async function init() {
     movies = await pywebview.api.get_movies();
-    collections = await pywebview.api.get_collections_v2();
+    try {
+        collections = await pywebview.api.get_collections_v2();
+    } catch(e) {
+        collections = [];
+    }
     favCounts = await pywebview.api.get_favorites();
     applyFilters();
     populateCollectionFilter();
-    populateAlphaJump();
     populateGenreChips();
     checkContinueWatching();
     checkNextEpisode();
@@ -1534,36 +1693,25 @@ function populateCollectionFilter() {
         opt.textContent = c.name;
         sel.appendChild(opt);
     });
-    // Restore selection if it still exists
     if (collections.some(c => c.id === current)) sel.value = current;
 }
 
-function populateAlphaJump() {
-    const alphaJump = document.getElementById("alpha-jump");
-    alphaJump.innerHTML = "";
-    "#ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(letter => {
-        const span = document.createElement("span");
-        span.textContent = letter;
-        span.onclick = () => jumpToLetter(letter);
-        alphaJump.appendChild(span);
-    });
+async function refreshCollectionFilter() {
+    try {
+        const fresh = await pywebview.api.get_collections_v2();
+        if (JSON.stringify(fresh) !== JSON.stringify(collections)) {
+            collections = fresh;
+            populateCollectionFilter();
+        }
+    } catch(e) { /* not ready yet */ }
 }
 
-// Strip leading articles for sort/jump purposes
+// Strip leading articles so "The Shining" sorts under S, not T
 function sortKey(title) {
     return (title || "").replace(/^(the|a|an)\s+/i, "").trim().toUpperCase();
 }
 
-function jumpToLetter(letter) {
-    const cards = [...document.querySelectorAll(".card")];
-    if (letter === "#") {
-        const card = cards.find(c => /^[^A-Z]/.test(sortKey(c.dataset.title || "")));
-        if (card) card.scrollIntoView({ behavior: "smooth", block: "start" });
-    } else {
-        const card = cards.find(c => sortKey(c.dataset.title || "").startsWith(letter));
-        if (card) card.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-}
+// applyFilters below
 
 function applyFilters() {
     const search = document.getElementById("search").value.toLowerCase().trim();
@@ -1573,14 +1721,14 @@ function applyFilters() {
     const sortBy = document.getElementById("sort-by").value;
     lastSearchQuery = search;
 
-    // Build a set of movie_ids in the chosen collection (if any)
+    // Build set of movie IDs in the chosen collection
     let colMovieIds = null;
     if (colFilter) {
         const col = collections.find(c => c.id === colFilter);
         colMovieIds = new Set(col ? (col.movie_ids || []) : []);
     }
 
-    // Build a reverse lookup: movieId → [collectionName, …]
+    // Reverse lookup: movieId → collection names (for sort-by-collection)
     const movieColNames = {};
     collections.forEach(c => (c.movie_ids || []).forEach(id => {
         if (!movieColNames[id]) movieColNames[id] = [];
@@ -1588,14 +1736,14 @@ function applyFilters() {
     }));
 
     filteredMovies = movies.filter(m => {
-        const titleMatch = (m.title || "").toLowerCase().includes(search);
-        const directorMatch = (m.director || "").toLowerCase().includes(search);
-        const castMatch = (m.cast || []).some(c => c.toLowerCase().includes(search));
-        const textMatch = !search || titleMatch || directorMatch || castMatch;
+        const titleMatch  = (m.title || "").toLowerCase().includes(search);
+        const dirMatch    = (m.director || "").toLowerCase().includes(search);
+        const castMatch   = (m.cast || []).some(c => c.toLowerCase().includes(search));
+        const textMatch   = !search || titleMatch || dirMatch || castMatch;
 
-        // Genre filter comes purely from activeGenreFilter JS var — no DOM read
-        const genreMatch = !activeGenreFilter || (m.categories || []).includes(activeGenreFilter);
-        const colMatch = !colMovieIds || colMovieIds.has(m.id);
+        // Genre filter: pure JS var, no DOM read
+        const genreMatch  = !activeGenreFilter || (m.categories || []).includes(activeGenreFilter);
+        const colMatch    = !colMovieIds || colMovieIds.has(m.id);
         const statusMatch = !statusFilter || m.watch_status === statusFilter;
         const ratingMatch = ratingFilter === 0 || (m.rating || 0) >= ratingFilter;
 
@@ -1603,11 +1751,11 @@ function applyFilters() {
     });
 
     filteredMovies.sort((a, b) => {
-        if (sortBy === "title-asc")  return sortKey(a.title).localeCompare(sortKey(b.title));
-        if (sortBy === "title-desc") return sortKey(b.title).localeCompare(sortKey(a.title));
-        if (sortBy === "year-asc")   return (a.year || 0) - (b.year || 0);
-        if (sortBy === "year-desc")  return (b.year || 0) - (a.year || 0);
-        if (sortBy === "rating-desc") return (b.rating || 0) - (a.rating || 0);
+        if (sortBy === "title-asc")       return sortKey(a.title).localeCompare(sortKey(b.title));
+        if (sortBy === "title-desc")      return sortKey(b.title).localeCompare(sortKey(a.title));
+        if (sortBy === "year-asc")        return (a.year || 0) - (b.year || 0);
+        if (sortBy === "year-desc")       return (b.year || 0) - (a.year || 0);
+        if (sortBy === "rating-desc")     return (b.rating || 0) - (a.rating || 0);
         if (sortBy === "collection-asc") {
             const ca = (movieColNames[a.id] || []).join(", ") || "zzz";
             const cb = (movieColNames[b.id] || []).join(", ") || "zzz";
@@ -1688,10 +1836,12 @@ function renderMovies() {
         if (movie.source_type === "series") {
             const eps = movie.episodes || [];
             const seasonNums = new Set(eps.filter(e => e.season_num).map(e => e.season_num));
+            const totalEps = eps.length;
+            // Count watched episodes by checking progress
             if (seasonNums.size > 1) {
-                metaParts.push(`📺 ${seasonNums.size} seasons · ${eps.length} eps`);
+                metaParts.push(`📺 ${seasonNums.size} seasons · ${totalEps} eps`);
             } else {
-                metaParts.push(`📺 ${eps.length} ep${eps.length !== 1 ? "s" : ""}`);
+                metaParts.push(`📺 ${totalEps} ep${totalEps !== 1 ? "s" : ""}`);
             }
         }
         meta.textContent = metaParts.join(" • ");
@@ -1728,6 +1878,26 @@ function renderMovies() {
             cats.appendChild(document.createTextNode(" "));
         });
 
+        // Content warning badges
+        const warnings = movie.content_warnings || [];
+        let cwBadges = null;
+        if (warnings.length > 0) {
+            cwBadges = document.createElement("div");
+            cwBadges.className = "cw-badges";
+            warnings.slice(0, 3).forEach(w => {
+                const b = document.createElement("span");
+                b.className = "cw-badge";
+                b.textContent = w;
+                cwBadges.appendChild(b);
+            });
+            if (warnings.length > 3) {
+                const b = document.createElement("span");
+                b.className = "cw-badge";
+                b.textContent = `+${warnings.length - 3} more`;
+                cwBadges.appendChild(b);
+            }
+        }
+
         const editBtn = document.createElement("button");
         editBtn.className = "card-edit-btn";
         editBtn.textContent = "✏";
@@ -1739,15 +1909,16 @@ function renderMovies() {
         content.appendChild(desc);
         content.appendChild(rating);
         if ((movie.categories || []).length > 0) content.appendChild(cats);
+        if (cwBadges) content.appendChild(cwBadges);
         content.appendChild(editBtn);
 
         card.appendChild(poster);
         card.appendChild(content);
         card.onclick = () => {
             if (movie.source_type === "series") {
-                openSeriesPlayer(movie);
+                playSeries(movie);
             } else {
-                playMovie(movie);
+                playMovieWithCwCheck(movie);
             }
         };
         card.oncontextmenu = (e) => {
@@ -1762,6 +1933,45 @@ function renderMovies() {
 function resizeGrid() {
     const size = document.getElementById("grid-size").value;
     document.querySelector(".grid").style.gridTemplateColumns = `repeat(auto-fill, minmax(${size}px, 1fr))`;
+}
+
+// ── Content Warning Gate ────────────────────────────────
+function showCwModal(warnings, onConfirm) {
+    const list = document.getElementById("cw-list");
+    list.innerHTML = "";
+    warnings.forEach(w => {
+        const li = document.createElement("li");
+        li.textContent = w;
+        list.appendChild(li);
+    });
+    const playBtn = document.getElementById("cw-play-btn");
+    // Remove previous listener, attach new one
+    const newBtn = playBtn.cloneNode(true);
+    playBtn.parentNode.replaceChild(newBtn, playBtn);
+    newBtn.onclick = () => { closeCwModal(); onConfirm(); };
+    document.getElementById("cw-modal").style.display = "flex";
+}
+
+function closeCwModal() {
+    document.getElementById("cw-modal").style.display = "none";
+}
+
+async function playMovieWithCwCheck(movie) {
+    const warnings = movie.content_warnings || [];
+    if (warnings.length > 0) {
+        showCwModal(warnings, () => playMovie(movie));
+    } else {
+        playMovie(movie);
+    }
+}
+
+async function playSeries(movie) {
+    const warnings = movie.content_warnings || [];
+    if (warnings.length > 0) {
+        showCwModal(warnings, () => openSeriesPlayer(movie));
+    } else {
+        openSeriesPlayer(movie);
+    }
 }
 
 // ── Play Movie ──────────────────────────────────────────
@@ -1857,6 +2067,9 @@ async function openSeriesPlayer(movie) {
     playingMovieObj = movie;
     playingMovieId = movie.id;
 
+    // Fetch progress for all episodes upfront
+    const progress = await pywebview.api.get_progress();
+
     // Inject the episode list above the notes panel without replacing the whole sidebar
     let episodeSection = document.getElementById("episode-list-section");
     if (!episodeSection) {
@@ -1867,20 +2080,108 @@ async function openSeriesPlayer(movie) {
         sidebar.insertBefore(episodeSection, sidebar.firstChild);
     }
 
+    const episodes = movie.episodes || [];
+    const totalEps = episodes.length;
+
+    // Figure out watched/in-progress counts for the header
+    let watchedCount = 0;
+    episodes.forEach(ep => {
+        const epId = `${movie.id}:${ep.path}`;
+        const t = progress[epId] || 0;
+        const dur = progress[`${epId}_dur`] || 0;
+        if (dur > 0 && t / dur > 0.9) watchedCount++;
+    });
+
     episodeSection.innerHTML = `
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-            <h3 style="margin:0; color:var(--accent);">${movie.title}</h3>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <h3 style="margin:0; color:var(--accent); font-size:1em;">${movie.title}</h3>
+            <span style="font-size:10px; color:var(--text-main); opacity:0.5;">${watchedCount}/${totalEps} watched</span>
         </div>
-        <div style="max-height:200px; overflow-y:auto; display:flex; flex-direction:column; gap:6px;" id="episode-list"></div>
+        <div style="max-height:260px; overflow-y:auto; display:flex; flex-direction:column; gap:4px;" id="episode-list"></div>
         <hr style="border:none; border-top:1px solid var(--border); margin:8px 0 0 0;">
     `;
 
     const episodeList = document.getElementById("episode-list");
-    const episodes = movie.episodes || [];
     const hasSeason = episodes.some(e => e.season_num);
 
+    // Helper to build one episode button with progress bar + watched tick
+    function makeEpBtn(ep) {
+        const epId = `${movie.id}:${ep.path}`;
+        const savedTime = progress[epId] || 0;
+        const duration  = progress[`${epId}_dur`] || 0;
+        const ratio = duration > 0 ? savedTime / duration : 0;
+        const isWatched = ratio > 0.9;
+        const inProgress = ratio > 0.02 && !isWatched;
+
+        const wrap = document.createElement("div");
+        wrap.className = "ep-btn-wrap";
+        wrap.style.cssText = "position:relative;";
+
+        const btn = document.createElement("button");
+        btn.style.cssText = "text-align:left; font-size:12px; padding:8px 28px 8px 10px; width:100%; margin:0;";
+        // Dim if watched
+        if (isWatched) btn.style.opacity = "0.5";
+
+        // Episode label: "S01E03 · Title" or just title
+        let label = ep.title;
+        if (ep.season_num && ep.ep_num) {
+            label = `S${String(ep.season_num).padStart(2,'0')}E${String(ep.ep_num).padStart(2,'0')} · ${ep.title}`;
+        }
+        btn.textContent = label;
+
+        // Per-episode content warning badge
+        const epWarnings = (movie.episode_warnings || {})[ep.path] || [];
+        if (epWarnings.length > 0) {
+            btn.title = "⚠ CW: " + epWarnings.join(", ");
+            btn.style.borderLeft = "3px solid var(--accent)";
+        }
+
+        btn.onclick = () => {
+            if (epWarnings.length > 0) {
+                showCwModal(epWarnings, () => playEpisode(movie, ep));
+            } else {
+                playEpisode(movie, ep);
+            }
+        };
+
+        // Watched tick
+        if (isWatched) {
+            const tick = document.createElement("span");
+            tick.className = "ep-watched-tick";
+            tick.textContent = "✓";
+            wrap.appendChild(tick);
+        }
+
+        // In-progress bar
+        if (inProgress) {
+            const bar = document.createElement("div");
+            bar.className = "ep-progress-bar";
+            bar.style.width = Math.round(ratio * 100) + "%";
+            wrap.appendChild(bar);
+        }
+
+        wrap.appendChild(btn);
+        return wrap;
+    }
+
+    // Identify the "current" episode (last played or first unwatched)
+    const lastId = progress.last_played_id || "";
+    let autoEp = null;
+    if (lastId.startsWith(movie.id + ":")) {
+        const lastPath = lastId.substring(movie.id.length + 1);
+        autoEp = episodes.find(e => e.path === lastPath) || null;
+    }
+    if (!autoEp) {
+        // Find first unwatched
+        autoEp = episodes.find(ep => {
+            const epId = `${movie.id}:${ep.path}`;
+            const t = progress[epId] || 0;
+            const d = progress[`${epId}_dur`] || 0;
+            return d === 0 || t / d < 0.9;
+        }) || episodes[0];
+    }
+
     if (hasSeason) {
-        // Group by season_num, then render collapsible season headers
         const seasonMap = {};
         episodes.forEach(ep => {
             const key = ep.season_num != null ? ep.season_num : 0;
@@ -1888,52 +2189,41 @@ async function openSeriesPlayer(movie) {
             seasonMap[key].eps.push(ep);
         });
 
-        Object.keys(seasonMap)
-            .sort((a, b) => Number(a) - Number(b))
-            .forEach(key => {
-                const season = seasonMap[key];
+        Object.keys(seasonMap).sort((a, b) => Number(a) - Number(b)).forEach(key => {
+            const season = seasonMap[key];
 
-                const header = document.createElement("div");
-                header.textContent = `▾ ${season.name}`;
-                header.style.cssText = "color:var(--accent); font-size:12px; font-weight:bold; cursor:pointer; padding:6px 4px 2px 4px; border-top:1px solid var(--border); letter-spacing:0.5px; user-select:none;";
+            // Check if this season contains the auto-resume episode; if so, expand it
+            const containsAutoEp = autoEp && season.eps.some(e => e.path === autoEp.path);
 
-                const epGroup = document.createElement("div");
-                epGroup.style.cssText = "display:flex; flex-direction:column; gap:4px; padding:2px 0 6px 8px;";
+            const header = document.createElement("div");
+            header.style.cssText = "color:var(--accent); font-size:12px; font-weight:bold; cursor:pointer; padding:6px 4px 2px 4px; border-top:1px solid var(--border); letter-spacing:0.5px; user-select:none;";
 
-                season.eps.forEach(ep => {
-                    const btn = document.createElement("button");
-                    btn.textContent = ep.title;
-                    btn.style.textAlign = "left";
-                    btn.style.fontSize = "12px";
-                    btn.style.padding = "8px 10px";
-                    btn.onclick = () => playEpisode(movie, ep);
-                    epGroup.appendChild(btn);
-                });
+            const epGroup = document.createElement("div");
+            epGroup.style.cssText = "display:flex; flex-direction:column; gap:3px; padding:2px 0 6px 8px;";
+            epGroup.style.display = containsAutoEp ? "flex" : "none";
+            header.textContent = `${containsAutoEp ? "▾" : "▸"} ${season.name}`;
 
-                // Toggle collapse on header click
-                header.onclick = () => {
-                    const collapsed = epGroup.style.display === "none";
-                    epGroup.style.display = collapsed ? "flex" : "none";
-                    header.textContent = `${collapsed ? "▾" : "▸"} ${season.name}`;
-                };
+            season.eps.forEach(ep => epGroup.appendChild(makeEpBtn(ep)));
 
-                episodeList.appendChild(header);
-                episodeList.appendChild(epGroup);
-            });
-    } else {
-        // Flat list — original behaviour for shows without season folders
-        episodes.forEach(ep => {
-            const btn = document.createElement("button");
-            btn.textContent = ep.title;
-            btn.style.textAlign = "left";
-            btn.style.fontSize = "12px";
-            btn.style.padding = "10px";
-            btn.onclick = () => playEpisode(movie, ep);
-            episodeList.appendChild(btn);
+            header.onclick = () => {
+                const collapsed = epGroup.style.display === "none";
+                epGroup.style.display = collapsed ? "flex" : "none";
+                header.textContent = `${collapsed ? "▾" : "▸"} ${season.name}`;
+            };
+
+            episodeList.appendChild(header);
+            episodeList.appendChild(epGroup);
         });
+    } else {
+        episodes.forEach(ep => episodeList.appendChild(makeEpBtn(ep)));
     }
 
     document.getElementById("player").style.display = "flex";
+
+    // Auto-start the resume episode if nothing currently playing
+    if (!document.getElementById("video").src || document.getElementById("video").paused) {
+        if (autoEp) playEpisode(movie, autoEp);
+    }
 }
 
 async function playEpisode(movie, episode) {
@@ -1984,6 +2274,9 @@ async function playEpisode(movie, episode) {
 function closePlayer() {
     const video = document.getElementById("video");
     video.pause();
+
+    autonextCancel();
+    closeCwModal();
 
     // Clear the auto-hide timer and restore controls visibility
     clearTimeout(_controlsHideTimer);
@@ -2141,7 +2434,6 @@ document.getElementById("player-scrubber").addEventListener("click", (e) => {
 document.getElementById("video").addEventListener("ended", async () => {
     if (!playingMovieObj) return;
     const video = document.getElementById("video");
-    // Record completion count
     await pywebview.api.save_progress(playingMovieId, video.duration || 0, video.duration || null, true);
     if (playingMovieObj.watch_status !== "watched") {
         playingMovieObj.watch_status = "watched";
@@ -2150,6 +2442,18 @@ document.getElementById("video").addEventListener("ended", async () => {
         if (idx !== -1) movies[idx] = playingMovieObj;
     }
     await renderContinueWatching();
+
+    // Auto-next for series
+    if (playingMovieId && playingMovieId.includes(":")) {
+        const baseId = playingMovieId.split(":")[0];
+        const movie = movies.find(m => m.id === baseId) || playingMovieObj;
+        const episodes = movie.episodes || [];
+        const currentPath = playingMovieId.substring(playingMovieId.indexOf(":") + 1);
+        const currentIdx = episodes.findIndex(e => e.path === currentPath);
+        if (currentIdx !== -1 && currentIdx < episodes.length - 1) {
+            startAutonext(movie, episodes[currentIdx + 1]);
+        }
+    }
 });
 
 // Update volume slider when volume changes
@@ -2205,6 +2509,7 @@ async function showSettings() {
     document.getElementById("setting-path").value = config.library_path || "";
     document.getElementById("setting-tmdb-key").value = config.tmdb_api_key || "";
     document.getElementById("settings-modal").style.display = "flex";
+    loadBackupHistory();
 }
 
 function closeSettings() {
@@ -2339,6 +2644,7 @@ function openEditor(movie) {
     document.getElementById("edit-categories").value = (movie.categories || []).join(", ");
     document.getElementById("edit-desc").value = movie.desc || "";
     document.getElementById("edit-notes").value = movie.notes || "";
+    document.getElementById("edit-content-warnings").value = (movie.content_warnings || []).join(", ");
 
     // Populate collection checkboxes
     const wrap = document.getElementById("edit-collections-wrap");
@@ -2346,7 +2652,6 @@ function openEditor(movie) {
     if (collections.length === 0) {
         wrap.innerHTML = '<span style="font-size:0.8em; color:var(--text-main); opacity:0.4;">No collections yet — create some in Options → 📚 Collections</span>';
     } else {
-        // Which collections currently contain this movie?
         const currentColIds = new Set(
             collections.filter(c => (c.movie_ids || []).includes(movie.id)).map(c => c.id)
         );
@@ -2395,6 +2700,7 @@ async function saveMovie() {
     editingMovie.categories = document.getElementById("edit-categories").value.split(",").map(c => c.trim()).filter(Boolean);
     editingMovie.desc = document.getElementById("edit-desc").value;
     editingMovie.notes = document.getElementById("edit-notes").value;
+    editingMovie.content_warnings = document.getElementById("edit-content-warnings").value.split(",").map(s => s.trim()).filter(Boolean);
 
     if (editingMovie.source_type === "series") {
         editingMovie.episodes = await pywebview.api.list_episodes(editingMovie.file);
@@ -2409,7 +2715,7 @@ async function saveMovie() {
         showToast("✅ Saved!");
     }
 
-    // Save collection assignments
+    // Save collection assignments from checkboxes
     const checkedIds = [...document.querySelectorAll("#edit-collections-wrap input[type=checkbox]:checked")]
         .map(cb => cb.value);
     await pywebview.api.set_movie_collections(editingMovie.id, checkedIds);
@@ -2953,6 +3259,7 @@ function populateGenreChips() {
     const allGenres = new Set();
     movies.forEach(m => (m.categories || []).forEach(g => allGenres.add(g)));
     const container = document.getElementById("genre-chips");
+    if (!container) return;
     container.innerHTML = "";
     if (allGenres.size === 0) return;
 
@@ -2981,6 +3288,8 @@ function populateGenreChips() {
 
 // ── Collections Manager ─────────────────────────────────────
 async function showCollections() {
+    collections = await pywebview.api.get_collections_v2();
+    populateCollectionFilter();
     await renderCollectionsList();
     document.getElementById("collections-modal").style.display = "flex";
 }
@@ -2999,11 +3308,8 @@ async function renderCollectionsList() {
         return;
     }
 
-    // Count members per collection
-    const countMap = {};
-    collections.forEach(c => { countMap[c.id] = (c.movie_ids || []).length; });
-
     collections.forEach(c => {
+        const count = (c.movie_ids || []).length;
         const row = document.createElement("div");
         row.className = "col-item";
 
@@ -3011,14 +3317,13 @@ async function renderCollectionsList() {
         name.className = "col-item-name";
         name.textContent = c.name;
 
-        const count = document.createElement("span");
-        count.className = "col-item-count";
-        count.textContent = `${countMap[c.id] || 0} title${countMap[c.id] !== 1 ? "s" : ""}`;
+        const countEl = document.createElement("span");
+        countEl.className = "col-item-count";
+        countEl.textContent = `${count} title${count !== 1 ? "s" : ""}`;
 
         const filterBtn = document.createElement("button");
         filterBtn.className = "col-action-btn";
         filterBtn.textContent = "🔍 Filter";
-        filterBtn.title = "Show only movies in this collection";
         filterBtn.onclick = () => {
             const sel = document.getElementById("filter-collection");
             if (sel) { sel.value = c.id; applyFilters(); }
@@ -3040,20 +3345,19 @@ async function renderCollectionsList() {
         const delBtn = document.createElement("button");
         delBtn.className = "col-action-btn";
         delBtn.textContent = "🗑";
-        delBtn.title = "Delete collection";
+        delBtn.title = "Delete collection (movies kept)";
         delBtn.onclick = async () => {
             if (!confirm(`Delete collection "${c.name}"? Movies won't be deleted.`)) return;
             await pywebview.api.delete_collection(c.id);
             collections = await pywebview.api.get_collections_v2();
             await renderCollectionsList();
             populateCollectionFilter();
-            // If we were filtering by this deleted collection, reset
             const sel = document.getElementById("filter-collection");
             if (sel && sel.value === c.id) { sel.value = ""; applyFilters(); }
         };
 
         row.appendChild(name);
-        row.appendChild(count);
+        row.appendChild(countEl);
         row.appendChild(filterBtn);
         row.appendChild(renameBtn);
         row.appendChild(delBtn);
@@ -3113,6 +3417,124 @@ async function openTrailer(movie) {
 function closeTrailer() {
     document.getElementById("trailer-frame").src = "";
     document.getElementById("trailer-modal").style.display = "none";
+}
+
+// ── Auto-Next Episode ────────────────────────────────────────
+function startAutonext(movie, nextEpisode) {
+    autonextCancel(); // clear any existing timer
+    _autonextPending = { movie, episode: nextEpisode };
+
+    const overlay = document.getElementById("autonext-overlay");
+    const titleEl = document.getElementById("autonext-title");
+    const countdownEl = document.getElementById("autonext-countdown");
+    const bar = document.getElementById("autonext-bar");
+
+    let label = nextEpisode.title;
+    if (nextEpisode.season_num && nextEpisode.ep_num) {
+        label = `S${String(nextEpisode.season_num).padStart(2,'0')}E${String(nextEpisode.ep_num).padStart(2,'0')} · ${nextEpisode.title}`;
+    }
+    titleEl.textContent = label;
+
+    let remaining = 10;
+    countdownEl.textContent = remaining;
+    bar.style.transition = "none";
+    bar.style.width = "100%";
+    overlay.style.display = "flex";
+
+    // Animate bar shrinking
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            bar.style.transition = `width ${remaining}s linear`;
+            bar.style.width = "0%";
+        });
+    });
+
+    _autonextTimer = setInterval(() => {
+        remaining--;
+        countdownEl.textContent = remaining;
+        if (remaining <= 0) {
+            autonextPlayNow();
+        }
+    }, 1000);
+}
+
+function autonextPlayNow() {
+    const pending = _autonextPending;
+    autonextCancel();
+    if (pending) playEpisode(pending.movie, pending.episode);
+}
+
+function autonextCancel() {
+    if (_autonextTimer) { clearInterval(_autonextTimer); _autonextTimer = null; }
+    _autonextPending = null;
+    const overlay = document.getElementById("autonext-overlay");
+    if (overlay) overlay.style.display = "none";
+}
+
+// ── Auto-Backup ─────────────────────────────────────────────
+async function triggerSilentBackup() {
+    try {
+        const result = await pywebview.api.trigger_auto_backup();
+        if (result && result.success) {
+            _lastAutoBackupTime = new Date();
+        }
+    } catch(e) { /* silent */ }
+}
+
+async function loadBackupHistory() {
+    const listEl = document.getElementById("backup-list");
+    const labelEl = document.getElementById("last-backup-label");
+    if (!listEl) return;
+
+    listEl.innerHTML = '<div style="color:var(--text-main); opacity:0.4; font-size:0.85em; padding:6px 0;">Loading…</div>';
+
+    try {
+        const backups = await pywebview.api.get_auto_backups();
+        if (labelEl && _lastAutoBackupTime) {
+            labelEl.textContent = `Last saved: ${_lastAutoBackupTime.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`;
+        }
+
+        if (!backups || backups.length === 0) {
+            listEl.innerHTML = '<div style="color:var(--text-main); opacity:0.4; font-size:0.85em; padding:6px 0;">No auto-backups yet.</div>';
+            return;
+        }
+
+        listEl.innerHTML = "";
+        backups.forEach(b => {
+            const row = document.createElement("div");
+            row.className = "backup-row";
+
+            const lbl = document.createElement("span");
+            lbl.className = "br-label";
+            lbl.textContent = b.label;
+
+            const count = document.createElement("span");
+            count.className = "br-count";
+            count.textContent = `${b.movie_count} titles`;
+
+            const restoreBtn = document.createElement("button");
+            restoreBtn.className = "br-btn";
+            restoreBtn.textContent = "↩ Restore";
+            restoreBtn.onclick = async () => {
+                if (!confirm(`Restore backup from ${b.label}?\nThis will overwrite your current library.`)) return;
+                const result = await pywebview.api.restore_auto_backup(b.path);
+                if (result && result.success) {
+                    showToast("✅ Library restored from backup!");
+                    closeSettings();
+                    await init();
+                } else {
+                    showToast("⚠ Restore failed: " + (result.error || "unknown error"));
+                }
+            };
+
+            row.appendChild(lbl);
+            row.appendChild(count);
+            row.appendChild(restoreBtn);
+            listEl.appendChild(row);
+        });
+    } catch(e) {
+        listEl.innerHTML = '<div style="color:var(--text-main); opacity:0.4; font-size:0.85em; padding:6px 0;">Could not load backups.</div>';
+    }
 }
 
 </script>

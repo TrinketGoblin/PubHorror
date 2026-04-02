@@ -457,6 +457,52 @@ class API:
         except Exception as e:
             return {"success": False, "error": str(e)}
 
+    def get_auto_backups(self):
+        """Return list of auto-backup metadata sorted newest first."""
+        import datetime
+        try:
+            backup_dir = os.path.join(DATA_DIR, "backups")
+            if not os.path.exists(backup_dir):
+                return []
+            files = sorted(
+                [f for f in os.listdir(backup_dir) if f.startswith("auto_") and f.endswith(".json")],
+                reverse=True
+            )
+            result = []
+            for fname in files:
+                fpath = os.path.join(backup_dir, fname)
+                try:
+                    raw = fname.replace("auto_", "").replace(".json", "")
+                    dt = datetime.datetime.strptime(raw, "%Y%m%d_%H%M%S")
+                    label = dt.strftime("%b %d %Y, %H:%M")
+                    with open(fpath, "r", encoding="utf-8") as f:
+                        data = json.load(f)
+                    count = len(data.get("movies", []))
+                    result.append({"filename": fname, "path": fpath, "label": label, "movie_count": count})
+                except Exception:
+                    pass
+            return result
+        except Exception:
+            return []
+
+    def restore_auto_backup(self, backup_path):
+        """Restore library state from an auto-backup file."""
+        try:
+            with open(backup_path, "r", encoding="utf-8") as f:
+                b = json.load(f)
+            if "movies" in b:
+                self.save_movies(b["movies"])
+            if "ratings" in b:
+                with open(RATINGS_FILE, "w", encoding="utf-8") as f:
+                    json.dump(b["ratings"], f, indent=2)
+            if "collections" in b:
+                self.save_collections(b["collections"])
+            if "config" in b:
+                self.save_config(b["config"])
+            return {"success": True}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+
     # --- BACKUP & UTILS ---
     def export_backup(self, backup):
         if self._window is None: return {"success": False}
