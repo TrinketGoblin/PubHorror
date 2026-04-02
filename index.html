@@ -1,0 +1,3121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PubHorror</title>
+<link href="https://fonts.googleapis.com/css2?family=Creepster&family=Nosifer&family=Metal+Mania&display=swap" rel="stylesheet">
+
+<style>
+
+@font-face {
+    font-family: OpenDyslexic;
+    src: url("./assets/OpenDyslexic-Regular.otf");
+}
+
+/* ── Base ─────────────────────────────────────────────── */
+
+:root {
+    --bg-main: #050000;
+    --bg-grad: radial-gradient(circle, #1a0000 0%, #050000 100%);
+    --bg-input: #1a0000;
+    --text-main: #d2d2d2;
+    --accent: #8b0000;
+    --highlight: #ff4d4d;
+    --border: #3a0000;
+    --glow: #ff0000;
+    --base-font-size: 18px;
+}
+
+/* Midnight Theme */
+body.theme-midnight {
+    --bg-main: #000205;
+    --bg-grad: radial-gradient(circle, #000c1a 0%, #000205 100%);
+    --bg-input: #000c1a;
+    --text-main: #d2e1ff;
+    --accent: #00338b;
+    --highlight: #4d94ff;
+    --border: #00223a;
+    --glow: #0080ff;
+}
+
+/* Forest Theme */
+body.theme-forest {
+    --bg-main: #000501;
+    --bg-grad: radial-gradient(circle, #001a05 0%, #000501 100%);
+    --bg-input: #001a05;
+    --text-main: #d2ffd6;
+    --accent: #008b2a;
+    --highlight: #4dff77;
+    --border: #003a0e;
+    --glow: #00ff40;
+}
+
+/* Classic Theme */
+body.theme-classic {
+    --bg-main: #050505;
+    --bg-grad: radial-gradient(circle, #1a1a1a 0%, #050505 100%);
+    --bg-input: #1a1a1a;
+    --text-main: #e0e0e0;
+    --accent: #444444;
+    --highlight: #ffffff;
+    --border: #333333;
+    --glow: #888888;
+}
+
+body {
+    background: var(--bg-main);
+    color: var(--text-main);
+    font-family: OpenDyslexic, sans-serif;
+    margin: 0;
+    padding: 20px;
+    padding-top: 0;
+    background-image: var(--bg-grad);
+    font-size: var(--base-font-size);
+}
+
+h2 { color: var(--accent); font-family: OpenDyslexic, sans-serif; }
+
+/* ── Sticky Header ────────────────────────────────────── */
+
+#header-container {
+    position: sticky;
+    top: 0;
+    background: var(--bg-main);
+    z-index: 1000;
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.7);
+    padding: 10px 20px 0 20px;
+    margin: 0 -20px;
+}
+
+/* ── Top Bar: logo + search + icons ───────────────────── */
+
+#top-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+#top-bar h1 {
+    margin: 0;
+    font-size: 1.25em;
+    color: var(--accent);
+    font-family: OpenDyslexic, sans-serif;
+    text-shadow: 0 0 8px var(--glow);
+    letter-spacing: 3px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+#search {
+    flex: 1;
+    min-width: 0;
+    padding: 8px 12px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    color: var(--highlight);
+    font-size: 0.9em;
+    font-family: OpenDyslexic, sans-serif;
+    box-shadow: inset 0 0 8px #000;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+#search:focus { outline: none; border-color: var(--accent); }
+
+/* ── Icon Action Buttons ──────────────────────────────── */
+
+#action-icons {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+    align-items: center;
+}
+
+.icon-btn {
+    margin: 0;
+    padding: 7px 10px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    cursor: pointer;
+    font-family: OpenDyslexic, sans-serif;
+    font-size: 0.85em;
+    border-radius: 3px;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    line-height: 1;
+}
+.icon-btn:hover { background: var(--accent); color: #fff; border-color: var(--highlight); }
+.icon-btn.active { background: var(--accent); color: #fff; border-color: var(--highlight); }
+
+/* ── Dropdown Modal ──────────────────────────────────── */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background-color: var(--bg-input);
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.8);
+    z-index: 1100;
+    border: 1px solid var(--border);
+    margin-top: 5px;
+}
+
+.dropdown-content button {
+    color: var(--text-main);
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    margin: 0;
+    font-size: 0.9em;
+}
+
+.dropdown-content button:hover {
+    background-color: var(--accent);
+    color: white;
+}
+
+/* Dropdowns are now opened via click (JS), not hover */
+
+/* ── Options Bar (formerly Filter Bar) ────────────────── */
+
+#options-bar {
+    display: none;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    padding: 8px 12px 10px 12px;
+    border-top: 1px solid var(--bg-input);
+    animation: slideDown 0.18s ease;
+    background: var(--bg-main);
+}
+#options-bar.open { display: flex; }
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+#options-bar select {
+    padding: 6px 8px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    color: var(--highlight);
+    font-family: OpenDyslexic, sans-serif;
+    font-size: 0.8em;
+    cursor: pointer;
+}
+#options-bar select:hover, #options-bar select:focus { border-color: var(--accent); outline: none; }
+
+#grid-size-wrap, #font-size-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-main);
+    font-size: 0.75em;
+    opacity: 0.8;
+}
+#grid-size, #font-size-slider { width: 80px; accent-color: var(--accent); cursor: pointer; }
+
+/* ── Alpha Jump ───────────────────────────────────────── */
+
+#alpha-jump {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    padding: 6px 0 8px 0;
+    border-top: 1px solid var(--bg-input);
+}
+#alpha-jump span {
+    display: inline-block;
+    padding: 2px 6px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    opacity: 0.6;
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: 0.75em;
+    transition: background 0.15s, color 0.15s, opacity 0.15s;
+}
+#alpha-jump span:hover { background: var(--accent); color: #fff; border-color: var(--highlight); opacity: 1; }
+
+/* sg-chip styles are defined in the Genre Chips section below */
+
+/* ── Buttons (general) ────────────────────────────────── */
+
+button {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: var(--accent);
+    border: 1px solid var(--highlight);
+    color: #fff;
+    cursor: pointer;
+    font-family: OpenDyslexic, sans-serif;
+    font-size: 0.9em;
+    transition: background 0.2s;
+}
+button:hover { background: var(--highlight); color: white; }
+
+/* ── Grid & Cards ─────────────────────────────────────── */
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 18px;
+    padding-top: 20px;
+}
+
+.card {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.7);
+}
+
+.card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 16px var(--accent);
+    border-color: var(--highlight);
+}
+
+.poster {
+    width: 100%;
+    aspect-ratio: 2/3;
+    background: #000;
+    object-fit: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+}
+
+.poster::after { content: none; }
+
+.poster.has-poster::after { content: none; }
+
+.card-content {
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background: linear-gradient(180deg, var(--bg-input) 0%, var(--bg-main) 100%);
+}
+
+.title {
+    font-weight: bold;
+    font-size: 0.9em;
+    color: var(--highlight);
+    font-family: OpenDyslexic, sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.meta {
+    font-size: 0.75em;
+    color: var(--text-main);
+    opacity: 0.6;
+    line-height: 1.4;
+}
+
+.desc {
+    font-size: 0.7em;
+    color: var(--text-main);
+    opacity: 0.7;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.35;
+}
+
+/* ── Stars ────────────────────────────────────────────── */
+
+.rating { display: flex; gap: 2px; }
+
+.star {
+    cursor: pointer;
+    font-size: 0.9em;
+    color: var(--border);
+    transition: color 0.1s;
+}
+
+.star.active {
+    color: var(--highlight);
+    text-shadow: 0 0 4px var(--glow);
+}
+
+/* ── Player ───────────────────────────────────────────── */
+
+/* Keep the player layout intact when it is the fullscreen element */
+#player:fullscreen,
+#player:-webkit-full-screen {
+    display: flex !important;
+    width: 100vw;
+    height: 100vh;
+}
+
+#player {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: black;
+    display: none;
+    flex-direction: row;
+    z-index: 2000;
+}
+
+#player-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 20px;
+    gap: 12px;
+    overflow: hidden;
+}
+
+video {
+    max-width: 100%;
+    max-height: 70vh;
+    box-shadow: 0 0 50px var(--accent);
+}
+
+/* When app is in OS fullscreen, let video fill all available space */
+#player.is-fullscreen #player-main {
+    padding: 0;
+    gap: 0;
+    justify-content: flex-end;
+}
+#player.is-fullscreen video {
+    max-height: none;
+    flex: 1;
+    width: 100%;
+    object-fit: contain;
+    box-shadow: none;
+}
+#player.is-fullscreen #video-controls-container {
+    max-width: 100%;
+    padding: 0 12px 12px 12px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.85));
+    z-index: 10;
+}
+#player.is-fullscreen #player-main {
+    position: relative;
+}
+#player.is-fullscreen .close { display: none; }
+
+/* ── Custom Video Controls ────────────────────────────── */
+
+#video-controls-container {
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#player-progress-wrap {
+    width: 100%;
+    position: relative;
+}
+
+#player-scrubber {
+    width: 100%;
+    height: 8px;
+    background: #222;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    overflow: visible;
+}
+
+#player-scrubber-fill {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    border-radius: 4px;
+    box-shadow: 0 0 6px var(--glow);
+    pointer-events: none;
+}
+
+#video-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--bg-main);
+    padding: 12px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+}
+
+.control-btn {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    color: var(--accent);
+    cursor: pointer;
+    font-family: OpenDyslexic, sans-serif;
+    font-size: 18px;
+    padding: 8px 14px;
+    border-radius: 4px;
+    transition: background 0.2s, color 0.2s;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.control-btn:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--glow);
+}
+
+#time-display {
+    color: var(--highlight);
+    font-size: 13px;
+    font-family: monospace;
+    min-width: 110px;
+    text-align: center;
+}
+
+#volume-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#volume-slider {
+    width: 80px;
+    accent-color: var(--accent);
+    cursor: pointer;
+}
+
+.control-spacer {
+    flex: 1;
+}
+
+#player-sidebar {
+    width: 300px;
+    background: var(--bg-main);
+    border-left: 2px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+#player-sidebar h3 {
+    color: var(--accent);
+    margin-top: 0;
+}
+
+#notes-list {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.note-item {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    padding: 10px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.note-item:hover {
+    border-color: var(--accent);
+}
+
+.note-time {
+    color: var(--glow);
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+#note-input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#note-input {
+    background: var(--bg-main);
+    border: 1px solid var(--border);
+    color: var(--highlight);
+    padding: 10px;
+    font-family: OpenDyslexic, sans-serif;
+    resize: none;
+}
+
+.close {
+    margin-top: 20px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 3px;
+    background: var(--bg-input);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    box-shadow: 0 0 4px var(--glow);
+}
+
+/* ── Modals ───────────────────────────────────────────── */
+
+#settings-modal,
+#stats-modal,
+#editor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.95);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 3000;
+}
+
+.modal-content {
+    background: var(--bg-main);
+    padding: 40px;
+    border: 2px solid var(--accent);
+    width: 90%;
+    max-width: 700px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    box-shadow: 0 0 50px rgba(0,0,0,0.5);
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-content h2 {
+    color: var(--accent);
+    font-family: OpenDyslexic, sans-serif;
+    text-align: center;
+    margin-top: 0;
+}
+
+.modal-content input,
+.modal-content textarea,
+.modal-content select {
+    padding: 12px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    color: var(--highlight);
+    font-family: OpenDyslexic, sans-serif;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+}
+
+/* ── Stats ────────────────────────────────────────────── */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.stat-item {
+    background: var(--bg-input);
+    padding: 20px;
+    border: 1px solid var(--border);
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 28px;
+    color: var(--highlight);
+    margin-top: 10px;
+    font-family: OpenDyslexic, sans-serif;
+}
+
+
+/* ── Continue Watching ────────────────────────────────── */
+#continue-watching-section { margin-bottom: 8px; }
+
+#continue-watching-row { margin: 14px 0 4px 0; }
+#continue-watching-row > div:last-child { scrollbar-width: thin; scrollbar-color: var(--border) var(--bg-main); }
+#continue-watching-row > div:last-child::-webkit-scrollbar { height: 4px; }
+#continue-watching-row > div:last-child::-webkit-scrollbar-track { background: var(--bg-main); }
+#continue-watching-row > div:last-child::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ── Watched Dimming ──────────────────────────────────── */
+
+/* ── "Fresh Meat" New Ribbon ──────────────────────────── */
+.card-ribbon {
+    position: absolute;
+    top: 10px;
+    right: -24px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 9px;
+    font-family: OpenDyslexic, sans-serif;
+    padding: 3px 28px;
+    transform: rotate(35deg);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.7);
+    z-index: 5;
+    letter-spacing: 1px;
+    border: 1px solid var(--highlight);
+    pointer-events: none;
+}
+.card { position: relative; }
+
+/* ── Poster fallback SVG ──────────────────────────────── */
+.poster::after { content: none; }
+.poster-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    inset: 0;
+}
+
+/* ── Genre Chips ───────────────────────────────────── */
+#genre-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    padding: 0 30px 16px 30px;
+}
+.sg-chip {
+    padding: 4px 14px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    color: var(--highlight);
+    cursor: pointer;
+    border-radius: 20px;
+    font-size: 12px;
+    font-family: OpenDyslexic, sans-serif;
+    transition: background 0.2s;
+    user-select: none;
+}
+.sg-chip:hover, .sg-chip.active {
+    background: var(--accent);
+    border-color: var(--glow);
+    color: #fff;
+}
+
+/* ── Collections Manager Modal ────────────────────────── */
+#collections-modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.95);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 3000;
+}
+.col-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    margin-bottom: 6px;
+}
+.col-item:hover { border-color: var(--accent); }
+.col-item-name { flex: 1; color: var(--highlight); font-size: 0.9em; }
+.col-item-count { font-size: 0.75em; color: var(--text-main); opacity: 0.5; min-width: 40px; text-align: right; }
+.col-action-btn {
+    margin: 0; padding: 4px 8px;
+    background: transparent; border: 1px solid var(--border);
+    color: var(--text-main); opacity: 0.6; cursor: pointer;
+    font-family: OpenDyslexic, sans-serif; font-size: 11px; border-radius: 3px;
+}
+.col-action-btn:hover { background: var(--accent); color: #fff; border-color: var(--highlight); opacity: 1; }
+#col-new-wrap { display: flex; gap: 8px; margin-top: 10px; }
+#col-new-input { flex: 1; padding: 10px; background: var(--bg-input); border: 1px solid var(--border); color: var(--highlight); font-family: OpenDyslexic, sans-serif; }
+
+/* ── Editor collection checkboxes ────────────────────── */
+#edit-collections-wrap {
+    display: flex; flex-direction: column; gap: 5px;
+    max-height: 120px; overflow-y: auto;
+    padding: 6px 8px;
+    background: var(--bg-input); border: 1px solid var(--border);
+}
+.col-check-row { display: flex; align-items: center; gap: 8px; font-size: 0.85em; }
+.col-check-row input[type=checkbox] { width: auto; accent-color: var(--accent); cursor: pointer; }
+.col-check-row label { cursor: pointer; color: var(--text-main); }
+
+/* ── Empty State ──────────────────────────────────────── */
+#empty-state {
+    display: none;
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--border);
+    font-size: 22px;
+    font-family: OpenDyslexic, sans-serif;
+    text-shadow: 0 0 15px var(--accent);
+    letter-spacing: 2px;
+}
+#empty-state .empty-icon { font-size: 60px; display: block; margin-bottom: 20px; }
+
+/* ── Toast Notification ───────────────────────────────── */
+#toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--bg-input);
+    border: 2px solid var(--accent);
+    color: var(--highlight);
+    padding: 14px 28px;
+    font-family: OpenDyslexic, sans-serif;
+    font-size: 15px;
+    z-index: 9999;
+    box-shadow: 0 0 20px rgba(0,0,0,0.6);
+    opacity: 0;
+    transition: transform 0.35s ease, opacity 0.35s ease;
+    pointer-events: none;
+    white-space: nowrap;
+}
+#toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+/* ── Jump Scare Progress Skulls ───────────────────────── */
+.progress-bar { position: relative; }
+.js-skull {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 13px;
+    cursor: pointer;
+    z-index: 5;
+    filter: drop-shadow(0 0 3px red);
+    line-height: 1;
+}
+
+/* ── Episode Header in Player ─────────────────────────── */
+#player-episode-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 14px 20px;
+    background: linear-gradient(rgba(0,0,0,0.85), transparent);
+    color: var(--highlight);
+    font-family: OpenDyslexic, sans-serif;
+    font-size: 1em;
+    z-index: 15;
+    display: none;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+#player-episode-header .ep-series-title {
+    font-size: 0.8em;
+    color: var(--accent);
+    letter-spacing: 1px;
+    margin-bottom: 3px;
+}
+#player-episode-header .ep-episode-label {
+    font-size: 1.1em;
+    color: var(--highlight);
+    text-shadow: 0 0 8px var(--glow);
+}
+
+/* ── Action Bar Fade ──────────────────────────────────── */
+#player-main.controls-hidden #video-controls-container,
+#player-main.controls-hidden #player-episode-header {
+    opacity: 0;
+    pointer-events: none;
+}
+#player-main.controls-hidden {
+    cursor: none;
+}
+#video-controls-container {
+    transition: opacity 0.4s ease;
+}
+
+
+#trailer-modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.97);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 5000;
+}
+#trailer-modal .modal-content {
+    max-width: 860px;
+    width: 95%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+#trailer-frame {
+    width: 100%;
+    aspect-ratio: 16/9;
+    border: 2px solid var(--border);
+    background: #000;
+}
+
+/* ── Card Edit Button ─────────────────────────────────── */
+.card-edit-btn {
+    margin-top: 6px;
+    padding: 4px 10px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    opacity: 0.5;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: OpenDyslexic, sans-serif;
+    border-radius: 3px;
+    transition: background 0.15s, color 0.15s, border-color 0.15s, opacity 0.15s;
+    align-self: flex-start;
+}
+.card-edit-btn:hover {
+    background: var(--bg-input);
+    color: var(--highlight);
+    border-color: var(--accent);
+    opacity: 1;
+}
+
+/* ── Clickable meta links ─────────────────────────────── */
+.meta-link {
+    cursor: pointer;
+    color: var(--accent);
+    text-decoration: underline dotted var(--border);
+    transition: color 0.2s;
+}
+.meta-link:hover { color: var(--highlight); }
+
+</style>
+</head>
+
+<body>
+
+<div id="header-container">
+
+<!-- ── Top Bar ─────────────────────────────────────────── -->
+<div id="top-bar">
+    <h1>🎞 PubHorror</h1>
+
+    <input id="search" placeholder="🔍  Search titles, directors, cast…" oninput="applyFilters()">
+
+    <div id="action-icons">
+        <!-- Add Dropdown (click-based) -->
+        <div class="dropdown" id="add-dropdown">
+            <button class="icon-btn" onclick="toggleAddDropdown(event)" title="Add content">＋</button>
+            <div class="dropdown-content" id="add-dropdown-content" style="display:none; left:0; right:auto;">
+                <button onclick="addMovieManual(); closeAddDropdown()">🎬 Add Movie</button>
+                <button onclick="addSeriesFolder(); closeAddDropdown()">📺 Add Series</button>
+                <button onclick="addMovieFolder(); closeAddDropdown()">📁 Import Folder</button>
+            </div>
+        </div>
+
+        <button class="icon-btn" id="btn-continue-watching" onclick="resumePlayback()" style="display:none; background:var(--accent); border-color:var(--highlight); color:#fff;">🎬 Resume</button>
+        
+        <button class="icon-btn" onclick="showSettings()" title="Settings">⚙️ Settings</button>
+        <button class="icon-btn" id="btn-toggle-options" onclick="toggleOptions()" title="Options">🎛 Options ▾</button>
+    </div>
+</div>
+
+<!-- ── Collapsible Options Panel ────────────────────────── -->
+<div id="options-bar">
+    <div id="options-main-items" style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; flex:1;">
+        <button class="icon-btn" onclick="randomMovie()" title="Random movie">🎲 Random</button>
+        <button class="icon-btn" onclick="showStats()" title="Library stats">📊 Stats</button>
+        <button class="icon-btn" onclick="rescanAll()" title="Re-scan all series folders">🔄 Rescan</button>
+        <button class="icon-btn" onclick="showCollections()" title="Manage collections">📚 Collections</button>
+
+        <div class="opt-separator" style="height: 20px; width: 1px; background: var(--border); margin: 0 4px;"></div>
+
+        <select id="filter-collection" onchange="applyFilters()">
+            <option value="">All Collections</option>
+        </select>
+        <select id="filter-status" onchange="applyFilters()">
+            <option value="">All Statuses</option>
+            <option value="unwatched">Unwatched</option>
+            <option value="watching">Watching</option>
+            <option value="watched">Watched</option>
+        </select>
+        <select id="filter-rating" onchange="applyFilters()">
+            <option value="0">All Ratings</option>
+            <option value="1">★ and up</option>
+            <option value="2">★★ and up</option>
+            <option value="3">★★★ and up</option>
+            <option value="4">★★★★ and up</option>
+            <option value="5">★★★★★ only</option>
+        </select>
+        <select id="sort-by" onchange="applyFilters()">
+            <option value="title-asc">A → Z</option>
+            <option value="title-desc">Z → A</option>
+            <option value="year-desc">Newest</option>
+            <option value="year-asc">Oldest</option>
+            <option value="rating-desc">Top Rated</option>
+            <option value="collection-asc">By Collection</option>
+        </select>
+        <div id="grid-size-wrap">
+            <span>⊞</span>
+            <input type="range" id="grid-size" min="150" max="400" value="200" oninput="resizeGrid()">
+            <span>⊟</span>
+        </div>
+        
+        <div id="font-size-wrap">
+            <span>A</span>
+            <input type="range" id="font-size-slider" min="12" max="24" value="16" oninput="changeFontSize()">
+            <span style="font-size: 1.2em;">A</span>
+        </div>
+
+        <select id="theme-selector" onchange="changeTheme()">
+            <option value="horror">Horror (Default)</option>
+            <option value="midnight">Midnight</option>
+            <option value="forest">Forest</option>
+            <option value="classic">Classic</option>
+            <option value="custom">🎨 Custom…</option>
+        </select>
+        <!-- Custom hex theme picker — shown only when "Custom" is selected -->
+        <div id="custom-theme-wrap" style="display:none; align-items:center; gap:6px; font-size:0.78em; color:var(--text-main); opacity:0.9;">
+            <label style="white-space:nowrap;">Accent</label>
+            <input type="color" id="custom-accent"    value="#8b0000" oninput="applyCustomTheme()" style="width:32px; height:26px; padding:2px; border:1px solid var(--border); background:var(--bg-input); cursor:pointer;">
+            <label style="white-space:nowrap;">Highlight</label>
+            <input type="color" id="custom-highlight" value="#ff4d4d" oninput="applyCustomTheme()" style="width:32px; height:26px; padding:2px; border:1px solid var(--border); background:var(--bg-input); cursor:pointer;">
+            <label style="white-space:nowrap;">BG</label>
+            <input type="color" id="custom-bg"        value="#050000" oninput="applyCustomTheme()" style="width:32px; height:26px; padding:2px; border:1px solid var(--border); background:var(--bg-input); cursor:pointer;">
+        </div>
+    </div>
+
+    <!-- More Options Dropdown (Hidden by default, shown by JS when overflowing) -->
+    <div id="more-options-dropdown" class="dropdown" style="display:none;">
+        <button class="icon-btn" onclick="toggleMoreDropdown(event)">More ▾</button>
+        <div id="more-options-content" class="dropdown-content" style="display:none;"></div>
+    </div>
+</div>
+
+<!-- ── Alpha Jump ─────────────────────────────────────── -->
+<div id="alpha-jump"></div>
+
+<!-- ── Genre Chips ─────────────────────────────────────── -->
+<div id="genre-chips"></div>
+
+</div>
+
+<!-- ── Toast Notification ─────────────────────────────── -->
+<div id="toast"></div>
+
+<!-- ── Queue (inline compact) ─────────────────────────── -->
+<div id="queue-section" style="display:none; margin: 12px 0; display:none;">
+    <div style="display:flex; gap:8px; align-items:center;">
+        <span style="color:var(--accent); font-size:12px; white-space:nowrap;">🎞 Queue:</span>
+        <select id="queue-dropdown" style="flex:1; padding:5px 8px; background:var(--bg-input); border:1px solid var(--border); color:var(--highlight); font-family:OpenDyslexic,sans-serif; font-size:12px;"></select>
+        <button onclick="playFromQueue()" style="margin:0; padding:5px 10px; font-size:12px;">▶ Play</button>
+    </div>
+</div>
+
+
+
+<!-- ── Empty State ─────────────────────────────────────── -->
+<div id="empty-state">
+    <span class="empty-icon">💀</span>
+    Nothing found... you're safe for now.
+</div>
+
+<!-- ── Main Grid ──────────────────────────────────────── -->
+<div class="grid" id="grid"></div>
+
+<!-- ── Video Player ───────────────────────────────────── -->
+<div id="player">
+    <div id="player-main">
+        <!-- Episode info header (shown when playing series) -->
+        <div id="player-episode-header">
+            <div class="ep-series-title" id="ep-series-title-text"></div>
+            <div class="ep-episode-label" id="ep-episode-label-text"></div>
+        </div>
+
+        <video id="video" playsinline preload="auto" onclick="togglePlayPause()"></video>
+        
+        <!-- Custom Video Controls Container -->
+        <div id="video-controls-container">
+            <!-- Progress Bar -->
+            <div id="player-progress-wrap">
+                <div id="player-scrubber">
+                    <div id="player-scrubber-fill"></div>
+                </div>
+            </div>
+            
+            <!-- Control Buttons -->
+            <div id="video-controls">
+                <button class="control-btn" id="btn-play-pause" onclick="togglePlayPause()">▶</button>
+                <button class="control-btn" onclick="skipBackward()">⏮ 10s</button>
+                <button class="control-btn" onclick="skipForward()">10s ⏭</button>
+                <span id="time-display">0:00 / 0:00</span>
+                <div class="control-spacer"></div>
+                <button class="control-btn" id="btn-next-episode-player" onclick="playNextEpisode()" style="display:none; font-size:14px;">Next ⏭</button>
+                <div id="volume-container">
+                    <button class="control-btn" id="btn-mute" onclick="toggleMute()">🔊</button>
+                    <input type="range" id="volume-slider" min="0" max="100" value="100" oninput="changeVolume()">
+                </div>
+                <button class="control-btn" onclick="toggleFullscreen()">⛶</button>
+            </div>
+        </div>
+        
+        <button class="close" onclick="closePlayer()">Close</button>
+    </div>
+    <div id="player-sidebar">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3>Notes</h3>
+            <button onclick="exportNotes()" style="font-size: 12px; margin-top:0;">📤 Export</button>
+        </div>
+        <div id="notes-list"></div>
+        <div id="note-input-container">
+            <textarea id="note-input" placeholder="Type a note..."></textarea>
+            <div style="display:flex; gap:8px;">
+                <button onclick="addTimestampedNote()" style="flex:1;">Add Note</button>
+                <button onclick="addJumpScareBookmark()" title="Mark Jump Scare" style="background:var(--bg-input); border-color:var(--accent); font-size:18px; padding:6px 10px; margin-top:10px;">💀</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ── Settings Modal ─────────────────────────────────── -->
+<div id="settings-modal">
+    <div class="modal-content">
+        <h2>Settings</h2>
+        <div style="display:flex; flex-direction:column; gap:15px; margin-top:10px;">
+            <div>
+                <label>Default Library Path:</label>
+                <div style="display:flex; gap:10px; margin-top:5px;">
+                    <input id="setting-path" style="flex:1;" readonly>
+                    <button onclick="pickLibraryPath()">Browse</button>
+                </div>
+            </div>
+            <hr style="border:0.5px solid #333; width:100%;">
+            <div>
+                <label>TMDB API Key:</label>
+                <div style="display:flex; gap:10px; margin-top:5px;">
+                    <input id="setting-tmdb-key" style="flex:1;" placeholder="Paste your TMDB API key here">
+                    <button onclick="saveTmdbKey()">Save</button>
+                </div>
+                <small style="color:#555;">Get a free key at <span style="color:var(--accent);">themoviedb.org</span> → Settings → API</small>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <button onclick="exportBackup()" style="flex:1;">📤 Export Backup</button>
+                <button onclick="importBackup()" style="flex:1;">📥 Import Backup</button>
+            </div>
+        </div>
+        <div class="modal-actions" style="margin-top:20px;">
+            <button onclick="closeSettings()">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Stats Modal ────────────────────────────────────── -->
+<div id="stats-modal">
+    <div class="modal-content">
+        <h2>Library Statistics</h2>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div>Total Movies</div>
+                <div id="stat-total" class="stat-value">0</div>
+            </div>
+            <div class="stat-item">
+                <div>Watched</div>
+                <div id="stat-watched" class="stat-value">0</div>
+            </div>
+            <div class="stat-item">
+                <div>Average Rating</div>
+                <div id="stat-rating" class="stat-value">0</div>
+            </div>
+            <div class="stat-item" style="grid-column: span 2;">
+                <div>Top Category</div>
+                <div id="stat-category" class="stat-value">-</div>
+            </div>
+        </div>
+        <div class="modal-actions" style="margin-top:20px;">
+            <button onclick="closeStats()">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Editor Modal ───────────────────────────────────── -->
+<div id="editor">
+    <div class="modal-content">
+        <h2>Edit Movie</h2>
+        <div style="display:flex; gap:20px;">
+            <div style="flex:1; display:flex; flex-direction:column; gap:10px;">
+                <div id="edit-poster" class="poster" style="width:150px; cursor:pointer;" onclick="changePoster()"></div>
+                <button onclick="changePoster()">Upload Poster</button>
+                <button onclick="autoFillMovieInfo(event)" style="background:#004a00; border-color:#008b00; color:#4dff4d;">🎬 Auto-fill TMDB</button>
+            </div>
+            <div style="flex:2; display:flex; flex-direction:column; gap:10px;">
+                <input id="edit-title" placeholder="Title">
+                <div style="display:flex; gap:10px;">
+                    <input id="edit-year" type="number" placeholder="Year" style="width:100px;">
+                    <select id="edit-source-type" style="flex:1;">
+                        <option value="file">File</option>
+                        <option value="dvd">DVD</option>
+                        <option value="missing">Wishlist</option>
+                        <option value="series">Series</option>
+                    </select>
+                </div>
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <input id="edit-file" placeholder="File path or folder" style="flex:1;">
+                    <button onclick="browseFile()" style="margin:0; white-space:nowrap; padding:8px 12px;">📂 Browse</button>
+                    <button onclick="rescanFile()" style="margin:0; white-space:nowrap; padding:8px 12px;" title="Re-scan file/folder to pick up new episodes or file changes">🔄 Rescan</button>
+                </div>
+                <div id="rescan-status" style="font-size:11px; color:#556655; display:none;"></div>
+                <input id="edit-director" placeholder="Director">
+                <input id="edit-cast" placeholder="Cast (comma separated)">
+                <input id="edit-categories" placeholder="Categories / Genres (comma separated)">
+                <textarea id="edit-desc" placeholder="Description" rows="3"></textarea>
+                <textarea id="edit-notes" placeholder="Notes" rows="2"></textarea>
+                <div style="font-size:0.8em; color:var(--text-main); opacity:0.7; margin-top:4px;">Collections:</div>
+                <div id="edit-collections-wrap">
+                    <span style="font-size:0.8em; color:var(--text-main); opacity:0.4;">No collections yet — create some in Options → Collections</span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button onclick="saveMovie()">Save</button>
+            <button onclick="deleteMovie()" style="background:var(--bg-input); border-color:var(--accent);">Delete</button>
+            <button onclick="closeEditor()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Collections Manager Modal ──────────────────────── -->
+<div id="collections-modal">
+    <div class="modal-content">
+        <h2>📚 Collections</h2>
+        <div id="collections-list" style="max-height:400px; overflow-y:auto;"></div>
+        <div id="col-new-wrap">
+            <input id="col-new-input" placeholder="New collection name…" onkeydown="if(event.key==='Enter') createCollection()">
+            <button onclick="createCollection()" style="margin:0;">＋ Add</button>
+        </div>
+        <div class="modal-actions" style="margin-top:16px;">
+            <button onclick="closeCollections()">Done</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Trailer Modal ──────────────────────────────────── -->
+<div id="trailer-modal">
+    <div class="modal-content">
+        <h2 id="trailer-modal-title"></h2>
+        <iframe id="trailer-frame"></iframe>
+        <div class="modal-actions">
+            <button onclick="closeTrailer()">Close</button>
+        </div>
+    </div>
+</div>
+
+<script>
+
+// ── Global State ────────────────────────────────────────
+let movies = [];
+let collections = [];   // [{id, name, movie_ids[]}]
+let filteredMovies = [];
+let detectedDrives = new Set();
+let playingMovieObj = null;
+let playingMovieId = null;
+let editingMovie = null;
+let lastSearchQuery = "";
+let favCounts = {};  // {movieId: completeCount}
+let _appFullscreen = false;
+let activeGenreFilter = null;   // tracks genre chip selection (pure JS, no DOM dependency)
+
+// No browser-native fullscreen listeners needed — fullscreen is managed exclusively
+// through pywebview.api.toggle_fullscreen() and the _appFullscreen flag.
+
+// ── Initialize ──────────────────────────────────────────
+window.addEventListener("pywebviewready", async function() {
+    await init();
+    await checkForDVDs();
+    setInterval(checkForDVDs, 10000);
+});
+
+async function init() {
+    movies = await pywebview.api.get_movies();
+    collections = await pywebview.api.get_collections_v2();
+    favCounts = await pywebview.api.get_favorites();
+    applyFilters();
+    populateCollectionFilter();
+    populateAlphaJump();
+    populateGenreChips();
+    checkContinueWatching();
+    checkNextEpisode();
+
+    // Restore saved theme and font size
+    try {
+        const config = await pywebview.api.get_config();
+        if (config.theme) {
+            const sel = document.getElementById("theme-selector");
+            if (sel) sel.value = config.theme;
+            if (config.theme === "custom") {
+                // Restore custom picker values then apply
+                if (config.custom_accent)    document.getElementById("custom-accent").value    = config.custom_accent;
+                if (config.custom_highlight) document.getElementById("custom-highlight").value = config.custom_highlight;
+                if (config.custom_bg)        document.getElementById("custom-bg").value        = config.custom_bg;
+                document.getElementById("custom-theme-wrap").style.display = "flex";
+                applyCustomTheme();
+            } else {
+                document.body.className = config.theme === "horror" ? "" : "theme-" + config.theme;
+            }
+        }
+        if (config.font_size) {
+            const fs = config.font_size;
+            document.documentElement.style.setProperty('--base-font-size', fs + 'px');
+            const slider = document.getElementById("font-size-slider");
+            if (slider) slider.value = fs;
+        }
+    } catch(e) { /* pywebview not ready yet in browser preview */ }
+}
+
+async function checkForDVDs() {
+    const drives = await pywebview.api.check_drives();
+    const driveLabels = new Set(drives.map(d => d.label));
+
+    // Clear removed drives from the session-level detection set
+    for (const label of detectedDrives) {
+        if (!driveLabels.has(label)) {
+            detectedDrives.delete(label);
+        }
+    }
+
+    drives.forEach(d => {
+        const existing = movies.find(m => m.disc_id === d.label && m.source_type === "dvd");
+        if (!existing && !detectedDrives.has(d.label)) {
+            detectedDrives.add(d.label);
+            showToast(`💿 DVD Detected: ${d.label}`);
+            addMovieManual({
+                title: d.label,
+                source_type: "dvd",
+                file: d.path,
+                disc_id: d.label
+            });
+        }
+    });
+}
+
+async function renderContinueWatching() {
+    const inProgress = await pywebview.api.get_in_progress();
+    const btn = document.getElementById("btn-continue-watching");
+    let section = document.getElementById("continue-watching-row");
+
+    if (!inProgress || inProgress.length === 0) {
+        btn.style.display = "none";
+        if (section) section.style.display = "none";
+        return;
+    }
+
+    btn.style.display = "flex";
+
+    if (!section) {
+        section = document.createElement("div");
+        section.id = "continue-watching-row";
+        section.style.cssText = "margin:14px 0 4px 0;";
+        const grid = document.getElementById("grid");
+        grid.parentNode.insertBefore(section, grid);
+    }
+
+    favCounts = await pywebview.api.get_favorites();
+    const maxCount = Math.max(0, ...Object.values(favCounts));
+
+    const items = inProgress.slice(0, 8);
+    const movieMap = {};
+    movies.forEach(function(m) { movieMap[m.id] = m; });
+
+    // Label
+    section.innerHTML = "";
+    const label = document.createElement("div");
+    label.style.cssText = "color:var(--accent);font-size:12px;letter-spacing:2px;margin-bottom:8px;";
+    label.textContent = "\u23ef CONTINUE WATCHING";
+    section.appendChild(label);
+
+    const strip = document.createElement("div");
+    strip.style.cssText = "display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;";
+
+    items.forEach(function(item) {
+        const baseId = item.id.split(":")[0];
+        const movie = movieMap[baseId];
+        if (!movie) return;
+
+        const pct = Math.round(item.ratio * 100);
+
+        const card = document.createElement("div");
+        card.style.cssText = "flex-shrink:0;width:110px;cursor:pointer;position:relative;";
+        card.onclick = function() {
+            if (movie.source_type === "series" && item.id.includes(":")) {
+                const path = item.id.substring(item.id.indexOf(":") + 1);
+                const ep = (movie.episodes || []).find(function(e) { return e.path === path; });
+                if (ep) { openSeriesPlayer(movie); playEpisode(movie, ep); }
+            } else {
+                playMovie(movie);
+            }
+        };
+
+        // Poster
+        if (movie.poster) {
+            const img = document.createElement("img");
+            img.src = movie.poster;
+            img.style.cssText = "width:100%;aspect-ratio:2/3;object-fit:cover;display:block;border:1px solid var(--border);";
+            card.appendChild(img);
+        } else {
+            const ph = document.createElement("div");
+            ph.style.cssText = "width:100%;aspect-ratio:2/3;background:var(--bg-main);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;";
+            ph.textContent = "\uD83C\uDFAC";
+            card.appendChild(ph);
+        }
+
+        // Favourite badge
+        const isFav = maxCount > 0 && (favCounts[baseId] || 0) >= maxCount;
+        if (isFav) {
+            const badge = document.createElement("div");
+            badge.style.cssText = "position:absolute;top:4px;left:4px;font-size:13px;";
+            badge.title = "Your favourite!";
+            badge.textContent = "\uD83C\uDFC6";
+            card.appendChild(badge);
+        }
+
+        // Progress bar
+        const barWrap = document.createElement("div");
+        barWrap.style.cssText = "height:3px;background:var(--bg-input);margin-top:2px;";
+        const barFill = document.createElement("div");
+        barFill.style.cssText = "height:100%;background:var(--accent);box-shadow:0 0 4px var(--glow);width:" + pct + "%;";
+        barWrap.appendChild(barFill);
+        card.appendChild(barWrap);
+
+        // Title
+        const titleEl = document.createElement("div");
+        titleEl.style.cssText = "font-size:10px;color:var(--text-main);opacity:0.7;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;";
+        titleEl.textContent = movie.title;
+        card.appendChild(titleEl);
+
+        // Percentage
+        const pctEl = document.createElement("div");
+        pctEl.style.cssText = "font-size:9px;color:var(--accent);";
+        pctEl.textContent = pct + "%";
+        card.appendChild(pctEl);
+
+        strip.appendChild(card);
+    });
+
+    section.appendChild(strip);
+    section.style.display = "block";
+}
+
+// Legacy alias used by closePlayer / init
+async function checkContinueWatching() {
+    await renderContinueWatching();
+}
+
+async function resumePlayback() {
+    const progress = await pywebview.api.get_progress();
+    const lastId = progress.last_played_id;
+    if (!lastId) return;
+    const movie = movies.find(m => m.id === lastId || m.id === lastId.split(":")[0]);
+    if (!movie) return;
+
+    if (movie.source_type === "series" && lastId.includes(":")) {
+        const path = lastId.substring(lastId.indexOf(":") + 1);
+        const ep = movie.episodes.find(e => e.path === path);
+        if (ep) {
+            // Open the series player (shows episode list) THEN start the episode
+            await openSeriesPlayer(movie);
+            await playEpisode(movie, ep);
+        }
+    } else {
+        playMovie(movie);
+    }
+}
+
+async function checkNextEpisode() {
+    const progress = await pywebview.api.get_progress();
+    const lastId = progress.last_played_id;
+    const playerBtn = document.getElementById("btn-next-episode-player");
+    if (!lastId || !lastId.includes(":")) {
+        if (playerBtn) playerBtn.style.display = "none";
+        return;
+    }
+    const baseId = lastId.split(":")[0];
+    const movie = movies.find(m => m.id === baseId);
+    if (!movie || movie.source_type !== "series") {
+        if (playerBtn) playerBtn.style.display = "none";
+        return;
+    }
+    const path = lastId.substring(lastId.indexOf(":") + 1);
+    const currentIndex = movie.episodes.findIndex(e => e.path === path);
+    if (currentIndex === -1 || currentIndex >= movie.episodes.length - 1) {
+        if (playerBtn) playerBtn.style.display = "none";
+        return;
+    }
+    if (playerBtn) playerBtn.style.display = "flex";
+}
+
+async function playNextEpisode() {
+    const progress = await pywebview.api.get_progress();
+    const lastId = progress.last_played_id;
+    if (!lastId || !lastId.includes(":")) return;
+    const baseId = lastId.split(":")[0];
+    const movie = movies.find(m => m.id === baseId);
+    if (!movie || movie.source_type !== "series") return;
+    const path = lastId.substring(lastId.indexOf(":") + 1);
+    const currentIndex = movie.episodes.findIndex(e => e.path === path);
+    if (currentIndex === -1 || currentIndex >= movie.episodes.length - 1) return;
+    const nextEp = movie.episodes[currentIndex + 1];
+    // Ensure player is open
+    if (document.getElementById("player").style.display === "none") {
+        await openSeriesPlayer(movie);
+    }
+    playEpisode(movie, nextEp);
+}
+
+// ── Filters & Sorting ───────────────────────────────────
+
+function populateCollectionFilter() {
+    const sel = document.getElementById("filter-collection");
+    if (!sel) return;
+    const current = sel.value;
+    sel.innerHTML = '<option value="">All Collections</option>';
+    collections.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c.id;
+        opt.textContent = c.name;
+        sel.appendChild(opt);
+    });
+    // Restore selection if it still exists
+    if (collections.some(c => c.id === current)) sel.value = current;
+}
+
+function populateAlphaJump() {
+    const alphaJump = document.getElementById("alpha-jump");
+    alphaJump.innerHTML = "";
+    "#ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(letter => {
+        const span = document.createElement("span");
+        span.textContent = letter;
+        span.onclick = () => jumpToLetter(letter);
+        alphaJump.appendChild(span);
+    });
+}
+
+// Strip leading articles for sort/jump purposes
+function sortKey(title) {
+    return (title || "").replace(/^(the|a|an)\s+/i, "").trim().toUpperCase();
+}
+
+function jumpToLetter(letter) {
+    const cards = [...document.querySelectorAll(".card")];
+    if (letter === "#") {
+        const card = cards.find(c => /^[^A-Z]/.test(sortKey(c.dataset.title || "")));
+        if (card) card.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else {
+        const card = cards.find(c => sortKey(c.dataset.title || "").startsWith(letter));
+        if (card) card.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+}
+
+function applyFilters() {
+    const search = document.getElementById("search").value.toLowerCase().trim();
+    const colFilter = document.getElementById("filter-collection").value;
+    const statusFilter = document.getElementById("filter-status").value;
+    const ratingFilter = parseInt(document.getElementById("filter-rating").value, 10);
+    const sortBy = document.getElementById("sort-by").value;
+    lastSearchQuery = search;
+
+    // Build a set of movie_ids in the chosen collection (if any)
+    let colMovieIds = null;
+    if (colFilter) {
+        const col = collections.find(c => c.id === colFilter);
+        colMovieIds = new Set(col ? (col.movie_ids || []) : []);
+    }
+
+    // Build a reverse lookup: movieId → [collectionName, …]
+    const movieColNames = {};
+    collections.forEach(c => (c.movie_ids || []).forEach(id => {
+        if (!movieColNames[id]) movieColNames[id] = [];
+        movieColNames[id].push(c.name);
+    }));
+
+    filteredMovies = movies.filter(m => {
+        const titleMatch = (m.title || "").toLowerCase().includes(search);
+        const directorMatch = (m.director || "").toLowerCase().includes(search);
+        const castMatch = (m.cast || []).some(c => c.toLowerCase().includes(search));
+        const textMatch = !search || titleMatch || directorMatch || castMatch;
+
+        // Genre filter comes purely from activeGenreFilter JS var — no DOM read
+        const genreMatch = !activeGenreFilter || (m.categories || []).includes(activeGenreFilter);
+        const colMatch = !colMovieIds || colMovieIds.has(m.id);
+        const statusMatch = !statusFilter || m.watch_status === statusFilter;
+        const ratingMatch = ratingFilter === 0 || (m.rating || 0) >= ratingFilter;
+
+        return textMatch && genreMatch && colMatch && statusMatch && ratingMatch;
+    });
+
+    filteredMovies.sort((a, b) => {
+        if (sortBy === "title-asc")  return sortKey(a.title).localeCompare(sortKey(b.title));
+        if (sortBy === "title-desc") return sortKey(b.title).localeCompare(sortKey(a.title));
+        if (sortBy === "year-asc")   return (a.year || 0) - (b.year || 0);
+        if (sortBy === "year-desc")  return (b.year || 0) - (a.year || 0);
+        if (sortBy === "rating-desc") return (b.rating || 0) - (a.rating || 0);
+        if (sortBy === "collection-asc") {
+            const ca = (movieColNames[a.id] || []).join(", ") || "zzz";
+            const cb = (movieColNames[b.id] || []).join(", ") || "zzz";
+            return ca.localeCompare(cb) || sortKey(a.title).localeCompare(sortKey(b.title));
+        }
+        return 0;
+    });
+
+    renderMovies();
+}
+
+function renderMovies() {
+    const grid = document.getElementById("grid");
+    grid.innerHTML = "";
+    const emptyState = document.getElementById("empty-state");
+
+    if (filteredMovies.length === 0) {
+        emptyState.style.display = "block";
+        return;
+    }
+    emptyState.style.display = "none";
+
+    filteredMovies.forEach(movie => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.dataset.title = sortKey(movie.title);
+
+        const poster = document.createElement("div");
+        poster.className = "poster";
+        if (movie.watch_status === "watched") poster.classList.add("is-watched");
+
+        // Always render fallback underneath; img overlays it if poster exists
+        const fallback = document.createElement("div");
+        fallback.className = "poster-fallback";
+        fallback.innerHTML = `<svg width="70" height="70" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="opacity:0.25;"><circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="2"/><path d="M35,65 Q50,50 65,65" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="40" cy="40" r="3" fill="currentColor"/><circle cx="60" cy="40" r="3" fill="currentColor"/></svg>`;
+        poster.appendChild(fallback);
+
+        if (movie.poster) {
+            const img = document.createElement("img");
+            img.src = movie.poster;
+            img.alt = movie.title;
+            img.style.cssText = "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;";
+            img.onerror = () => img.remove();
+            poster.appendChild(img);
+            poster.classList.add("has-poster");
+        }
+
+        const isNew = Date.now() - (movie.added_timestamp || 0) < 7 * 24 * 60 * 60 * 1000;
+        if (isNew) {
+            const ribbon = document.createElement("div");
+            ribbon.className = "card-ribbon";
+            ribbon.textContent = "FRESH MEAT";
+            poster.appendChild(ribbon);
+        }
+
+        // 🏆 Favourite badge — shown on the most-completed title(s)
+        const maxFavCount = Math.max(0, ...Object.values(favCounts));
+        if (maxFavCount > 0 && (favCounts[movie.id] || 0) >= maxFavCount) {
+            const fav = document.createElement("div");
+            fav.style.cssText = "position:absolute;top:6px;left:6px;font-size:18px;filter:drop-shadow(0 0 4px gold);z-index:6;pointer-events:none;";
+            fav.textContent = "🏆";
+            fav.title = `Watched to completion ${favCounts[movie.id]}x`;
+            poster.appendChild(fav);
+        }
+
+        const content = document.createElement("div");
+        content.className = "card-content";
+
+        const title = document.createElement("div");
+        title.className = "title";
+        title.textContent = movie.title;
+
+        const meta = document.createElement("div");
+        meta.className = "meta";
+        const metaParts = [];
+        if (movie.year) metaParts.push(movie.year);
+        if (movie.director) metaParts.push(movie.director);
+        if (movie.source_type === "series") {
+            const eps = movie.episodes || [];
+            const seasonNums = new Set(eps.filter(e => e.season_num).map(e => e.season_num));
+            if (seasonNums.size > 1) {
+                metaParts.push(`📺 ${seasonNums.size} seasons · ${eps.length} eps`);
+            } else {
+                metaParts.push(`📺 ${eps.length} ep${eps.length !== 1 ? "s" : ""}`);
+            }
+        }
+        meta.textContent = metaParts.join(" • ");
+
+        const desc = document.createElement("div");
+        desc.className = "desc";
+        desc.textContent = movie.desc || "";
+
+        const rating = document.createElement("div");
+        rating.className = "rating";
+        for (let i = 1; i <= 5; i++) {
+            const star = document.createElement("span");
+            star.className = "star" + (i <= (movie.rating || 0) ? " active" : "");
+            star.textContent = "★";
+            star.onclick = (e) => { e.stopPropagation(); rateMovie(movie, i); };
+            rating.appendChild(star);
+        }
+
+        const cats = document.createElement("div");
+        cats.style.fontSize = "10px";
+        cats.style.color = "var(--accent)";
+        cats.style.marginTop = "4px";
+        (movie.categories || []).forEach(c => {
+            const chip = document.createElement("span");
+            chip.textContent = c;
+            chip.className = "meta-link";
+            chip.onclick = (e) => {
+                e.stopPropagation();
+                activeGenreFilter = c;
+                populateGenreChips();
+                applyFilters();
+            };
+            cats.appendChild(chip);
+            cats.appendChild(document.createTextNode(" "));
+        });
+
+        const editBtn = document.createElement("button");
+        editBtn.className = "card-edit-btn";
+        editBtn.textContent = "✏";
+        editBtn.title = "Edit";
+        editBtn.onclick = (e) => { e.stopPropagation(); openEditor(movie); };
+
+        content.appendChild(title);
+        content.appendChild(meta);
+        content.appendChild(desc);
+        content.appendChild(rating);
+        if ((movie.categories || []).length > 0) content.appendChild(cats);
+        content.appendChild(editBtn);
+
+        card.appendChild(poster);
+        card.appendChild(content);
+        card.onclick = () => {
+            if (movie.source_type === "series") {
+                openSeriesPlayer(movie);
+            } else {
+                playMovie(movie);
+            }
+        };
+        card.oncontextmenu = (e) => {
+            e.preventDefault();
+            openEditor(movie);
+        };
+
+        grid.appendChild(card);
+    });
+}
+
+function resizeGrid() {
+    const size = document.getElementById("grid-size").value;
+    document.querySelector(".grid").style.gridTemplateColumns = `repeat(auto-fill, minmax(${size}px, 1fr))`;
+}
+
+// ── Play Movie ──────────────────────────────────────────
+// Token used to cancel any in-flight loadAndPlay when a new one starts.
+// This prevents stale canplay/error listeners from a previous (failed or
+// interrupted) load from bleeding into the next play operation.
+let _loadToken = 0;
+
+function loadAndPlay(url, savedTime) {
+    const myToken = ++_loadToken;
+    const video = document.getElementById("video");
+    _lastSaveTime = 0; // Reset progress tracker
+
+    return new Promise(function(resolve) {
+        function cleanup() {
+            video.removeEventListener('loadedmetadata', onMetadata);
+            video.removeEventListener('canplay', onCanPlay);
+            video.removeEventListener('error', onError);
+        }
+
+        function onMetadata() {
+            if (myToken !== _loadToken) { cleanup(); return resolve(); }
+            
+            if (savedTime && savedTime > 5) {
+                video.currentTime = savedTime;
+            }
+        }
+
+        function onCanPlay() {
+            cleanup();
+            if (myToken !== _loadToken) return resolve();
+            
+            video.play().catch(function(e) {
+                console.warn("Play failed in onCanPlay:", e);
+                // If it fails, maybe it needs another user gesture, 
+                // but usually the initial click is enough.
+            });
+            resolve();
+        }
+
+        function onError(e) {
+            cleanup();
+            if (myToken !== _loadToken) return resolve();
+            console.error("Video load error:", e);
+            showToast("⚠ Could not load video — check the file path.");
+            resolve();
+        }
+
+        video.addEventListener('loadedmetadata', onMetadata);
+        video.addEventListener('canplay', onCanPlay);
+        video.addEventListener('error', onError);
+
+        video.src = url;
+        video.load();
+    });
+}
+
+async function playMovie(movie) {
+    playingMovieObj = movie;
+    playingMovieId = movie.id;
+
+    if (movie.source_type === "missing") {
+        showToast("⚠ This movie is on your wishlist!");
+        return;
+    }
+
+    if (!await pywebview.api.check_file_exists(movie.file)) {
+        showToast("⚠ File not found: " + movie.file);
+        return;
+    }
+
+    document.getElementById("player").style.display = "flex";
+
+    const progress = await pywebview.api.get_progress();
+    const savedTime = progress[movie.id];
+
+    await loadAndPlay(toFileUrl(movie.file), savedTime);
+
+    if (savedTime && savedTime > 5) {
+        showToast(`⏯ Resumed at ${Math.floor(savedTime / 60)}:${String(Math.floor(savedTime % 60)).padStart(2, '0')}`);
+    }
+
+    renderNotes();
+
+    if (movie.watch_status !== "watched" && movie.watch_status !== "watching") {
+        movie.watch_status = "watching";
+        await pywebview.api.update_movie(movie);
+        await init();
+    }
+}
+
+async function openSeriesPlayer(movie) {
+    playingMovieObj = movie;
+    playingMovieId = movie.id;
+
+    // Inject the episode list above the notes panel without replacing the whole sidebar
+    let episodeSection = document.getElementById("episode-list-section");
+    if (!episodeSection) {
+        episodeSection = document.createElement("div");
+        episodeSection.id = "episode-list-section";
+        episodeSection.style.cssText = "display:flex; flex-direction:column; gap:4px; margin-bottom:12px;";
+        const sidebar = document.getElementById("player-sidebar");
+        sidebar.insertBefore(episodeSection, sidebar.firstChild);
+    }
+
+    episodeSection.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <h3 style="margin:0; color:var(--accent);">${movie.title}</h3>
+        </div>
+        <div style="max-height:200px; overflow-y:auto; display:flex; flex-direction:column; gap:6px;" id="episode-list"></div>
+        <hr style="border:none; border-top:1px solid var(--border); margin:8px 0 0 0;">
+    `;
+
+    const episodeList = document.getElementById("episode-list");
+    const episodes = movie.episodes || [];
+    const hasSeason = episodes.some(e => e.season_num);
+
+    if (hasSeason) {
+        // Group by season_num, then render collapsible season headers
+        const seasonMap = {};
+        episodes.forEach(ep => {
+            const key = ep.season_num != null ? ep.season_num : 0;
+            if (!seasonMap[key]) seasonMap[key] = { name: ep.season_name || (key ? `Season ${key}` : "Episodes"), eps: [] };
+            seasonMap[key].eps.push(ep);
+        });
+
+        Object.keys(seasonMap)
+            .sort((a, b) => Number(a) - Number(b))
+            .forEach(key => {
+                const season = seasonMap[key];
+
+                const header = document.createElement("div");
+                header.textContent = `▾ ${season.name}`;
+                header.style.cssText = "color:var(--accent); font-size:12px; font-weight:bold; cursor:pointer; padding:6px 4px 2px 4px; border-top:1px solid var(--border); letter-spacing:0.5px; user-select:none;";
+
+                const epGroup = document.createElement("div");
+                epGroup.style.cssText = "display:flex; flex-direction:column; gap:4px; padding:2px 0 6px 8px;";
+
+                season.eps.forEach(ep => {
+                    const btn = document.createElement("button");
+                    btn.textContent = ep.title;
+                    btn.style.textAlign = "left";
+                    btn.style.fontSize = "12px";
+                    btn.style.padding = "8px 10px";
+                    btn.onclick = () => playEpisode(movie, ep);
+                    epGroup.appendChild(btn);
+                });
+
+                // Toggle collapse on header click
+                header.onclick = () => {
+                    const collapsed = epGroup.style.display === "none";
+                    epGroup.style.display = collapsed ? "flex" : "none";
+                    header.textContent = `${collapsed ? "▾" : "▸"} ${season.name}`;
+                };
+
+                episodeList.appendChild(header);
+                episodeList.appendChild(epGroup);
+            });
+    } else {
+        // Flat list — original behaviour for shows without season folders
+        episodes.forEach(ep => {
+            const btn = document.createElement("button");
+            btn.textContent = ep.title;
+            btn.style.textAlign = "left";
+            btn.style.fontSize = "12px";
+            btn.style.padding = "10px";
+            btn.onclick = () => playEpisode(movie, ep);
+            episodeList.appendChild(btn);
+        });
+    }
+
+    document.getElementById("player").style.display = "flex";
+}
+
+async function playEpisode(movie, episode) {
+    const episodeId = `${movie.id}:${episode.path}`;
+    playingMovieObj = movie;
+    playingMovieId = episodeId;
+
+    const progress = await pywebview.api.get_progress();
+    const savedTime = progress[episodeId];
+
+    await loadAndPlay(toFileUrl(episode.path), savedTime);
+
+    if (savedTime && savedTime > 5) {
+        showToast(`⏯ Resumed at ${Math.floor(savedTime / 60)}:${String(Math.floor(savedTime % 60)).padStart(2, '0')}`);
+    }
+
+    renderNotes();
+
+    // Show episode header
+    const episodes = movie.episodes || [];
+    const epIndex = episodes.findIndex(e => e.path === episode.path);
+    const epNum = epIndex !== -1 ? epIndex + 1 : null;
+    const serTitleEl = document.getElementById("ep-series-title-text");
+    const epLabelEl = document.getElementById("ep-episode-label-text");
+    const epHeader = document.getElementById("player-episode-header");
+    if (serTitleEl && epLabelEl && epHeader) {
+        serTitleEl.textContent = movie.title;
+        const seasonLabel = episode.season_num ? `S${String(episode.season_num).padStart(2,'0')}` : "";
+        const episodeLabel = epNum ? `E${String(epNum).padStart(2,'0')}` : "";
+        epLabelEl.textContent = `${seasonLabel}${episodeLabel}${seasonLabel || episodeLabel ? " — " : ""}${episode.title}`;
+        epHeader.style.display = "block";
+    }
+
+    // Update next episode button visibility in player
+    const nextBtn = document.getElementById("btn-next-episode-player");
+    if (nextBtn) {
+        const hasNext = epIndex !== -1 && epIndex < episodes.length - 1;
+        nextBtn.style.display = hasNext ? "flex" : "none";
+    }
+
+    if (movie.watch_status !== "watched" && movie.watch_status !== "watching") {
+        movie.watch_status = "watching";
+        await pywebview.api.update_movie(movie);
+        await init();
+    }
+}
+
+function closePlayer() {
+    const video = document.getElementById("video");
+    video.pause();
+
+    // Clear the auto-hide timer and restore controls visibility
+    clearTimeout(_controlsHideTimer);
+    const playerMain = document.getElementById("player-main");
+    if (playerMain) playerMain.classList.remove("controls-hidden");
+
+    // Hide episode header
+    const epHeader = document.getElementById("player-episode-header");
+    if (epHeader) epHeader.style.display = "none";
+    
+    // Exit fullscreen if active
+    if (_appFullscreen) {
+        _appFullscreen = false;
+        document.getElementById("player-sidebar").style.display = "flex";
+        document.getElementById("player").classList.remove("is-fullscreen");
+        const btn = document.querySelector(".control-btn[onclick=\"toggleFullscreen()\"]");
+        if (btn) btn.textContent = "\u29c6"; // ⛶
+        // Tell pywebview to exit OS-level fullscreen
+        try { pywebview.api.toggle_fullscreen(); } catch(e) {}
+    }
+
+    video.removeAttribute('src');
+    video.load(); // help browser clear memory/handle
+    document.getElementById("player").style.display = "none";
+    
+    playingMovieObj = null;
+    playingMovieId = null;
+    // Remove any episode list injected for series
+    const epSection = document.getElementById("episode-list-section");
+    if (epSection) epSection.remove();
+    checkContinueWatching();
+    checkNextEpisode();
+}
+
+// ── File URL helper ─────────────────────────────────────────
+function toFileUrl(path) {
+    if (!path) return '';
+    if (/^(file:|https?:)/.test(path)) return path;
+    const normalized = path.replace(/\\/g, '/');
+    const segments = normalized.split('/');
+    const encodedSegments = segments.map(function(seg, i) {
+        // First segment on Windows like "C:" — don't encode it
+        if (i === 0 && /^[A-Za-z]:$/.test(seg)) return seg;
+        return encodeURIComponent(seg);
+    });
+    // For Windows-style drive paths, it must be file:///C:/path/to/file
+    // For absolute Linux paths, it's file:///path/to/file
+    // Here we ensure exactly three slashes after file: if it doesn't already have them.
+    let base = 'file:///'.replace(/\/+$/, '');
+    if (!encodedSegments[0].startsWith('/') && !/^[A-Za-z]:$/.test(encodedSegments[0])) {
+         // This shouldn't happen for absolute paths, but just in case
+         return 'file:///' + encodedSegments.join('/');
+    }
+    return 'file:///' + encodedSegments.join('/').replace(/^\/+/, '');
+}
+
+// ── Video Controls ──────────────────────────────────────
+function togglePlayPause() {
+    const video = document.getElementById("video");
+    if (video.paused) {
+        video.play().catch(function(e) { console.warn("Play failed:", e); });
+    } else {
+        video.pause();
+    }
+}
+
+function skipBackward() {
+    const video = document.getElementById("video");
+    video.currentTime = Math.max(0, video.currentTime - 10);
+}
+
+function skipForward() {
+    const video = document.getElementById("video");
+    video.currentTime = Math.min(video.duration || 0, video.currentTime + 10);
+}
+
+function toggleMute() {
+    const video = document.getElementById("video");
+    const btn = document.getElementById("btn-mute");
+    video.muted = !video.muted;
+    btn.textContent = video.muted ? "🔇" : "🔊";
+}
+
+function changeVolume() {
+    const video = document.getElementById("video");
+    const slider = document.getElementById("volume-slider");
+    video.volume = slider.value / 100;
+}
+
+// ── True OS-level Fullscreen via pywebview ──────────────────
+async function toggleFullscreen() {
+    _appFullscreen = !_appFullscreen;
+    const player = document.getElementById("player");
+    const sidebar = document.getElementById("player-sidebar");
+    const btn = document.querySelector(".control-btn[onclick=\"toggleFullscreen()\"]");
+    
+    if (_appFullscreen) {
+        sidebar.style.display = "none";
+        player.classList.add("is-fullscreen");
+        if (btn) btn.textContent = "\u2715";  // ✕
+    } else {
+        sidebar.style.display = "flex";
+        player.classList.remove("is-fullscreen");
+        if (btn) btn.textContent = "\u29c6";  // ⛶
+    }
+    
+    // Only use pywebview OS-level fullscreen — do NOT call browser requestFullscreen,
+    // which would conflict with the Escape key and cause the OS window to stay fullscreen.
+    try {
+        await pywebview.api.toggle_fullscreen();
+    } catch(e) {
+        console.warn("toggle_fullscreen API error:", e);
+    }
+}
+
+// Update time display and save progress periodically
+let _lastSaveTime = 0;
+document.getElementById("video").addEventListener("timeupdate", () => {
+    const video = document.getElementById("video");
+    const current = video.currentTime;
+    const duration = video.duration || 0;
+    
+    const formatTime = (seconds) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${String(secs).padStart(2, '0')}`;
+    };
+    
+    document.getElementById("time-display").textContent = `${formatTime(current)} / ${formatTime(duration)}`;
+
+    // Update scrubber fill
+    if (duration > 0) {
+        const pct = (current / duration) * 100;
+        document.getElementById("player-scrubber-fill").style.width = pct + "%";
+    }
+
+    // Save progress every 5 seconds of playback
+    if (!video.paused && playingMovieId && current > 0) {
+        if (Math.abs(current - _lastSaveTime) > 5) {
+            _lastSaveTime = current;
+            pywebview.api.save_progress(playingMovieId, current, duration || null);
+        }
+    }
+});
+
+// Click to seek on scrubber
+document.getElementById("player-scrubber").addEventListener("click", (e) => {
+    const video = document.getElementById("video");
+    const rect = e.currentTarget.getBoundingClientRect();
+    const pos = (e.clientX - rect.left) / rect.width;
+    video.currentTime = pos * (video.duration || 0);
+});
+
+// Mark movie as watched and record completion when video ends
+document.getElementById("video").addEventListener("ended", async () => {
+    if (!playingMovieObj) return;
+    const video = document.getElementById("video");
+    // Record completion count
+    await pywebview.api.save_progress(playingMovieId, video.duration || 0, video.duration || null, true);
+    if (playingMovieObj.watch_status !== "watched") {
+        playingMovieObj.watch_status = "watched";
+        await pywebview.api.update_movie(playingMovieObj);
+        const idx = movies.findIndex(m => m.id === playingMovieObj.id);
+        if (idx !== -1) movies[idx] = playingMovieObj;
+    }
+    await renderContinueWatching();
+});
+
+// Update volume slider when volume changes
+document.getElementById("video").addEventListener("volumechange", () => {
+    const video = document.getElementById("video");
+    document.getElementById("volume-slider").value = video.volume * 100;
+    document.getElementById("btn-mute").textContent = video.muted ? "🔇" : "🔊";
+});
+
+// ── Rating ──────────────────────────────────────────────
+async function rateMovie(movie, stars) {
+    movie.rating = stars;
+    await pywebview.api.update_movie(movie);
+    await pywebview.api.save_rating(movie.id, stars);
+    applyFilters();
+}
+
+// ── Random Movie ────────────────────────────────────────
+function randomMovie() {
+    if (filteredMovies.length === 0) return;
+    const movie = filteredMovies[Math.floor(Math.random() * filteredMovies.length)];
+    if (movie.source_type === "series") {
+        openSeriesPlayer(movie);
+    } else {
+        playMovie(movie);
+    }
+}
+
+// ── Stats ───────────────────────────────────────────────
+function showStats() {
+    const total = movies.length;
+    const watched = movies.filter(m => m.watch_status === "watched").length;
+    const avgRating = total > 0 ? (movies.reduce((s, m) => s + (m.rating || 0), 0) / total).toFixed(1) : 0;
+    
+    const catCounts = {};
+    movies.forEach(m => (m.categories || []).forEach(c => catCounts[c] = (catCounts[c] || 0) + 1));
+    const topCat = Object.keys(catCounts).sort((a, b) => catCounts[b] - catCounts[a])[0] || "-";
+
+    document.getElementById("stat-total").textContent = total;
+    document.getElementById("stat-watched").textContent = watched;
+    document.getElementById("stat-rating").textContent = avgRating;
+    document.getElementById("stat-category").textContent = topCat;
+    document.getElementById("stats-modal").style.display = "flex";
+}
+
+function closeStats() {
+    document.getElementById("stats-modal").style.display = "none";
+}
+
+// ── Settings ────────────────────────────────────────────
+async function showSettings() {
+    const config = await pywebview.api.get_config();
+    document.getElementById("setting-path").value = config.library_path || "";
+    document.getElementById("setting-tmdb-key").value = config.tmdb_api_key || "";
+    document.getElementById("settings-modal").style.display = "flex";
+}
+
+function closeSettings() {
+    document.getElementById("settings-modal").style.display = "none";
+}
+
+async function pickLibraryPath() {
+    const path = await pywebview.api.pick_folder();
+    if (path) document.getElementById("setting-path").value = path;
+}
+
+async function saveTmdbKey() {
+    const config = await pywebview.api.get_config();
+    config.tmdb_api_key = document.getElementById("setting-tmdb-key").value;
+    config.library_path = document.getElementById("setting-path").value;
+    await pywebview.api.save_config(config);
+    showToast("✅ Settings saved!");
+}
+
+async function exportBackup() {
+    const backup = {
+        movies: await pywebview.api.get_movies(),
+        ratings: await pywebview.api.get_ratings(),
+        collections: await pywebview.api.get_collections(),
+        config: await pywebview.api.get_config()
+    };
+    const result = await pywebview.api.export_backup(backup);
+    if (result && result.success) {
+        showToast("✅ Backup exported!");
+    }
+}
+
+async function importBackup() {
+    const result = await pywebview.api.import_backup();
+    if (result && result.success) {
+        showToast("✅ Backup imported!");
+        await init();
+    }
+}
+
+// ── Notes ───────────────────────────────────────────────
+function renderNotes() {
+    const notesList = document.getElementById("notes-list");
+    if (!notesList) return;
+    notesList.innerHTML = "";
+
+    if (!playingMovieObj) return;
+
+    let notes = [];
+    const colonIndex = (playingMovieId || "").indexOf(":");
+    if (colonIndex !== -1) {
+        const path = playingMovieId.substring(colonIndex + 1);
+        notes = (playingMovieObj.episode_notes || {})[path] || [];
+    } else {
+        notes = playingMovieObj.timestamped_notes || [];
+    }
+
+    notes.sort((a, b) => a.time - b.time).forEach((note, idx) => {
+        const noteItem = document.createElement("div");
+        noteItem.className = "note-item";
+        noteItem.innerHTML = `<div class="note-time">${Math.floor(note.time / 60)}:${String(Math.floor(note.time % 60)).padStart(2, '0')}</div><div>${note.text}</div>`;
+        noteItem.onclick = () => { document.getElementById("video").currentTime = note.time; };
+        noteItem.oncontextmenu = (e) => {
+            e.preventDefault();
+            if (confirm("Delete this note?")) {
+                notes.splice(idx, 1);
+                pywebview.api.update_movie(playingMovieObj);
+                renderNotes();
+                renderSkullsOnScrubber();
+            }
+        };
+        notesList.appendChild(noteItem);
+    });
+}
+
+async function addTimestampedNote() {
+    if (!playingMovieObj) return;
+    const video = document.getElementById("video");
+    const text = document.getElementById("note-input").value.trim();
+    if (!text) return;
+
+    const note = { time: video.currentTime, text, isJumpScare: false };
+
+    const colonIndex = playingMovieId.indexOf(":");
+    if (colonIndex !== -1) {
+        const path = playingMovieId.substring(colonIndex + 1);
+        if (!playingMovieObj.episode_notes) playingMovieObj.episode_notes = {};
+        if (!playingMovieObj.episode_notes[path]) playingMovieObj.episode_notes[path] = [];
+        playingMovieObj.episode_notes[path].push(note);
+    } else {
+        if (!playingMovieObj.timestamped_notes) playingMovieObj.timestamped_notes = [];
+        playingMovieObj.timestamped_notes.push(note);
+    }
+
+    await pywebview.api.update_movie(playingMovieObj);
+    renderNotes();
+    document.getElementById("note-input").value = "";
+    showToast("✅ Note added!");
+}
+
+async function exportNotes() {
+    if (!playingMovieObj) return;
+    let notes = [];
+    const colonIndex = (playingMovieId || "").indexOf(":");
+    if (colonIndex !== -1) {
+        const path = playingMovieId.substring(colonIndex + 1);
+        notes = (playingMovieObj.episode_notes || {})[path] || [];
+    } else {
+        notes = playingMovieObj.timestamped_notes || [];
+    }
+
+    let content = `Notes for ${playingMovieObj.title}\n\n`;
+    notes.sort((a, b) => a.time - b.time).forEach(note => {
+        content += `[${Math.floor(note.time / 60)}:${String(Math.floor(note.time % 60)).padStart(2, '0')}] ${note.text}\n`;
+    });
+
+    const result = await pywebview.api.export_notes(playingMovieObj.title, content);
+    if (result && result.success) {
+        showToast("✅ Notes exported!");
+    }
+}
+
+// ── Editor ──────────────────────────────────────────────
+function openEditor(movie) {
+    editingMovie = movie;
+    document.getElementById("edit-title").value = movie.title || "";
+    document.getElementById("edit-year").value = movie.year || "";
+    document.getElementById("edit-source-type").value = movie.source_type || "file";
+    document.getElementById("edit-file").value = movie.file || "";
+    document.getElementById("edit-director").value = movie.director || "";
+    document.getElementById("edit-cast").value = (movie.cast || []).join(", ");
+    document.getElementById("edit-categories").value = (movie.categories || []).join(", ");
+    document.getElementById("edit-desc").value = movie.desc || "";
+    document.getElementById("edit-notes").value = movie.notes || "";
+
+    // Populate collection checkboxes
+    const wrap = document.getElementById("edit-collections-wrap");
+    wrap.innerHTML = "";
+    if (collections.length === 0) {
+        wrap.innerHTML = '<span style="font-size:0.8em; color:var(--text-main); opacity:0.4;">No collections yet — create some in Options → 📚 Collections</span>';
+    } else {
+        // Which collections currently contain this movie?
+        const currentColIds = new Set(
+            collections.filter(c => (c.movie_ids || []).includes(movie.id)).map(c => c.id)
+        );
+        collections.forEach(c => {
+            const row = document.createElement("div");
+            row.className = "col-check-row";
+            const cb = document.createElement("input");
+            cb.type = "checkbox";
+            cb.id = `col-cb-${c.id}`;
+            cb.value = c.id;
+            cb.checked = currentColIds.has(c.id);
+            const lbl = document.createElement("label");
+            lbl.htmlFor = `col-cb-${c.id}`;
+            lbl.textContent = c.name;
+            row.appendChild(cb);
+            row.appendChild(lbl);
+            wrap.appendChild(row);
+        });
+    }
+
+    const posterDiv = document.getElementById("edit-poster");
+    posterDiv.innerHTML = "";
+    if (movie.poster) {
+        const img = document.createElement("img");
+        img.src = movie.poster;
+        img.style.width = "100%";
+        img.style.height = "100%";
+        img.style.objectFit = "cover";
+        posterDiv.appendChild(img);
+    }
+
+    document.getElementById("editor").style.display = "flex";
+    const statusEl = document.getElementById("rescan-status");
+    statusEl.style.display = "none";
+    statusEl.textContent = "";
+}
+
+async function saveMovie() {
+    if (!editingMovie) return;
+    editingMovie.title = document.getElementById("edit-title").value;
+    editingMovie.year = parseInt(document.getElementById("edit-year").value, 10) || 0;
+    editingMovie.source_type = document.getElementById("edit-source-type").value;
+    editingMovie.file = document.getElementById("edit-file").value;
+    editingMovie.director = document.getElementById("edit-director").value;
+    editingMovie.cast = document.getElementById("edit-cast").value.split(",").map(c => c.trim()).filter(Boolean);
+    editingMovie.categories = document.getElementById("edit-categories").value.split(",").map(c => c.trim()).filter(Boolean);
+    editingMovie.desc = document.getElementById("edit-desc").value;
+    editingMovie.notes = document.getElementById("edit-notes").value;
+
+    if (editingMovie.source_type === "series") {
+        editingMovie.episodes = await pywebview.api.list_episodes(editingMovie.file);
+    }
+
+    const isNew = !movies.some(m => m.id === editingMovie.id);
+    if (isNew) {
+        await pywebview.api.add_movie(editingMovie);
+        showToast("✅ Added!");
+    } else {
+        await pywebview.api.update_movie(editingMovie);
+        showToast("✅ Saved!");
+    }
+
+    // Save collection assignments
+    const checkedIds = [...document.querySelectorAll("#edit-collections-wrap input[type=checkbox]:checked")]
+        .map(cb => cb.value);
+    await pywebview.api.set_movie_collections(editingMovie.id, checkedIds);
+
+    closeEditor();
+    await init();
+}
+
+async function deleteMovie() {
+    if (!editingMovie) return;
+    if (!confirm(`Delete "${editingMovie.title}"?`)) return;
+    await pywebview.api.delete_movie(editingMovie.id);
+    closeEditor();
+    await init();
+    showToast("🗑 Movie deleted!");
+}
+
+function closeEditor() {
+    document.getElementById("editor").style.display = "none";
+    editingMovie = null;
+}
+
+async function rescanFile() {
+    const filePath = document.getElementById("edit-file").value.trim();
+    const sourceType = document.getElementById("edit-source-type").value;
+    const statusEl = document.getElementById("rescan-status");
+
+    if (!filePath) {
+        showToast("⚠ No file path set.");
+        return;
+    }
+
+    statusEl.style.display = "block";
+    statusEl.style.color = "var(--text-main)";
+    statusEl.textContent = "Scanning…";
+
+    if (sourceType === "series") {
+        const episodes = await pywebview.api.list_episodes(filePath);
+        if (editingMovie) editingMovie.episodes = episodes;
+
+        const seasonNums = new Set(episodes.filter(e => e.season_num).map(e => e.season_num));
+        const seasonInfo = seasonNums.size > 1
+            ? `${seasonNums.size} seasons · ${episodes.length} episodes`
+            : `${episodes.length} episode${episodes.length !== 1 ? "s" : ""}`;
+
+        statusEl.style.color = "var(--highlight)";
+        statusEl.textContent = `✅ Found ${seasonInfo}`;
+    } else {
+        const exists = await pywebview.api.check_file_exists(filePath);
+        statusEl.style.color = exists ? "var(--highlight)" : "var(--accent)";
+        statusEl.textContent = exists ? "✅ File found" : "⚠ File not found at this path";
+    }
+}
+
+async function rescanAll() {
+    const allMovies = await pywebview.api.get_movies();
+    const series = allMovies.filter(m => m.source_type === "series" && m.file);
+    if (series.length === 0) {
+        showToast("No series in library to rescan.");
+        return;
+    }
+
+    showToast(`🔄 Rescanning ${series.length} series…`);
+    let updated = 0;
+    for (const m of series) {
+        const episodes = await pywebview.api.list_episodes(m.file);
+        if (JSON.stringify(episodes) !== JSON.stringify(m.episodes || [])) {
+            await pywebview.api.update_movie({ ...m, episodes });
+            updated++;
+        }
+    }
+    showToast(`✅ Rescan done — ${updated} series updated.`);
+    await init();
+}
+
+
+async function browseFile() {
+    const sourceType = document.getElementById("edit-source-type").value;
+    let path;
+    if (sourceType === "series") {
+        path = await pywebview.api.pick_folder();
+    } else {
+        path = await pywebview.api.pick_file("video");
+    }
+    if (!path) return;
+    document.getElementById("edit-file").value = path;
+    // Auto-fill title from filename/folder if title is still the default
+    const titleEl = document.getElementById("edit-title");
+    if (!titleEl.value || titleEl.value === "New Movie" || titleEl.value === "New Series") {
+        titleEl.value = path.split("/").filter(Boolean).pop().replace(/\.[^.]+$/, "");
+    }
+}
+
+
+async function changePoster() {
+    const file = await pywebview.api.pick_file("image");
+    if (!file) return;
+    // For new unsaved entries, persist to disk first so we have a real ID to name the poster after
+    const isNew = !movies.some(m => m.id === editingMovie.id);
+    if (isNew) {
+        await pywebview.api.add_movie(editingMovie);
+    }
+    const result = await pywebview.api.save_poster(editingMovie.id, file);
+    if (result && result.success) {
+        editingMovie.poster = result.poster_path;
+        await pywebview.api.update_movie(editingMovie);
+        const posterDiv = document.getElementById("edit-poster");
+        posterDiv.innerHTML = `<img src="${result.poster_path}" style="width:100%; height:100%; object-fit:cover;">`;
+        showToast("✅ Poster updated!");
+    } else {
+        showToast("⚠ Failed to save poster.");
+    }
+}
+
+
+async function selectPoster(url) {
+    const result = await pywebview.api.download_poster(editingMovie.id, url);
+    if (result && result.success) {
+        editingMovie.poster = result.poster_path;
+        const posterDiv = document.getElementById("edit-poster");
+        posterDiv.innerHTML = `<img src="${result.poster_path}" style="width:100%; height:100%; object-fit:cover;">`;
+        showToast("✅ Poster updated!");
+    }
+}
+
+async function autoFillMovieInfo(event) {
+    event.preventDefault();
+    const config = await pywebview.api.get_config();
+    const apiKey = config.tmdb_api_key;
+    if (!apiKey) {
+        showToast("⚠ Set your TMDB API key in Settings first.");
+        return;
+    }
+
+    const title = document.getElementById("edit-title").value;
+    const year = document.getElementById("edit-year").value;
+    if (!title) {
+        showToast("⚠ Enter a title first.");
+        return;
+    }
+
+    const sourceType = document.getElementById("edit-source-type").value;
+    showToast("🎬 Fetching info…");
+    const info = await pywebview.api.fetch_tmdb_info(title, year, apiKey, sourceType);
+    if (!info) {
+        showToast("⚠ No results found.");
+        return;
+    }
+
+    document.getElementById("edit-year").value       = info.year;
+    document.getElementById("edit-director").value   = info.director;
+    document.getElementById("edit-cast").value       = info.cast.join(", ");
+    document.getElementById("edit-categories").value = info.categories.join(", ");
+    document.getElementById("edit-desc").value       = info.desc;
+
+    if (info.poster_url && confirm("Would you like to use the poster from TMDB?")) {
+        selectPoster(info.poster_url);
+    }
+    showToast(`✅ Info filled! (${info.source || 'TMDB'})`);
+}
+
+async function addMovieManual(data) {
+    openEditor(data || {
+        id:          "manual-" + Date.now(),
+        title:       "New Movie",
+        source_type: "file"
+    });
+}
+
+async function addSeriesFolder() {
+    const folder = await pywebview.api.pick_folder();
+    if (!folder) return;
+    const title = folder.split("/").filter(Boolean).pop() || "New Series";
+    openEditor({
+        id:          "series-" + Date.now(),
+        title:       title,
+        source_type: "series",
+        file:        folder,
+        categories:  ["Series"],
+    });
+}
+
+async function addMovieFolder() {
+    const found = await pywebview.api.import_folder();
+    if (!found || found.length === 0) return;
+    showToast(`Importing ${found.length} movie${found.length !== 1 ? 's' : ''}…`);
+    for (let i = 0; i < found.length; i++) {
+        await pywebview.api.add_movie(found[i]);
+        if ((i + 1) % 5 === 0 || i === found.length - 1) {
+            showToast(`Imported ${i + 1} / ${found.length}…`);
+        }
+    }
+    showToast(`✅ Done! ${found.length} movie${found.length !== 1 ? 's' : ''} added.`);
+    await init();
+}
+
+// ── Toast Notification ─────────────────────────────────────
+let _toastTimer = null;
+function showToast(msg, duration = 3000) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(_toastTimer);
+    _toastTimer = setTimeout(() => t.classList.remove("show"), duration);
+}
+
+// ── Action Bar Auto-Fade ────────────────────────────────────
+let _controlsHideTimer = null;
+
+function resetControlsTimer() {
+    const playerMain = document.getElementById("player-main");
+    if (!playerMain) return;
+    playerMain.classList.remove("controls-hidden");
+    clearTimeout(_controlsHideTimer);
+    _controlsHideTimer = setTimeout(() => {
+        // Only hide if video is playing
+        const video = document.getElementById("video");
+        if (video && !video.paused) {
+            playerMain.classList.add("controls-hidden");
+        }
+    }, 3000);
+}
+
+document.addEventListener("mousemove", (e) => {
+    const player = document.getElementById("player");
+    if (player && player.style.display !== "none") {
+        resetControlsTimer();
+    }
+});
+
+document.getElementById("video").addEventListener("play", () => {
+    document.getElementById("btn-play-pause").textContent = "⏸";
+    resetControlsTimer();
+});
+
+document.getElementById("video").addEventListener("pause", () => {
+    document.getElementById("btn-play-pause").textContent = "▶";
+    // Always show controls when paused
+    const playerMain = document.getElementById("player-main");
+    if (playerMain) playerMain.classList.remove("controls-hidden");
+    clearTimeout(_controlsHideTimer);
+});
+
+// ── More Options Dropdown (click-based) ─────────────────────
+function toggleMoreDropdown(e) {
+    e.stopPropagation();
+    const content = document.getElementById("more-options-content");
+    const isOpen = content.style.display === "block";
+    content.style.display = isOpen ? "none" : "block";
+}
+
+document.addEventListener("click", (e) => {
+    const dd = document.getElementById("more-options-dropdown");
+    if (dd && !dd.contains(e.target)) {
+        const content = document.getElementById("more-options-content");
+        if (content) content.style.display = "none";
+    }
+});
+
+// ── Add Dropdown (click-based) ──────────────────────────────
+function toggleAddDropdown(e) {
+    e.stopPropagation();
+    const content = document.getElementById("add-dropdown-content");
+    const isOpen = content.style.display === "block";
+    content.style.display = isOpen ? "none" : "block";
+}
+
+function closeAddDropdown() {
+    const content = document.getElementById("add-dropdown-content");
+    if (content) content.style.display = "none";
+}
+
+document.addEventListener("click", (e) => {
+    const dd = document.getElementById("add-dropdown");
+    if (dd && !dd.contains(e.target)) closeAddDropdown();
+});
+
+// ── Options Panel Toggle ─────────────────────────────────────
+function toggleOptions() {
+    const bar = document.getElementById("options-bar");
+    const btn = document.getElementById("btn-toggle-options");
+    const open = bar.classList.toggle("open");
+    btn.classList.toggle("active", open);
+    btn.textContent = open ? "🎛 Options ▴" : "🎛 Options ▾";
+    if (open) handleOverflow();
+}
+
+async function changeFontSize() {
+    const size = document.getElementById("font-size-slider").value;
+    document.documentElement.style.setProperty('--base-font-size', size + 'px');
+    const config = await pywebview.api.get_config();
+    config.font_size = parseInt(size, 10);
+    await pywebview.api.save_config(config);
+    handleOverflow();
+}
+
+async function changeTheme() {
+    const theme = document.getElementById("theme-selector").value;
+    const customWrap = document.getElementById("custom-theme-wrap");
+
+    if (theme === "custom") {
+        customWrap.style.display = "flex";
+        applyCustomTheme();       // apply whatever's in the colour pickers
+        // Save 'custom' as the theme name so we restore the pickers on reload
+        const config = await pywebview.api.get_config();
+        config.theme = "custom";
+        config.custom_accent    = document.getElementById("custom-accent").value;
+        config.custom_highlight = document.getElementById("custom-highlight").value;
+        config.custom_bg        = document.getElementById("custom-bg").value;
+        await pywebview.api.save_config(config);
+        return;
+    }
+
+    customWrap.style.display = "none";
+    document.body.className = theme === "horror" ? "" : "theme-" + theme;
+    // Remove any inline custom CSS vars when switching away from custom
+    const root = document.documentElement;
+    for (const v of ["--bg-main","--bg-grad","--bg-input","--text-main","--accent","--highlight","--border","--glow"]) {
+        root.style.removeProperty(v);
+    }
+    const config = await pywebview.api.get_config();
+    config.theme = theme;
+    await pywebview.api.save_config(config);
+}
+
+function applyCustomTheme() {
+    const accent    = document.getElementById("custom-accent").value;
+    const highlight = document.getElementById("custom-highlight").value;
+    const bg        = document.getElementById("custom-bg").value;
+
+    // Derive supporting colours from the chosen base
+    function hexToRgb(hex) {
+        const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+        return [r, g, b];
+    }
+    function darken(hex, factor) {
+        const [r,g,b] = hexToRgb(hex);
+        return `rgb(${Math.round(r*factor)},${Math.round(g*factor)},${Math.round(b*factor)})`;
+    }
+    function lighten(hex, factor) {
+        const [r,g,b] = hexToRgb(hex);
+        return `rgb(${Math.min(255,Math.round(r+(255-r)*factor))},${Math.min(255,Math.round(g+(255-g)*factor))},${Math.min(255,Math.round(b+(255-b)*factor))})`;
+    }
+
+    const root = document.documentElement;
+    document.body.className = "";   // clear preset theme class
+    root.style.setProperty("--bg-main",    bg);
+    root.style.setProperty("--bg-grad",    `radial-gradient(circle, ${lighten(bg, 0.15)} 0%, ${bg} 100%)`);
+    root.style.setProperty("--bg-input",   lighten(bg, 0.12));
+    root.style.setProperty("--text-main",  lighten(highlight, 0.6));
+    root.style.setProperty("--accent",     accent);
+    root.style.setProperty("--highlight",  highlight);
+    root.style.setProperty("--border",     lighten(accent, 0.15));
+    root.style.setProperty("--glow",       highlight);
+
+    // Persist colours into config
+    pywebview.api.get_config().then(config => {
+        config.theme            = "custom";
+        config.custom_accent    = accent;
+        config.custom_highlight = highlight;
+        config.custom_bg        = bg;
+        pywebview.api.save_config(config);
+    }).catch(() => {});
+}
+
+function handleOverflow() {
+    const bar = document.getElementById("options-bar");
+    if (!bar.classList.contains("open")) return;
+    
+    const mainItems = document.getElementById("options-main-items");
+    const moreDropdown = document.getElementById("more-options-dropdown");
+    const moreContent = document.getElementById("more-options-content");
+    
+    // Reset
+    while (moreContent.firstChild) {
+        mainItems.appendChild(moreContent.firstChild);
+    }
+    moreDropdown.style.display = "none";
+    
+    const barWidth = bar.offsetWidth - 60; // Leave space for "More" button
+    let currentWidth = 0;
+    const children = Array.from(mainItems.children);
+    
+    children.forEach(child => {
+        currentWidth += child.offsetWidth + 12; // gap
+        if (currentWidth > barWidth) {
+            moreDropdown.style.display = "inline-block";
+            moreContent.appendChild(child);
+        }
+    });
+}
+
+window.addEventListener('resize', handleOverflow);
+
+
+// ── Volume Memory ───────────────────────────────────────────
+function loadVolume() {
+    const v = localStorage.getItem("pubhorror_volume");
+    if (v !== null) {
+        const video = document.getElementById("video");
+        video.volume = parseFloat(v);
+    }
+}
+function saveVolume() {
+    const video = document.getElementById("video");
+    localStorage.setItem("pubhorror_volume", video.volume);
+}
+document.getElementById("video").addEventListener("volumechange", saveVolume);
+
+// ── Keyboard Shortcuts ──────────────────────────────────────
+document.addEventListener("keydown", (e) => {
+    const player = document.getElementById("player");
+    if (player.style.display === "none") return;
+    // Don't fire when typing in textarea/input
+    if (["INPUT","TEXTAREA"].includes(e.target.tagName)) return;
+    const video = document.getElementById("video");
+    switch (e.key) {
+        case " ":
+        case "k":
+            e.preventDefault();
+            togglePlayPause();
+            break;
+        case "f":
+        case "F":
+            e.preventDefault();
+            toggleFullscreen();
+            break;
+        case "m":
+        case "M":
+            e.preventDefault();
+            toggleMute();
+            break;
+        case "ArrowRight":
+            e.preventDefault();
+            skipForward();
+            break;
+        case "ArrowLeft":
+            e.preventDefault();
+            skipBackward();
+            break;
+        case "ArrowUp":
+            e.preventDefault();
+            video.volume = Math.min(1, video.volume + 0.1);
+            break;
+        case "ArrowDown":
+            e.preventDefault();
+            video.volume = Math.max(0, video.volume - 0.1);
+            break;
+        case "Escape":
+            // Since we no longer use browser-native fullscreen, _appFullscreen is the only
+            // fullscreen state. ESC should always exit it and call pywebview to restore the window.
+            if (_appFullscreen) {
+                toggleFullscreen();
+            } else if (player.style.display !== "none") {
+                closePlayer();
+            }
+            break;
+    }
+});
+
+// ── Player Scrubber ─────────────────────────────────────────
+(function() {
+    const scrubber = document.getElementById("player-scrubber");
+    const fill     = document.getElementById("player-scrubber-fill");
+    const video    = document.getElementById("video");
+
+    function seekTo(e) {
+        if (!video.duration) return;
+        const rect = scrubber.getBoundingClientRect();
+        const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        video.currentTime = ratio * video.duration;
+    }
+
+    let dragging = false;
+    scrubber.addEventListener("mousedown", (e) => { dragging = true; seekTo(e); });
+    document.addEventListener("mousemove", (e) => { if (dragging) seekTo(e); });
+    document.addEventListener("mouseup", () => { dragging = false; });
+
+    video.addEventListener("timeupdate", () => {
+        if (!video.duration) return;
+        fill.style.width = (video.currentTime / video.duration * 100) + "%";
+        renderSkullsOnScrubber();
+    });
+
+    video.addEventListener("canplay", loadVolume);
+})();
+
+function renderSkullsOnScrubber() {
+    const scrubber = document.getElementById("player-scrubber");
+    const video    = document.getElementById("video");
+    if (!playingMovieObj || !video.duration) return;
+
+    // Remove old skulls
+    scrubber.querySelectorAll(".js-skull").forEach(s => s.remove());
+
+    let notes = [];
+    const colonIndex = (playingMovieId || "").indexOf(":");
+    if (colonIndex !== -1) {
+        const path = playingMovieId.substring(colonIndex + 1);
+        notes = (playingMovieObj.episode_notes || {})[path] || [];
+    } else {
+        notes = playingMovieObj.timestamped_notes || [];
+    }
+
+    notes.filter(n => n.isJumpScare).forEach(n => {
+        const pct = (n.time / video.duration) * 100;
+        const skull = document.createElement("div");
+        skull.className = "js-skull";
+        skull.textContent = "💀";
+        skull.style.left = pct + "%";
+        skull.title = `Jump Scare @ ${Math.floor(n.time/60)}:${String(Math.floor(n.time%60)).padStart(2,'0')}`;
+        skull.onclick = (e) => { e.stopPropagation(); video.currentTime = n.time; };
+        scrubber.appendChild(skull);
+    });
+}
+
+// ── Jump Scare Bookmark ─────────────────────────────────────
+async function addJumpScareBookmark() {
+    if (!playingMovieObj) return;
+    const video = document.getElementById("video");
+    const note = { time: video.currentTime, text: "💀 Jump Scare", isJumpScare: true };
+
+    const colonIndex = playingMovieId.indexOf(":");
+    if (colonIndex !== -1) {
+        const path = playingMovieId.substring(colonIndex + 1);
+        if (!playingMovieObj.episode_notes) playingMovieObj.episode_notes = {};
+        if (!playingMovieObj.episode_notes[path]) playingMovieObj.episode_notes[path] = [];
+        playingMovieObj.episode_notes[path].push(note);
+    } else {
+        if (!playingMovieObj.timestamped_notes) playingMovieObj.timestamped_notes = [];
+        playingMovieObj.timestamped_notes.push(note);
+    }
+    await pywebview.api.update_movie(playingMovieObj);
+    renderNotes();
+    renderSkullsOnScrubber();
+    showToast("💀 Jump Scare marked!");
+}
+
+// ── Genre Chips ─────────────────────────────────────────────
+function populateGenreChips() {
+    const allGenres = new Set();
+    movies.forEach(m => (m.categories || []).forEach(g => allGenres.add(g)));
+    const container = document.getElementById("genre-chips");
+    container.innerHTML = "";
+    if (allGenres.size === 0) return;
+
+    const allChip = document.createElement("span");
+    allChip.className = "sg-chip" + (activeGenreFilter === null ? " active" : "");
+    allChip.textContent = "All Genres";
+    allChip.onclick = () => {
+        activeGenreFilter = null;
+        populateGenreChips();
+        applyFilters();
+    };
+    container.appendChild(allChip);
+
+    Array.from(allGenres).sort().forEach(g => {
+        const chip = document.createElement("span");
+        chip.className = "sg-chip" + (activeGenreFilter === g ? " active" : "");
+        chip.textContent = g;
+        chip.onclick = () => {
+            activeGenreFilter = g;
+            populateGenreChips();
+            applyFilters();
+        };
+        container.appendChild(chip);
+    });
+}
+
+// ── Collections Manager ─────────────────────────────────────
+async function showCollections() {
+    await renderCollectionsList();
+    document.getElementById("collections-modal").style.display = "flex";
+}
+
+function closeCollections() {
+    document.getElementById("collections-modal").style.display = "none";
+    document.getElementById("col-new-input").value = "";
+}
+
+async function renderCollectionsList() {
+    const list = document.getElementById("collections-list");
+    list.innerHTML = "";
+
+    if (collections.length === 0) {
+        list.innerHTML = '<div style="color:var(--text-main); opacity:0.4; text-align:center; padding:20px;">No collections yet. Add one below.</div>';
+        return;
+    }
+
+    // Count members per collection
+    const countMap = {};
+    collections.forEach(c => { countMap[c.id] = (c.movie_ids || []).length; });
+
+    collections.forEach(c => {
+        const row = document.createElement("div");
+        row.className = "col-item";
+
+        const name = document.createElement("span");
+        name.className = "col-item-name";
+        name.textContent = c.name;
+
+        const count = document.createElement("span");
+        count.className = "col-item-count";
+        count.textContent = `${countMap[c.id] || 0} title${countMap[c.id] !== 1 ? "s" : ""}`;
+
+        const filterBtn = document.createElement("button");
+        filterBtn.className = "col-action-btn";
+        filterBtn.textContent = "🔍 Filter";
+        filterBtn.title = "Show only movies in this collection";
+        filterBtn.onclick = () => {
+            const sel = document.getElementById("filter-collection");
+            if (sel) { sel.value = c.id; applyFilters(); }
+            closeCollections();
+        };
+
+        const renameBtn = document.createElement("button");
+        renameBtn.className = "col-action-btn";
+        renameBtn.textContent = "✏ Rename";
+        renameBtn.onclick = async () => {
+            const newName = prompt(`Rename "${c.name}" to:`, c.name);
+            if (!newName || newName.trim() === c.name) return;
+            await pywebview.api.rename_collection(c.id, newName.trim());
+            collections = await pywebview.api.get_collections_v2();
+            await renderCollectionsList();
+            populateCollectionFilter();
+        };
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "col-action-btn";
+        delBtn.textContent = "🗑";
+        delBtn.title = "Delete collection";
+        delBtn.onclick = async () => {
+            if (!confirm(`Delete collection "${c.name}"? Movies won't be deleted.`)) return;
+            await pywebview.api.delete_collection(c.id);
+            collections = await pywebview.api.get_collections_v2();
+            await renderCollectionsList();
+            populateCollectionFilter();
+            // If we were filtering by this deleted collection, reset
+            const sel = document.getElementById("filter-collection");
+            if (sel && sel.value === c.id) { sel.value = ""; applyFilters(); }
+        };
+
+        row.appendChild(name);
+        row.appendChild(count);
+        row.appendChild(filterBtn);
+        row.appendChild(renameBtn);
+        row.appendChild(delBtn);
+        list.appendChild(row);
+    });
+}
+
+async function createCollection() {
+    const input = document.getElementById("col-new-input");
+    const name = (input.value || "").trim();
+    if (!name) return;
+    const result = await pywebview.api.create_collection(name);
+    if (result && result.success) {
+        input.value = "";
+        collections = await pywebview.api.get_collections_v2();
+        await renderCollectionsList();
+        populateCollectionFilter();
+        showToast(`✅ Collection "${name}" created!`);
+    } else {
+        showToast("⚠ " + (result.error || "Could not create collection."));
+    }
+}
+
+// ── Trailer Modal ───────────────────────────────────────────
+async function openTrailer(movie) {
+    const config = await pywebview.api.get_config();
+    const apiKey = config.tmdb_api_key;
+    if (!apiKey) {
+        showToast("⚠ Set your TMDB API key in Settings first.");
+        return;
+    }
+    showToast("🎞 Fetching trailer…");
+    try {
+        // Search for the movie
+        const searchUrl = `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${encodeURIComponent(movie.title)}&year=${movie.year || ""}`;
+        const searchResp = await fetch(searchUrl);
+        const searchData = await searchResp.json();
+        const tmdbId = searchData.results?.[0]?.id;
+        if (!tmdbId) { showToast("No trailer found."); return; }
+
+        const vidUrl = `https://api.themoviedb.org/3/movie/${tmdbId}/videos?api_key=${apiKey}`;
+        const vidResp = await fetch(vidUrl);
+        const vidData = await vidResp.json();
+        const trailer = vidData.results?.find(v => v.site === "YouTube" && v.type === "Trailer")
+                     || vidData.results?.find(v => v.site === "YouTube");
+        if (!trailer) { showToast("No YouTube trailer found."); return; }
+
+        document.getElementById("trailer-modal-title").textContent = `${movie.title} — Trailer`;
+        document.getElementById("trailer-frame").src = `https://www.youtube.com/embed/${trailer.key}?autoplay=1`;
+        document.getElementById("trailer-modal").style.display = "flex";
+    } catch (err) {
+        showToast("Failed to load trailer.");
+        console.error(err);
+    }
+}
+
+function closeTrailer() {
+    document.getElementById("trailer-frame").src = "";
+    document.getElementById("trailer-modal").style.display = "none";
+}
+
+</script>
+
+</body>
+</html>
