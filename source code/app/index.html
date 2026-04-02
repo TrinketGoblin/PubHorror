@@ -1738,7 +1738,11 @@ function applyFilters() {
     filteredMovies = movies.filter(m => {
         const titleMatch  = (m.title || "").toLowerCase().includes(search);
         const dirMatch    = (m.director || "").toLowerCase().includes(search);
-        const castMatch   = (m.cast || []).some(c => c.toLowerCase().includes(search));
+        const castArr = Array.isArray(m.cast)
+            ? m.cast
+            : (typeof m.cast === "string" ? [m.cast] : []);
+
+        const castMatch = castArr.some(c => c.toLowerCase().includes(search));
         const textMatch   = !search || titleMatch || dirMatch || castMatch;
 
         // Genre filter: pure JS var, no DOM read
@@ -1879,21 +1883,31 @@ function renderMovies() {
         });
 
         // Content warning badges
-        const warnings = movie.content_warnings || [];
+        const rawWarnings = movie.content_warnings;
+
+        const warningsArr = Array.isArray(rawWarnings)
+            ? rawWarnings
+            : (typeof rawWarnings === "string"
+                ? rawWarnings.split(",").map(w => w.trim()).filter(Boolean)
+                : []);
+
         let cwBadges = null;
-        if (warnings.length > 0) {
+
+        if (warningsArr.length > 0) {
             cwBadges = document.createElement("div");
             cwBadges.className = "cw-badges";
-            warnings.slice(0, 3).forEach(w => {
+
+            warningsArr.slice(0, 3).forEach(w => {
                 const b = document.createElement("span");
                 b.className = "cw-badge";
                 b.textContent = w;
                 cwBadges.appendChild(b);
             });
-            if (warnings.length > 3) {
+
+            if (warningsArr.length > 3) {
                 const b = document.createElement("span");
                 b.className = "cw-badge";
-                b.textContent = `+${warnings.length - 3} more`;
+                b.textContent = `+${warningsArr.length - 3} more`;
                 cwBadges.appendChild(b);
             }
         }
