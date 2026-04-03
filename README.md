@@ -100,3 +100,4 @@
 ---
 
 If anything breaks, it’s haunted. I didn’t do it. 👻
+We have a Discord and a Tumblr
