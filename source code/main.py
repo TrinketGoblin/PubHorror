@@ -6,6 +6,11 @@ import uuid
 import requests
 import shutil
 import subprocess
+import ctypes
+import string
+import threading
+import re
+import csv
 from urllib.parse import quote
 from typing import Any, Optional, cast
 
@@ -31,6 +36,15 @@ POSTERS_DIR = os.path.join(ROOT_DIR, "posters")
 
 # Global media extensions including the AC3 fix
 MEDIA_EXT = {".mp4", ".mkv", ".avi", ".mov", ".webm", ".m4v", ".ac3", ".m4a", ".wav"}
+
+# MakeMKV CLI handles disc decryption (DVD CSS / Blu-ray AACS) for discs you own
+MAKEMKV_CANDIDATES = [
+    r"C:\Program Files (x86)\MakeMKV\makemkvcon64.exe",
+    r"C:\Program Files\MakeMKV\makemkvcon64.exe",
+    r"C:\Program Files (x86)\MakeMKV\makemkvcon.exe",
+    r"C:\Program Files\MakeMKV\makemkvcon.exe",
+]
+DVD_RIPS_DIR = os.path.join(LIBRARY_DIR, "dvd_rips")
 
 def ensure_data_files():
     for folder in [DATA_DIR, POSTERS_DIR, LIBRARY_DIR]:
@@ -67,6 +81,9 @@ INDEX_HTML = os.path.join(os.path.dirname(__file__), "app", "index.html")
 class API:
     def __init__(self):
         self._window: Optional[webview.Window] = None
+        self._rip = {}   # movie_id -> {state, percent, output, error}
+        self._scan_lock = threading.Lock()
+        self._last_scan = []
 
     # --- CONFIG ---
     def get_config(self):
@@ -365,23 +382,193 @@ class API:
         found.sort(key=_sort_key)
         return found
 
-    def check_drives(self):
+    def _scan_drives(self, include_all=False):
+        """Scan optical (type 5) and removable (type 2, e.g. USB DVD drives) drives.
+        include_all=False -> only drives holding a video disc.
+        include_all=True  -> every candidate drive with a status, for the manual picker."""
         result = []
-        if sys.platform == "win32":
-            import ctypes, string
-            for letter in string.ascii_uppercase:
-                drive = f"{letter}:\\"
-                if ctypes.windll.kernel32.GetDriveTypeW(drive) == 5:
-                    try:
-                        raw = os.popen(f"vol {letter}: 2>nul").read()
-                        if "is" in raw:
-                            label = raw.split("is")[-1].strip().split("\n")[0].strip()
-                            result.append({"path": drive, "label": label})
-                    except: pass
+        if sys.platform != "win32":
+            return result
+        k32 = ctypes.windll.kernel32
+        mask = k32.GetLogicalDrives()
+        for i, letter in enumerate(string.ascii_uppercase):
+            if not (mask & (1 << i)):
+                continue
+            root = f"{letter}:\\"
+            dtype = k32.GetDriveTypeW(root)
+            if dtype not in (2, 5):                   # 2 = removable, 5 = CD/DVD
+                continue
+            buf = ctypes.create_unicode_buffer(261)
+            old_mode = k32.SetErrorMode(1)            # suppress "no disc" popups
+            try:
+                ok = k32.GetVolumeInformationW(root, buf, 261, None, None, None, None, 0)
+            finally:
+                k32.SetErrorMode(old_mode)
+            if not ok:
+                if include_all and dtype == 5:
+                    result.append({"path": root, "letter": letter, "label": "",
+                                   "kind": "empty"})
+                continue                              # tray empty / not ready
+            is_dvd = os.path.isdir(os.path.join(root, "VIDEO_TS"))
+            is_bd = os.path.isdir(os.path.join(root, "BDMV"))
+            kind = "bluray" if is_bd else ("dvd" if is_dvd else "data")
+            if kind == "data" and not include_all:
+                continue
+            if kind == "data" and dtype == 2:
+                continue                              # ignore ordinary USB sticks in the picker
+            result.append({
+                "path": root,
+                "letter": letter,
+                "label": buf.value or f"DISC_{letter}",
+                "kind": kind,
+            })
         return result
+
+    def check_drives(self):
+        """Drives that currently hold a video disc Windows can read (auto-detect poll).
+        Never overlaps itself: if a scan is already running (slow drive), return the last result."""
+        if not self._scan_lock.acquire(blocking=False):
+            return self._last_scan
+        try:
+            self._last_scan = self._scan_drives(False)
+            return self._last_scan
+        finally:
+            self._scan_lock.release()
+
+    def _makemkv_drives(self):
+        """Ask MakeMKV which drives hold a disc. Reads the disc raw, so it can see
+        discs Windows reports as 'not ready'. Returns [{letter, label}]."""
+        exe = self._find_makemkv()
+        if not exe:
+            return []
+        try:
+            out = subprocess.run([exe, "-r", "--cache=1", "info", "disc:9999"],
+                                 capture_output=True, text=True, timeout=120,
+                                 creationflags=subprocess.CREATE_NO_WINDOW).stdout
+        except Exception:
+            return []
+        found = []
+        for line in out.splitlines():
+            if not line.startswith("DRV:"):
+                continue
+            try:
+                f = next(csv.reader([line[4:]]))
+            except Exception:
+                continue
+            # DRV:index,visible,enabled,flags,"drive name","disc name","device"
+            if len(f) >= 7 and f[5].strip() and f[6].strip():
+                found.append({"letter": f[6].strip().rstrip("\\/").rstrip(":").upper(),
+                              "label": f[5].strip()})
+        return found
+
+    def list_drives(self):
+        """Every optical drive with a status, for the manual drive picker and ripping."""
+        with self._scan_lock:
+            drives = self._scan_drives(True)
+            if any(d["kind"] == "empty" for d in drives) or not drives:
+                mk = {d["letter"]: d["label"] for d in self._makemkv_drives()}
+                for d in drives:
+                    if d["kind"] == "empty" and d["letter"] in mk:
+                        d["kind"] = "disc"            # Windows can't read it, MakeMKV can
+                        d["label"] = mk[d["letter"]]
+                known = {d["letter"] for d in drives}
+                for letter, label in mk.items():
+                    if letter not in known and len(letter) == 1:
+                        drives.append({"path": f"{letter}:\\", "letter": letter,
+                                       "label": label, "kind": "disc"})
+            return drives
 
     def check_file_exists(self, path):
         return os.path.exists(path) if path else False
+
+    # --- DVD RIPPING (MakeMKV handles the disc decryption) ---
+    def _find_makemkv(self):
+        for p in MAKEMKV_CANDIDATES:
+            if os.path.exists(p):
+                return p
+        return shutil.which("makemkvcon64") or shutil.which("makemkvcon")
+
+    def has_makemkv(self):
+        return bool(self._find_makemkv())
+
+    def _makemkv_disc_index(self, exe, drive_root):
+        """Map a drive letter like 'D:\\' to MakeMKV's disc:N index."""
+        out = subprocess.run([exe, "-r", "--cache=1", "info", "disc:9999"],
+                             capture_output=True, text=True, timeout=120,
+                             creationflags=subprocess.CREATE_NO_WINDOW).stdout
+        want = drive_root.rstrip("\\/").rstrip(":").upper()
+        for line in out.splitlines():
+            if not line.startswith("DRV:"):
+                continue
+            try:
+                f = next(csv.reader([line[4:]]))
+            except Exception:
+                continue
+            if len(f) >= 7 and f[6].strip().rstrip("\\/").rstrip(":").upper() == want:
+                return int(f[0])
+        return None
+
+    def _main_title_id(self, exe, disc_idx):
+        """Pick the longest title on the disc."""
+        out = subprocess.run([exe, "-r", "--cache=1", "info", f"disc:{disc_idx}"],
+                             capture_output=True, text=True,
+                             creationflags=subprocess.CREATE_NO_WINDOW).stdout
+        best_id, best_secs = None, -1
+        for line in out.splitlines():
+            m = re.match(r'TINFO:(\d+),9,0,"(\d+):(\d+):(\d+)"', line)   # attr 9 = duration
+            if m:
+                tid, h, mi, sec = map(int, m.groups())
+                secs = h * 3600 + mi * 60 + sec
+                if secs > best_secs:
+                    best_id, best_secs = tid, secs
+        return best_id
+
+    def start_rip(self, movie_id, drive_root, label):
+        exe = self._find_makemkv()
+        if not exe:
+            return {"success": False, "error": "MakeMKV not found. Install it from makemkv.com."}
+        if self._rip.get(movie_id, {}).get("state") == "running":
+            return {"success": True}
+        safe = "".join(c for c in label if c.isalnum() or c in " -_").strip() or "disc"
+        out_dir = os.path.join(DVD_RIPS_DIR, safe)
+        os.makedirs(out_dir, exist_ok=True)
+        self._rip[movie_id] = {"state": "running", "percent": 0, "output": None, "error": None}
+
+        def worker():
+            st = self._rip[movie_id]
+            try:
+                idx = self._makemkv_disc_index(exe, drive_root)
+                if idx is None:
+                    raise RuntimeError("MakeMKV can't see that drive/disc.")
+                tid = self._main_title_id(exe, idx)
+                if tid is None:
+                    raise RuntimeError("No titles found on disc.")
+                proc = subprocess.Popen(
+                    [exe, "-r", "--progress=-same", "mkv", f"disc:{idx}", str(tid), out_dir],
+                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
+                    creationflags=subprocess.CREATE_NO_WINDOW)
+                for line in proc.stdout:
+                    m = re.match(r"PRGV:(\d+),(\d+),(\d+)", line)
+                    if m:
+                        cur, _tot, mx = map(int, m.groups())
+                        if mx > 0:
+                            st["percent"] = int(cur * 100 / mx)
+                proc.wait()
+                mkvs = sorted((f for f in os.listdir(out_dir) if f.lower().endswith(".mkv")),
+                              key=lambda f: os.path.getmtime(os.path.join(out_dir, f)))
+                if proc.returncode != 0 or not mkvs:
+                    raise RuntimeError("MakeMKV failed (disc may be damaged or unsupported).")
+                st["output"] = os.path.join(out_dir, mkvs[-1]).replace("\\", "/")
+                st["state"] = "done"
+            except Exception as e:
+                st["state"] = "error"
+                st["error"] = str(e)
+
+        threading.Thread(target=worker, daemon=True).start()
+        return {"success": True}
+
+    def get_rip_status(self, movie_id):
+        return self._rip.get(movie_id, {"state": "idle"})
 
     # --- TMDB & POSTERS ---
     def fetch_tmdb_info(self, title, year, api_key, source_type="file"):

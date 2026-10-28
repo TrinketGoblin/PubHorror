@@ -40,8 +40,15 @@ webview_datas = collect_data_files('webview')
 #                   sys._MEIPASS / "app" / "assets" / *
 app_datas = [
     (os.path.join('app', 'index.html'),          'app'),
-    (os.path.join('app', 'assets'),              os.path.join('app', 'assets')),
 ]
+# Only bundle assets/ if it exists, so the build doesn't fail when it's missing
+if os.path.isdir(os.path.join('app', 'assets')):
+    app_datas.append((os.path.join('app', 'assets'), os.path.join('app', 'assets')))
+else:
+    print('WARNING: app/assets not found - building without fonts/icon')
+
+_icon = os.path.join('app', 'assets', 'PubHorrorIcon.ico')
+_icon = _icon if os.path.exists(_icon) else None
 
 all_datas = webview_datas + app_datas
 
@@ -138,7 +145,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=os.path.join('app', 'assets', 'PubHorrorIcon.ico'),
+    icon=_icon,
 )
 
 # ── COLLECT (onedir bundle) ───────────────────────────────────

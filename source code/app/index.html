@@ -1090,6 +1090,7 @@ video {
                 <button onclick="addMovieManual(); closeAddDropdown()">🎬 Add Movie</button>
                 <button onclick="addSeriesFolder(); closeAddDropdown()">📺 Add Series</button>
                 <button onclick="addMovieFolder(); closeAddDropdown()">📁 Import Folder</button>
+                <button onclick="showDrivePicker(); closeAddDropdown()">💿 Add Disc…</button>
             </div>
         </div>
 
@@ -1400,6 +1401,18 @@ video {
     </div>
 </div>
 
+<!-- ── Drive Picker Modal ─────────────────────────────── -->
+<div id="drive-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); display:none; justify-content:center; align-items:center; z-index:3000;">
+    <div class="modal-content">
+        <h2>💿 Pick a Drive</h2>
+        <div id="drive-list" style="max-height:360px; overflow-y:auto;"></div>
+        <div class="modal-actions" style="margin-top:16px;">
+            <button onclick="showDrivePicker()">🔄 Refresh</button>
+            <button onclick="closeDrivePicker()">Close</button>
+        </div>
+    </div>
+</div>
+
 <!-- ── Trailer Modal ──────────────────────────────────── -->
 <div id="trailer-modal">
     <div class="modal-content">
@@ -1481,7 +1494,15 @@ async function init() {
     } catch(e) { /* pywebview not ready yet in browser preview */ }
 }
 
+let _dvdCheckBusy = false;
 async function checkForDVDs() {
+    if (_dvdCheckBusy) return;
+    _dvdCheckBusy = true;
+    try { await _checkForDVDsInner(); } catch (e) { console.warn(e); }
+    finally { _dvdCheckBusy = false; }
+}
+
+async function _checkForDVDsInner() {
     const drives = await pywebview.api.check_drives();
     const driveLabels = new Set(drives.map(d => d.label));
 
@@ -1496,7 +1517,7 @@ async function checkForDVDs() {
         const existing = movies.find(m => m.disc_id === d.label && m.source_type === "dvd");
         if (!existing && !detectedDrives.has(d.label)) {
             detectedDrives.add(d.label);
-            showToast(`💿 DVD Detected: ${d.label}`);
+            showToast(`💿 ${d.kind === "bluray" ? "Blu-ray" : "DVD"} Detected: ${d.label}`);
             addMovieManual({
                 title: d.label,
                 source_type: "dvd",
@@ -2052,8 +2073,16 @@ async function playMovie(movie) {
         return;
     }
 
-    if (!await pywebview.api.check_file_exists(movie.file)) {
-        showToast("⚠ File not found: " + movie.file);
+    // Discs: play the ripped copy if we have one, otherwise rip first
+    if (movie.source_type === "dvd" &&
+        !(movie.ripped_file && await pywebview.api.check_file_exists(movie.ripped_file))) {
+        await ripAndPlayDisc(movie);
+        return;
+    }
+    const playPath = (movie.source_type === "dvd" && movie.ripped_file) ? movie.ripped_file : movie.file;
+
+    if (!await pywebview.api.check_file_exists(playPath)) {
+        showToast("⚠ File not found: " + playPath);
         return;
     }
 
@@ -2062,7 +2091,7 @@ async function playMovie(movie) {
     const progress = await pywebview.api.get_progress();
     const savedTime = progress[movie.id];
 
-    await loadAndPlay(toFileUrl(movie.file), savedTime);
+    await loadAndPlay(toFileUrl(playPath), savedTime);
 
     if (savedTime && savedTime > 5) {
         showToast(`⏯ Resumed at ${Math.floor(savedTime / 60)}:${String(Math.floor(savedTime % 60)).padStart(2, '0')}`);
@@ -2075,6 +2104,105 @@ async function playMovie(movie) {
         await pywebview.api.update_movie(movie);
         await init();
     }
+}
+
+// ── Drive Picker ─────────────────────────────────────────────
+async function showDrivePicker() {
+    const list = document.getElementById("drive-list");
+    list.innerHTML = '<div style="opacity:0.5; text-align:center; padding:20px;">Scanning… this can take up to a minute while the drive spins up.</div>';
+    document.getElementById("drive-modal").style.display = "flex";
+
+    let drives = [];
+    try {
+        drives = await pywebview.api.list_drives();
+    } catch (e) {
+        list.innerHTML = '<div style="opacity:0.7; text-align:center; padding:20px;">Scan failed: ' + String(e) + '</div>';
+        return;
+    }
+    list.innerHTML = "";
+
+    if (!drives.length) {
+        list.innerHTML = '<div style="opacity:0.5; text-align:center; padding:20px;">No optical drives found.</div>';
+        return;
+    }
+
+    drives.forEach(d => {
+        const playable = ["dvd", "bluray", "disc"].includes(d.kind);
+        const kindText = { dvd: "DVD", bluray: "Blu-ray", data: "Not a video disc", disc: "Disc (MakeMKV)", empty: "No disc" }[d.kind] || d.kind;
+
+        const row = document.createElement("div");
+        row.className = "col-item";
+
+        const name = document.createElement("span");
+        name.className = "col-item-name";
+        name.textContent = `${d.letter}:  ${d.label || ""}`;
+
+        const kind = document.createElement("span");
+        kind.className = "col-item-count";
+        kind.style.minWidth = "110px";
+        kind.textContent = kindText;
+
+        const btn = document.createElement("button");
+        btn.className = "col-action-btn";
+        btn.textContent = "＋ Add";
+        btn.disabled = !playable;
+        if (!playable) btn.style.opacity = "0.3";
+        btn.onclick = () => {
+            closeDrivePicker();
+            addMovieManual({
+                title: d.label,
+                source_type: "dvd",
+                file: d.path,
+                disc_id: d.label
+            });
+        };
+
+        row.appendChild(name);
+        row.appendChild(kind);
+        row.appendChild(btn);
+        list.appendChild(row);
+    });
+}
+
+function closeDrivePicker() {
+    document.getElementById("drive-modal").style.display = "none";
+}
+
+async function ripAndPlayDisc(movie) {
+    if (!await pywebview.api.has_makemkv()) {
+        showToast("⚠ Install MakeMKV (makemkv.com) to play discs.", 5000);
+        return;
+    }
+    showToast("💿 Looking for the disc…", 3000);
+    const drives = (await pywebview.api.list_drives()).filter(d => ["dvd", "bluray", "disc"].includes(d.kind));
+    const drive = drives.find(d => d.label === movie.disc_id) || drives.find(d => d.path === movie.file);
+    if (!drive) {
+        showToast(`💿 Insert "${movie.disc_id || movie.title}" to play it.`, 4000);
+        return;
+    }
+    if (!confirm(`"${movie.title}" needs to be ripped before it can play.\nThis can take 15–40 minutes. Start now?`)) return;
+
+    const res = await pywebview.api.start_rip(movie.id, drive.path, drive.label);
+    if (!res.success) { showToast("⚠ " + res.error, 5000); return; }
+
+    const poll = setInterval(async () => {
+        const s = await pywebview.api.get_rip_status(movie.id);
+        if (s.state === "running") {
+            showToast(`💿 Ripping ${movie.title}… ${s.percent}%`, 2500);
+        } else if (s.state === "done") {
+            clearInterval(poll);
+            movie.ripped_file = s.output;
+            await pywebview.api.update_movie(movie);
+            showToast("✅ Rip complete!");
+            await init();
+            playMovie(movie);
+        } else if (s.state === "error") {
+            clearInterval(poll);
+            showToast("⚠ " + s.error, 6000);
+        } else {
+            clearInterval(poll);
+        }
+    }, 2000);
 }
 
 async function openSeriesPlayer(movie) {
