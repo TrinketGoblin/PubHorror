@@ -3,7 +3,7 @@
 ; Output: PubHorror_Setup_<version>.exe in the project root.
 
 #define MyAppName      "PubHorror"
-#define MyAppVersion   "1.0.3"
+#define MyAppVersion   "1.0.5"
 #define MyAppExeName   "PubHorror.exe"
 
 ; Paths in Inno are relative to this script. Detect where it was placed.
@@ -33,7 +33,6 @@ WizardStyle=modern
 ArchitecturesAllowed=x64
 ArchitecturesInstallIn64BitMode=x64
 UninstallDisplayIcon={app}\{#MyAppExeName}
-LicenseFile={#Root}LICENSE
 #ifexist Src + "app\assets\PubHorrorIcon.ico"
 SetupIconFile={#Src}app\assets\PubHorrorIcon.ico
 #endif
@@ -54,6 +53,9 @@ Name: "{app}\posters"; Flags: uninsneveruninstall
 Source: "{#Src}dist\PubHorror\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; WebView2 bootstrapper, only extracted if the runtime is missing
 Source: "{#Src}MicrosoftEdgeWebview2Setup.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall; Check: not WebView2Installed
+; MakeMKV installer (disc ripping), only extracted if MakeMKV is missing. Put the official
+; installer next to this script and name it MakeMKV_setup.exe.
+Source: "{#Src}MakeMKV_setup.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall; Check: not MakeMKVInstalled
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
@@ -62,6 +64,9 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 
 [Run]
 Filename: "{tmp}\MicrosoftEdgeWebview2Setup.exe"; Parameters: "/silent /install"; StatusMsg: "Installing Microsoft WebView2 runtime..."; Flags: waituntilterminated; Check: not WebView2Installed
+; MakeMKV installs to Program Files, so its installer needs admin. shellexec lets Windows show the
+; UAC prompt even though PubHorror itself installs per-user.
+Filename: "{tmp}\MakeMKV_setup.exe"; Parameters: "/S"; StatusMsg: "Installing MakeMKV (needed for playing discs)..."; Flags: shellexec waituntilterminated; Check: not MakeMKVInstalled
 Filename: "{app}\{#MyAppExeName}"; Description: "Launch {#MyAppName}"; Flags: nowait postinstall skipifsilent
 
 [Code]
@@ -75,4 +80,14 @@ begin
     RegQueryStringValue(HKCU,   'Software\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}', 'pv', v);
   if Result then
     Result := (v <> '') and (v <> '0.0.0.0');
+end;
+
+{ Same locations main.py checks for makemkvcon }
+function MakeMKVInstalled: Boolean;
+begin
+  Result :=
+    FileExists(ExpandConstant('{commonpf64}\MakeMKV\makemkvcon64.exe')) or
+    FileExists(ExpandConstant('{commonpf32}\MakeMKV\makemkvcon64.exe')) or
+    FileExists(ExpandConstant('{commonpf64}\MakeMKV\makemkvcon.exe')) or
+    FileExists(ExpandConstant('{commonpf32}\MakeMKV\makemkvcon.exe'));
 end;
