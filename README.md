@@ -1,103 +1,116 @@
-# **🎬 PubHorror v1.0 — Initial Release**
+# PubHorror
 
-**📚 Library Management**
+A desktop library for your horror movie collection. It tracks what you own, what you've watched, and what you thought, plays files and discs you own inside the app, and has a notes system built for people who write about film.
 
-* Add movies manually or import entire folders
-* Automatically detects movies vs. series
-* Full editing (title, year, director, cast, description, notes, etc.)
-* Custom categories and sub-genres
-* Collections for organizing stuff
-* Poster upload + management
+Version 1.0.5. Built with Python and pywebview, with the interface in a single HTML file. Windows installer included.
 
-**📺 Series Support**
+## Install
 
-* Import full series from folders
-* Auto-detect episodes
-* Play episodes inside the app
-* “Next Episode” button so you don’t have to think
+Run `PubHorror_Setup_1.0.5.exe`. It installs per-user (no admin needed for PubHorror itself) into `%LocalAppData%\Programs\PubHorror`.
 
-**▶️ Video Player**
+The installer also checks for two things the app depends on and installs them if they're missing:
 
-* Built-in player with custom controls
-* Play/pause + skip forward/back
-* Volume + mute
-* Fullscreen support
-* Tracks progress automatically
-* Resume whatever you were watching last
+- **Microsoft Edge WebView2 runtime**, which draws the interface.
+- **MakeMKV**, which reads discs. Its installer needs admin, so Windows will show a UAC prompt.
 
-**⏱ Progress & Tracking**
+MakeMKV is still on its own license. After install, open it once and enter your registration key.
 
-* Continue Watching section
-* Watch status (Unwatched / Watching / Watched)
-* Saves progress automatically
-* Tracks completions + rewatches
+Your data lives next to the exe in `data\`, `library\` and `posters\`. Upgrades and uninstalls leave those folders alone.
 
-**⭐ Ratings & Favorites**
+## Library
 
-* 5-star rating system
-* Favorites based on how often you watch something
-* Sort by top-rated
+- Add a single movie, a series folder, a whole folder of movies at once, or a disc.
+- Each title has a poster, year, director, cast, categories, description, notes and a source type: File, DVD, Series, or Wishlist (for movies you want but don't have yet).
+- Search across titles, directors and cast.
+- Filter by collection, watch status (unwatched, watching, watched), minimum star rating, and genre chips.
+- Sort A to Z, Z to A, newest, oldest, top rated, or by collection.
+- 1 to 5 star ratings.
+- Random movie picker.
+- Library stats: total titles, watched count, average rating, top category.
+- Collections: create, rename and delete your own, and put a movie in as many as you like.
+- Resize the poster grid and the interface text with sliders.
+- Themes: Horror (default), Midnight, Forest, Classic, or a custom theme where you pick the accent, highlight and background colors.
 
-**🔍 Search, Filter & Sorting**
+## Metadata
 
-* Search by title, director, or cast
-* Filter by category, status, rating
-* Sort by title, year, rating, or collection
-* Alphabet jump bar
+- **TMDB auto-fill** pulls title, year, director, cast, genres, description and poster. You need your own free TMDB API key (Settings).
+- **Wikidata lookup** fills in studio, country of origin, and the Wikidata and IMDb IDs.
+- Upload your own poster or pick one from TMDB results.
+- Trailers play in the app, using the YouTube trailer TMDB lists.
+- **Edition fields** record which version you watched: cut, aspect ratio, release or restoration, region, and format.
+- **Content warnings** are per title. A warning screen shows before playback and you choose Play Anyway or Cancel.
 
-**🎨 UI & Customization**
+## Playback
 
-* Multiple themes (Horror, Midnight, Forest, Classic)
-* Custom color theme option
-* Adjustable grid size
-* Adjustable font size
-* Card-based layout
+- Built-in player with custom controls, 10 second skip, volume (remembered between sessions), and fullscreen.
+- Keyboard shortcuts: `Space` or `K` play/pause, `F` fullscreen, `M` mute, `C` subtitles, left/right arrows skip 10s, up/down arrows volume, `Esc` leaves fullscreen or closes the player.
+- Resume where you left off. A Resume button and a Continue Watching list appear when something is in progress.
+- Watched/in-progress state is tracked for you.
+- Files stream through a local server that only answers requests from your own machine.
 
-**📊 Statistics**
+### Series
 
-* Total movies tracked
-* Watched vs unwatched
-* Average rating
-* Most common category
+- Add a folder and episodes are found and sorted automatically.
+- Per-episode progress bars and watched ticks.
+- "Up next" countdown with Play Now and Cancel, plus a Next button in the player.
+- Rescan one series, or all of them, to pick up new episodes.
 
-**📝 Notes System**
+### Subtitles
 
-* Timestamped notes while watching
-* Click notes to jump back to moments
-* Jump scare markers (💀)
-* Export your notes
+- Reads embedded subtitle tracks and sidecar files (`.srt`, `.vtt`, `.ass`, `.ssa`).
+- Load a subtitle file by hand if the app doesn't find one.
+- Adjust timing delay and text size while playing.
 
-**🎲 Utility Stuff**
+### Audio and video fixes
 
-* Random movie button
-* Queue system
-* Toast notifications
-* Empty state messages
+WebView2 can't play some formats directly, so the app converts them with ffmpeg:
 
-**🔄 Library Tools**
+- AC3, DTS, TrueHD and other unsupported audio is converted to AAC.
+- DVD video (MPEG-2) is re-encoded to H.264.
+- Converted rips are saved so you only wait once.
 
-* Re-scan folders for new content
-* Check if files still exist
-* Auto-refresh series episodes
+## Discs
 
-**🌐 Metadata Integration**
+- **Add Disc** lists the drives with a disc in them and tells you whether each is a DVD, Blu-ray, or something it can't play.
+- The first time you play a disc title, the app asks to rip it with MakeMKV. This can take 15 to 40 minutes. Progress is tracked and the rip survives you closing the player.
+- After the rip, the playable copy is stored in `library\dvd_rips`. From then on the title plays without the disc.
+- If the disc isn't in the drive, the app tells you which one to insert.
+- Only rip discs you own.
 
-* TMDB auto-fill for movies/series
-* Download posters automatically
+## Notes and research tools
 
-**💾 Backup & Data**
+This is the part aimed at film writing and coursework.
 
-* Export backup
-* Import backup
-* Local JSON storage (no cloud stuff)
+- **Timestamped notes** while you watch. Notes on episodes are saved per episode.
+- **Tags** on each note: cinematography, sound, score, editing, performance, theme, symbolism, production design, continuity, context. You can type your own.
+- **Passage notes**: press ⏱ In to mark the start, then Add Note at the end to attach a note to a range.
+- **Jump scare bookmarks** with the 💀 button. Skulls show on the progress bar where you marked them.
+- **Annotation search** looks through every note in your whole library by text, title or tag.
+- **Citations**: a note can be turned into a Chicago or MLA citation. It includes the director, studio, year, edition and the timestamp.
+- **Export notes** as `.txt`, `.md` or `.csv`.
+- **Export clip**: cut a passage out of a note as an `.mp4`. A text file with the source, passage, edition, tag, note and citation is saved beside it.
 
-**⚙️ Settings**
+## Backups
 
-* Custom library path
-* TMDB API key support
-* Saves your preferences
+- An automatic backup is saved each time the app starts. The 10 most recent are kept.
+- Restore any recent backup from Settings.
+- Export a full backup to a file, or import one, to move your library to another machine.
+- Backups include movies, ratings, collections and settings.
 
----
+## Requirements
 
-If anything breaks, it’s haunted. I didn’t do it. 👻
-We have a Discord and a Tumblr
+- Windows 10 or 11, 64-bit.
+- WebView2 runtime (the installer handles it).
+- MakeMKV, only for playing discs (the installer handles it).
+- ffmpeg, for audio and video conversion, subtitle extraction, and clip export. The app looks for `ffmpeg.exe` next to PubHorror or on your PATH.
+- A TMDB API key, only for auto-fill and trailers.
+
+## Building
+
+1. Run `build.bat`. This produces `dist\PubHorror\`.
+2. Put `MicrosoftEdgeWebview2Setup.exe` and `MakeMKV_setup.exe` next to `PubHorror.iss`.
+3. Compile `PubHorror.iss` with Inno Setup. The output is `PubHorror_Setup_<version>.exe`.
+
+## Disclaimer
+
+PubHorror reads and rips discs you own, for your own use. Check the laws where you live before doing so. Clip export is meant for criticism, comment and scholarship, and the source record it writes next to each clip is there to support that.
