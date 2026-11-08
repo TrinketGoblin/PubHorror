@@ -3,7 +3,7 @@
 ; Output: PubHorror_Setup_<version>.exe in the project root.
 
 #define MyAppName      "PubHorror"
-#define MyAppVersion   "1.0.5"
+#define MyAppVersion   "1.0.6"
 #define MyAppExeName   "PubHorror.exe"
 
 ; Paths in Inno are relative to this script. Detect where it was placed.
@@ -56,6 +56,12 @@ Source: "{#Src}MicrosoftEdgeWebview2Setup.exe"; DestDir: "{tmp}"; Flags: deletea
 ; MakeMKV installer (disc ripping), only extracted if MakeMKV is missing. Put the official
 ; installer next to this script and name it MakeMKV_setup.exe.
 Source: "{#Src}MakeMKV_setup.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall; Check: not MakeMKVInstalled
+; ffmpeg + ffprobe, installed next to PubHorror.exe where the app looks for them first.
+; Needed for disc playback, audio conversion, subtitle extraction and clip export.
+; Put ffmpeg.exe and ffprobe.exe in an "ffmpeg" folder next to this script, with the build's LICENSE.
+Source: "{#Src}ffmpeg\ffmpeg.exe";  DestDir: "{app}"; Flags: ignoreversion
+Source: "{#Src}ffmpeg\ffprobe.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#Src}ffmpeg\LICENSE.txt"; DestDir: "{app}\licenses"; DestName: "ffmpeg-LICENSE.txt"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"

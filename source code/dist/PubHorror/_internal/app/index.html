@@ -504,7 +504,10 @@ video {
 }
 
 #player-sidebar {
-    width: 300px;
+    position: relative;
+    width: clamp(380px, 32vw, 560px);
+    min-width: 300px;
+    max-width: 75vw;
     background: var(--bg-main);
     border-left: 2px solid var(--border);
     display: flex;
@@ -512,6 +515,36 @@ video {
     padding: 20px;
     box-sizing: border-box;
 }
+
+#sub-wrap { position: relative; }
+#btn-subs { font-size: 14px; padding: 8px 12px; }
+#btn-subs.active { background: var(--accent); color: #fff; }
+#sub-menu {
+    display: none; position: absolute; right: 0; bottom: calc(100% + 10px);
+    min-width: 280px; max-width: 420px; max-height: 60vh; overflow-y: auto;
+    background: var(--bg-main); border: 1px solid var(--accent); border-radius: 6px;
+    padding: 8px; z-index: 50; flex-direction: column; gap: 4px;
+    font-family: OpenDyslexic, sans-serif; font-size: 13px; color: var(--text-main);
+    box-shadow: 0 0 20px rgba(0,0,0,0.8);
+}
+#sub-menu.open { display: flex; }
+#sub-menu .sub-item { padding: 6px 8px; cursor: pointer; border: 1px solid transparent; border-radius: 3px; }
+#sub-menu .sub-item:hover { border-color: var(--accent); }
+#sub-menu .sub-item.on { color: var(--highlight); font-weight: bold; }
+#sub-menu .sub-item.off-item { opacity: 0.45; cursor: default; }
+#sub-menu .sub-row { display: flex; align-items: center; gap: 6px; padding: 4px 8px; }
+#sub-menu .sub-row button { margin: 0; padding: 3px 9px; font-size: 12px; }
+#sub-menu .sub-sep { border-top: 1px solid var(--border); margin: 4px 0; }
+#sidebar-resizer {
+    position: absolute;
+    left: -5px; top: 0; bottom: 0;
+    width: 10px;
+    cursor: col-resize;
+    z-index: 5;
+    touch-action: none;
+}
+#sidebar-resizer:hover, #sidebar-resizer.dragging { background: var(--accent); opacity: 0.5; }
+#notes-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
 
 #player-sidebar h3 {
     color: var(--accent);
@@ -559,6 +592,36 @@ video {
     font-family: OpenDyslexic, sans-serif;
     resize: none;
 }
+
+.note-tag {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 1px 7px;
+    font-size: 11px;
+    font-weight: normal;
+    border: 1px solid var(--accent);
+    color: var(--highlight);
+    border-radius: 10px;
+}
+.note-actions { margin-top: 6px; display: flex; gap: 6px; }
+.note-actions button { font-size: 11px; padding: 2px 8px; margin: 0; }
+#note-meta-row { display: flex; gap: 8px; align-items: center; }
+#note-tag { flex: 1; min-width: 0; background: var(--bg-main); border: 1px solid var(--border); color: var(--highlight); padding: 6px 8px; font-family: OpenDyslexic, sans-serif; font-size: 13px; }
+#note-in-btn { margin: 0; font-size: 12px; padding: 6px 8px; white-space: nowrap; }
+#note-in-btn.armed { background: var(--accent); color: #fff; border-color: var(--highlight); }
+#note-tools-row { display: flex; gap: 6px; align-items: center; font-size: 12px; }
+#note-tools-row select { background: var(--bg-input); border: 1px solid var(--border); color: var(--highlight); font-size: 12px; padding: 3px; font-family: OpenDyslexic, sans-serif; }
+.edition-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.edition-row input { flex: 1; min-width: 120px; }
+#annot-modal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.95); display: none;
+    justify-content: center; align-items: center; z-index: 3000;
+}
+#annot-results { max-height: 380px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.annot-hit { background: var(--bg-input); border: 1px solid var(--border); padding: 8px 10px; cursor: pointer; font-size: 14px; }
+.annot-hit:hover { border-color: var(--accent); }
+.annot-hit .ah-head { color: var(--glow); font-weight: bold; margin-bottom: 4px; }
 
 .close {
     margin-top: 20px;
@@ -1108,6 +1171,7 @@ video {
         <button class="icon-btn" onclick="showStats()" title="Library stats">📊 Stats</button>
         <button class="icon-btn" onclick="rescanAll()" title="Re-scan all series folders">🔄 Rescan</button>
         <button class="icon-btn" onclick="showCollections()" title="Manage collections">📚 Collections</button>
+        <button class="icon-btn" onclick="showAnnotations()" title="Search every note across your library">🔎 Annotations</button>
 
         <div class="opt-separator" style="height: 20px; width: 1px; background: var(--border); margin: 0 4px;"></div>
 
@@ -1223,6 +1287,10 @@ video {
                     <button class="control-btn" id="btn-mute" onclick="toggleMute()">🔊</button>
                     <input type="range" id="volume-slider" min="0" max="100" value="100" oninput="changeVolume()">
                 </div>
+                <div id="sub-wrap">
+                    <button class="control-btn" id="btn-subs" onclick="toggleSubMenu(event)" title="Subtitles (C)">CC</button>
+                    <div id="sub-menu"></div>
+                </div>
                 <button class="control-btn" onclick="toggleFullscreen()">⛶</button>
             </div>
         </div>
@@ -1241,13 +1309,34 @@ video {
         </div>
     </div>
     <div id="player-sidebar">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div id="sidebar-resizer" title="Drag to resize the notes panel (double-click to reset)"></div>
+        <div id="notes-header">
             <h3>Notes</h3>
-            <button onclick="exportNotes()" style="font-size: 12px; margin-top:0;">📤 Export</button>
+            <div id="note-tools-row">
+                <select id="cite-style" title="Citation style" onchange="saveCiteStyle()">
+                    <option value="chicago">Chicago</option>
+                    <option value="mla">MLA</option>
+                </select>
+                <select id="export-format" title="Export format">
+                    <option value="txt">.txt</option>
+                    <option value="md">.md</option>
+                    <option value="csv">.csv</option>
+                </select>
+                <button onclick="exportNotes()" style="font-size: 12px; margin-top:0;">📤 Export</button>
+            </div>
         </div>
         <div id="notes-list"></div>
         <div id="note-input-container">
             <textarea id="note-input" placeholder="Type a note..."></textarea>
+            <div id="note-meta-row">
+                <input id="note-tag" list="note-tag-list" placeholder="Tag (e.g. sound, theme)">
+                <datalist id="note-tag-list">
+                    <option value="cinematography"><option value="sound"><option value="score">
+                    <option value="editing"><option value="performance"><option value="theme">
+                    <option value="symbolism"><option value="production design"><option value="continuity"><option value="context">
+                </datalist>
+                <button id="note-in-btn" onclick="toggleNoteIn()" title="Mark the start of a passage, then Add Note at the end">⏱ In</button>
+            </div>
             <div style="display:flex; gap:8px;">
                 <button onclick="addTimestampedNote()" style="flex:1;">Add Note</button>
                 <button onclick="addJumpScareBookmark()" title="Mark Jump Scare" style="background:var(--bg-input); border-color:var(--accent); font-size:18px; padding:6px 10px; margin-top:10px;">💀</button>
@@ -1357,6 +1446,22 @@ video {
                 <input id="edit-cast" placeholder="Cast (comma separated)">
                 <input id="edit-categories" placeholder="Categories (comma separated)">
                 <input id="edit-content-warnings" placeholder="Content warnings e.g. Gore, Flashing Lights, Animal Death">
+                <div style="font-size:0.8em; color:var(--text-main); opacity:0.7; margin-top:4px;">Edition (which version did you watch?):</div>
+                <div class="edition-row">
+                    <input id="edit-ed-cut" placeholder="Cut / version e.g. Director's Cut">
+                    <input id="edit-ed-aspect" placeholder="Aspect ratio e.g. 1.85:1">
+                    <input id="edit-ed-release" placeholder="Release / restoration e.g. 2018 4K restoration">
+                    <input id="edit-ed-region" placeholder="Region e.g. R1, UK">
+                    <input id="edit-ed-format" placeholder="Format e.g. Blu-ray, DVD, file">
+                </div>
+                <div style="font-size:0.8em; color:var(--text-main); opacity:0.7; margin-top:4px;">Scholarly record:</div>
+                <div class="edition-row">
+                    <input id="edit-studio" placeholder="Studio / production company">
+                    <input id="edit-country" placeholder="Country of origin">
+                    <input id="edit-wikidata" placeholder="Wikidata ID e.g. Q123">
+                    <input id="edit-imdb" placeholder="IMDb ID e.g. tt0051554">
+                </div>
+                <button type="button" onclick="fetchWikidata()" style="margin-top:6px;">🏛 Look up on Wikidata</button>
                 <textarea id="edit-desc" placeholder="Description" rows="3"></textarea>
                 <textarea id="edit-notes" placeholder="Notes" rows="2"></textarea>
                 <div style="font-size:0.8em; color:var(--text-main); opacity:0.7; margin-top:4px;">Collections:</div>
@@ -1397,6 +1502,21 @@ video {
         </div>
         <div class="modal-actions" style="margin-top:16px;">
             <button onclick="closeCollections()">Done</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Annotation Search Modal ────────────────────────── -->
+<div id="annot-modal">
+    <div class="modal-content" style="width:min(640px, 92vw);">
+        <h2>🔎 Annotations</h2>
+        <div style="display:flex; gap:8px;">
+            <input id="annot-q" placeholder="Search notes, titles, tags…" oninput="renderAnnotations()" style="flex:1;">
+            <select id="annot-tag" onchange="renderAnnotations()"><option value="">All tags</option></select>
+        </div>
+        <div id="annot-results"></div>
+        <div class="modal-actions" style="margin-top:16px;">
+            <button onclick="closeAnnotations()">Close</button>
         </div>
     </div>
 </div>
@@ -1588,7 +1708,7 @@ async function renderContinueWatching() {
         // Poster
         if (movie.poster) {
             const img = document.createElement("img");
-            img.src = movie.poster;
+            img.src = posterSrc(movie.poster);
             img.style.cssText = "width:100%;aspect-ratio:2/3;object-fit:cover;display:block;border:1px solid var(--border);";
             card.appendChild(img);
         } else {
@@ -1820,7 +1940,7 @@ function renderMovies() {
 
         if (movie.poster) {
             const img = document.createElement("img");
-            img.src = movie.poster;
+            img.src = posterSrc(movie.poster);
             img.alt = movie.title;
             img.style.cssText = "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;";
             img.onerror = () => img.remove();
@@ -2029,6 +2149,10 @@ function loadAndPlay(url, savedTime) {
 
         function onMetadata() {
             if (myToken !== _loadToken) { cleanup(); return resolve(); }
+            if (video.videoWidth === 0) {
+                showToast("⚠ Audio loads but the video track can't be decoded (unsupported codec, likely old MPEG-2). Press play again to convert it.", 8000);
+                if (playingMovieObj) playingMovieObj._fixTried = false;
+            }
             
             if (savedTime && savedTime > 5) {
                 video.currentTime = savedTime;
@@ -2076,7 +2200,31 @@ async function playMovie(movie) {
     // Discs: play the ripped copy if we have one, otherwise rip first
     if (movie.source_type === "dvd" &&
         !(movie.ripped_file && await pywebview.api.check_file_exists(movie.ripped_file))) {
+        // A rip/conversion may already be running for this disc: just wait for it
+        const cur = await pywebview.api.get_rip_status(movie.id);
+        if (cur.state === "running" || cur.state === "converting") {
+            showToast("⏳ Still working on " + movie.title + "…", 3000);
+            pollRip(movie);
+            return;
+        }
+        // Already ripped earlier but conversion failed/never finished: convert it, don't re-rip
+        const raw = await pywebview.api.find_raw_rip(movie.disc_id || movie.title);
+        if (raw) {
+            const r = await pywebview.api.start_audio_fix(movie.id, raw);
+            if (!r.success) { showToast("⚠ " + r.error, 5000); return; }
+            showToast("🎞 Converting the saved rip (no disc needed)…", 4000);
+            pollRip(movie);
+            return;
+        }
         await ripAndPlayDisc(movie);
+        return;
+    }
+    if (movie.source_type === "dvd" && movie.ripped_file && !movie._fixTried &&
+        await pywebview.api.needs_audio_fix(movie.ripped_file)) {
+        movie._fixTried = true;
+        const r = await pywebview.api.start_audio_fix(movie.id, movie.ripped_file);
+        if (r.success) { pollRip(movie); return; }
+        showToast("⚠ " + r.error, 5000);
         return;
     }
     const playPath = (movie.source_type === "dvd" && movie.ripped_file) ? movie.ripped_file : movie.file;
@@ -2091,7 +2239,8 @@ async function playMovie(movie) {
     const progress = await pywebview.api.get_progress();
     const savedTime = progress[movie.id];
 
-    await loadAndPlay(toFileUrl(playPath), savedTime);
+    await loadAndPlay(toFileUrl(await resolvePlayPath(playPath)), savedTime);
+    initSubtitles();
 
     if (savedTime && savedTime > 5) {
         showToast(`⏯ Resumed at ${Math.floor(savedTime / 60)}:${String(Math.floor(savedTime % 60)).padStart(2, '0')}`);
@@ -2185,23 +2334,34 @@ async function ripAndPlayDisc(movie) {
     const res = await pywebview.api.start_rip(movie.id, drive.path, drive.label);
     if (!res.success) { showToast("⚠ " + res.error, 5000); return; }
 
-    const poll = setInterval(async () => {
+    pollRip(movie);
+}
+
+const _ripPollers = {};
+function pollRip(movie) {
+    if (_ripPollers[movie.id]) return;          // already polling this one
+    const poll = _ripPollers[movie.id] = setInterval(async () => {
+        const stop = () => { clearInterval(poll); delete _ripPollers[movie.id]; };
         const s = await pywebview.api.get_rip_status(movie.id);
         if (s.state === "running") {
             showToast(`💿 Ripping ${movie.title}… ${s.percent}%`, 2500);
+        } else if (s.state === "converting") {
+            showToast(`🎞 Converting for playback: ${movie.title}… ${s.percent}%`, 2500);
         } else if (s.state === "done") {
-            clearInterval(poll);
+            stop();
             movie.ripped_file = s.output;
+            movie._fixTried = true;
             await pywebview.api.update_movie(movie);
-            showToast("✅ Rip complete!");
+            showToast(s.warning ? "⚠ " + s.warning : "✅ Rip complete!", s.warning ? 7000 : 3000);
             await init();
             playMovie(movie);
         } else if (s.state === "error") {
-            clearInterval(poll);
+            stop();
             showToast("⚠ " + s.error, 6000);
-        } else {
-            clearInterval(poll);
+        } else if (s.state === "idle") {
+            stop();
         }
+        // any other state: keep polling instead of silently giving up
     }, 2000);
 }
 
@@ -2376,7 +2536,8 @@ async function playEpisode(movie, episode) {
     const progress = await pywebview.api.get_progress();
     const savedTime = progress[episodeId];
 
-    await loadAndPlay(toFileUrl(episode.path), savedTime);
+    await loadAndPlay(toFileUrl(await resolvePlayPath(episode.path)), savedTime);
+    initSubtitles();
 
     if (savedTime && savedTime > 5) {
         showToast(`⏯ Resumed at ${Math.floor(savedTime / 60)}:${String(Math.floor(savedTime % 60)).padStart(2, '0')}`);
@@ -2454,8 +2615,34 @@ function closePlayer() {
 }
 
 // ── File URL helper ─────────────────────────────────────────
+// On macOS/Linux the app serves media over a local http address (window.__MEDIA_BASE, set by main.py)
+function mediaUrl(p) {
+    if (!p) return '';
+    if (/^https?:/i.test(p)) return p;
+    if (/^file:/i.test(p)) {
+        const rest = decodeURIComponent(p.replace(/^file:\/\/\/?/i, ''));
+        p = /^[A-Za-z]:/.test(rest) ? rest : '/' + rest.replace(/^\/+/, '');
+    }
+    return window.__MEDIA_BASE + encodeURIComponent(p);
+}
+function posterSrc(p) {
+    return (window.__MEDIA_BASE && p && /^file:/i.test(p)) ? mediaUrl(p) : p;
+}
+
+// Converts files Safari's engine can't play (MKV, AC3...) once, then reuses the result. No-op on Windows.
+async function resolvePlayPath(path) {
+    if (!window.__MEDIA_BASE) return path;
+    const timer = setTimeout(() => showToast("🎞 Preparing this file for playback… the first time can take a few minutes.", 15000), 1500);
+    try {
+        const r = await pywebview.api.prepare_for_web(path);
+        if (!r || !r.success) { showToast("⚠ " + ((r && r.error) || "Couldn't prepare the file."), 7000); return path; }
+        return r.path;
+    } finally { clearTimeout(timer); }
+}
+
 function toFileUrl(path) {
     if (!path) return '';
+    if (window.__MEDIA_BASE) return mediaUrl(path);
     if (/^(file:|https?:)/.test(path)) return path;
     const normalized = path.replace(/\\/g, '/');
     const segments = normalized.split('/');
@@ -2693,27 +2880,122 @@ async function importBackup() {
 }
 
 // ── Notes ───────────────────────────────────────────────
+// Resizable notes panel: drag the left edge; width is remembered
+(function initSidebarResize() {
+    function setup() {
+        const sb = document.getElementById("player-sidebar");
+        const handle = document.getElementById("sidebar-resizer");
+        if (!sb || !handle) return;
+        const clamp = w => Math.max(300, Math.min(w, Math.floor(window.innerWidth * 0.75)));
+        try {
+            const saved = parseInt(localStorage.getItem("ph_sidebar_w"), 10);
+            if (saved) sb.style.width = clamp(saved) + "px";
+        } catch (e) {}
+        handle.addEventListener("pointerdown", e => {
+            e.preventDefault();
+            handle.setPointerCapture(e.pointerId);
+            handle.classList.add("dragging");
+            const move = ev => { sb.style.width = clamp(window.innerWidth - ev.clientX) + "px"; };
+            const up = () => {
+                handle.classList.remove("dragging");
+                handle.removeEventListener("pointermove", move);
+                handle.removeEventListener("pointerup", up);
+                try { localStorage.setItem("ph_sidebar_w", parseInt(sb.style.width, 10)); } catch (e) {}
+            };
+            handle.addEventListener("pointermove", move);
+            handle.addEventListener("pointerup", up);
+        });
+        handle.addEventListener("dblclick", () => {
+            sb.style.width = "";
+            try { localStorage.removeItem("ph_sidebar_w"); } catch (e) {}
+        });
+    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", setup);
+    else setup();
+})();
+
+let noteInTime = null;
+
+function escHtml(t) {
+    return String(t == null ? "" : t).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+function fmtTime(t) {
+    t = Math.max(0, Math.floor(t || 0));
+    const h = Math.floor(t / 3600), m = Math.floor((t % 3600) / 60), sec = t % 60;
+    return h > 0
+        ? `${h}:${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`
+        : `${m}:${String(sec).padStart(2, "0")}`;
+}
+
+function noteSpan(n) {
+    return (n.end != null && n.end > n.time) ? `${fmtTime(n.time)} – ${fmtTime(n.end)}` : fmtTime(n.time);
+}
+
+// Returns the live notes array for whatever is playing (creates it if asked).
+function currentNotesArray(create) {
+    if (!playingMovieObj) return [];
+    const colonIndex = (playingMovieId || "").indexOf(":");
+    if (colonIndex !== -1) {
+        const path = playingMovieId.substring(colonIndex + 1);
+        if (create) {
+            if (!playingMovieObj.episode_notes) playingMovieObj.episode_notes = {};
+            if (!playingMovieObj.episode_notes[path]) playingMovieObj.episode_notes[path] = [];
+        }
+        return (playingMovieObj.episode_notes || {})[path] || [];
+    }
+    if (create && !playingMovieObj.timestamped_notes) playingMovieObj.timestamped_notes = [];
+    return playingMovieObj.timestamped_notes || [];
+}
+
+function loadCiteStyle() {
+    try {
+        const v = localStorage.getItem("ph_cite_style");
+        if (v) document.getElementById("cite-style").value = v;
+    } catch (e) {}
+}
+function saveCiteStyle() {
+    try { localStorage.setItem("ph_cite_style", document.getElementById("cite-style").value); } catch (e) {}
+}
+
+function toggleNoteIn() {
+    const btn = document.getElementById("note-in-btn");
+    if (noteInTime === null) {
+        noteInTime = document.getElementById("video").currentTime;
+        btn.classList.add("armed");
+        btn.textContent = "⏱ In " + fmtTime(noteInTime);
+    } else {
+        noteInTime = null;
+        btn.classList.remove("armed");
+        btn.textContent = "⏱ In";
+    }
+}
+
 function renderNotes() {
     const notesList = document.getElementById("notes-list");
     if (!notesList) return;
     notesList.innerHTML = "";
-
     if (!playingMovieObj) return;
+    loadCiteStyle();
 
-    let notes = [];
-    const colonIndex = (playingMovieId || "").indexOf(":");
-    if (colonIndex !== -1) {
-        const path = playingMovieId.substring(colonIndex + 1);
-        notes = (playingMovieObj.episode_notes || {})[path] || [];
-    } else {
-        notes = playingMovieObj.timestamped_notes || [];
-    }
-
+    const notes = currentNotesArray(false);
     notes.sort((a, b) => a.time - b.time).forEach((note, idx) => {
+        const tag = note.tag || (note.isJumpScare ? "jump scare" : "");
         const noteItem = document.createElement("div");
         noteItem.className = "note-item";
-        noteItem.innerHTML = `<div class="note-time">${Math.floor(note.time / 60)}:${String(Math.floor(note.time % 60)).padStart(2, '0')}</div><div>${note.text}</div>`;
+        noteItem.innerHTML =
+            `<div class="note-time">${noteSpan(note)}${tag ? `<span class="note-tag">${escHtml(tag)}</span>` : ""}</div>` +
+            `<div>${escHtml(note.text)}</div>` +
+            `<div class="note-actions"><button class="cite-btn">📋 Cite</button><button class="clip-btn" title="Export this passage as a short clip (10 s from the note if it has no end point)">✂ Clip</button></div>`;
         noteItem.onclick = () => { document.getElementById("video").currentTime = note.time; };
+        noteItem.querySelector(".cite-btn").onclick = (e) => {
+            e.stopPropagation();
+            copyText(buildCitation(playingMovieObj, playingMovieId, note));
+        };
+        noteItem.querySelector(".clip-btn").onclick = (e) => {
+            e.stopPropagation();
+            exportClip(note);
+        };
         noteItem.oncontextmenu = (e) => {
             e.preventDefault();
             if (confirm("Delete this note?")) {
@@ -2732,46 +3014,437 @@ async function addTimestampedNote() {
     const video = document.getElementById("video");
     const text = document.getElementById("note-input").value.trim();
     if (!text) return;
+    const tag = document.getElementById("note-tag").value.trim().toLowerCase();
 
-    const note = { time: video.currentTime, text, isJumpScare: false };
-
-    const colonIndex = playingMovieId.indexOf(":");
-    if (colonIndex !== -1) {
-        const path = playingMovieId.substring(colonIndex + 1);
-        if (!playingMovieObj.episode_notes) playingMovieObj.episode_notes = {};
-        if (!playingMovieObj.episode_notes[path]) playingMovieObj.episode_notes[path] = [];
-        playingMovieObj.episode_notes[path].push(note);
-    } else {
-        if (!playingMovieObj.timestamped_notes) playingMovieObj.timestamped_notes = [];
-        playingMovieObj.timestamped_notes.push(note);
+    const now = video.currentTime;
+    const note = { time: now, text, isJumpScare: false };
+    if (tag) note.tag = tag;
+    if (noteInTime !== null && noteInTime < now) {
+        note.time = noteInTime;
+        note.end = now;
     }
 
+    currentNotesArray(true).push(note);
     await pywebview.api.update_movie(playingMovieObj);
     renderNotes();
     document.getElementById("note-input").value = "";
+    if (noteInTime !== null) toggleNoteIn();
     showToast("✅ Note added!");
+}
+
+// ── Editions & citations ────────────────────────────────
+function editionString(m) {
+    return [m.edition_cut, m.edition_aspect, m.edition_release,
+            m.edition_region ? "region " + m.edition_region : "", m.edition_format]
+        .filter(Boolean).join(", ");
+}
+
+function buildCitation(m, noteMovieId, note) {
+    const style = (document.getElementById("cite-style") || {}).value || "chicago";
+    const colon = (noteMovieId || "").indexOf(":");
+    const epPath = colon !== -1 ? noteMovieId.substring(colon + 1) : "";
+    const epName = epPath ? epPath.split(/[\\/]/).pop() : "";
+    const ed = editionString(m);
+    const ts = fmtTime(note.time);
+    const title = `*${m.title}*` + (epName ? ` (${epName})` : "");
+    const dir = m.director ? `directed by ${m.director}` : "";
+    const year = m.year ? String(m.year) : "";
+    if (style === "mla") {
+        // *Title*. Directed by X, Studio, Year. Edition, timestamp.
+        let out = title + ".";
+        if (dir || year || m.studio) out += " " + [dir ? "Directed by " + m.director : "", m.studio, year].filter(Boolean).join(", ") + ".";
+        if (ed) out += " " + ed + ",";
+        out += (ed ? " " : " ") + ts + ".";
+        return out;
+    }
+    // Chicago notes style: *Title*, directed by X (Year), edition, timestamp.
+    let out = title;
+    if (dir) out += ", " + dir;
+    if (year || m.studio) out += " (" + [m.studio, year].filter(Boolean).join(", ") + ")";
+    if (ed) out += ", " + ed;
+    out += ", " + ts + ".";
+    return out;
+}
+
+function copyText(text) {
+    const done = () => showToast("📋 Citation copied");
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+    } else {
+        fallbackCopy(text, done);
+    }
+}
+function fallbackCopy(text, done) {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); done(); } catch (e) { showToast("⚠ Couldn't copy, select it manually: " + text, 6000); }
+    document.body.removeChild(ta);
 }
 
 async function exportNotes() {
     if (!playingMovieObj) return;
-    let notes = [];
-    const colonIndex = (playingMovieId || "").indexOf(":");
-    if (colonIndex !== -1) {
-        const path = playingMovieId.substring(colonIndex + 1);
-        notes = (playingMovieObj.episode_notes || {})[path] || [];
+    const notes = currentNotesArray(false).slice().sort((a, b) => a.time - b.time);
+    const fmt = (document.getElementById("export-format") || {}).value || "txt";
+    const m = playingMovieObj;
+    const ed = editionString(m);
+    let content = "";
+
+    if (fmt === "csv") {
+        const q = v => `"${String(v == null ? "" : v).replace(/"/g, '""')}"`;
+        content = "start,end,tag,note,citation\n" + notes.map(n =>
+            [fmtTime(n.time), n.end != null ? fmtTime(n.end) : "", n.tag || (n.isJumpScare ? "jump scare" : ""),
+             n.text, buildCitation(m, playingMovieId, n)].map(q).join(",")).join("\n") + "\n";
+    } else if (fmt === "md") {
+        content = `# ${m.title}${m.year ? " (" + m.year + ")" : ""}\n\n`;
+        if (m.director) content += `**Director:** ${m.director}  \n`;
+        if (ed) content += `**Edition:** ${ed}  \n`;
+        content += `\n## Annotations\n\n`;
+        notes.forEach(n => {
+            const tag = n.tag || (n.isJumpScare ? "jump scare" : "");
+            content += `- **[${noteSpan(n)}]**${tag ? " _" + tag + "_" : ""} ${n.text}\n  - ${buildCitation(m, playingMovieId, n)}\n`;
+        });
     } else {
-        notes = playingMovieObj.timestamped_notes || [];
+        content = `Notes for ${m.title}${m.year ? " (" + m.year + ")" : ""}\n`;
+        if (ed) content += `Edition: ${ed}\n`;
+        content += "\n";
+        notes.forEach(n => {
+            const tag = n.tag || (n.isJumpScare ? "jump scare" : "");
+            content += `[${noteSpan(n)}]${tag ? " (" + tag + ")" : ""} ${n.text}\n`;
+        });
     }
 
-    let content = `Notes for ${playingMovieObj.title}\n\n`;
-    notes.sort((a, b) => a.time - b.time).forEach(note => {
-        content += `[${Math.floor(note.time / 60)}:${String(Math.floor(note.time % 60)).padStart(2, '0')}] ${note.text}\n`;
+    const result = await pywebview.api.export_notes(m.title, content, fmt);
+    if (result && result.success) showToast("✅ Notes exported!");
+}
+
+// ── Subtitles ───────────────────────────────────────────
+let subTextTrack = null;
+let subTracks = [];
+let subActive = -1;
+let subCueObjs = [];      // [{cue, s, e}] so sync shifts keep original timings
+let subDelay = 0;
+let _subToken = 0;
+let subSize = 3.4;        // % of screen height
+try { subSize = parseFloat(localStorage.getItem("ph_sub_size")) || 3.4; } catch (e) {}
+
+function applySubStyle() {
+    let st = document.getElementById("sub-style");
+    if (!st) { st = document.createElement("style"); st.id = "sub-style"; document.head.appendChild(st); }
+    st.textContent = `video::cue { font-size: ${subSize}vh; background: rgba(0,0,0,0.78); color: #fff; font-family: OpenDyslexic, sans-serif; line-height: 1.3; }`;
+}
+
+function subTrackObj() {
+    const video = document.getElementById("video");
+    if (!subTextTrack) subTextTrack = video.addTextTrack("subtitles", "Subtitles", "und");
+    return subTextTrack;
+}
+
+function subClearCues() {
+    const t = subTrackObj();
+    t.mode = "hidden";                    // cues list is null while disabled
+    Array.from(t.cues || []).forEach(c => t.removeCue(c));
+    subCueObjs = [];
+}
+
+function updateSubButton() {
+    const b = document.getElementById("btn-subs");
+    if (b) b.classList.toggle("active", subActive >= 0);
+}
+
+async function initSubtitles() {
+    const tok = ++_subToken;
+    applySubStyle();
+    subTracks = []; subActive = -1; subDelay = 0;
+    subClearCues();
+    subTrackObj().mode = "disabled";
+    updateSubButton();
+    closeSubMenu();
+    if (!playingMovieObj) return;
+    const r = await pywebview.api.list_subtitles(playingSourcePath());
+    if (tok !== _subToken || !r || !r.success) return;
+    subTracks = r.tracks || [];
+    if (!subTracks.length) return;
+    let last = null;
+    try { last = localStorage.getItem("ph_sub_last"); } catch (e) {}
+    if (last && last !== "off") {
+        const i = subTracks.findIndex(t => t.supported && t.lang === last);
+        if (i >= 0) { await selectSubtitle(i, true); return; }
+    } else if (!last) {
+        showToast(`💬 ${subTracks.length} subtitle track${subTracks.length > 1 ? "s" : ""} found. Press C or use the CC button.`, 4500);
+    }
+}
+
+async function selectSubtitle(i, quiet) {
+    closeSubMenu();
+    const tok = ++_subToken;
+    if (i < 0) {
+        subClearCues();
+        subTrackObj().mode = "disabled";
+        subActive = -1;
+        try { localStorage.setItem("ph_sub_last", "off"); } catch (e) {}
+        updateSubButton();
+        return;
+    }
+    const track = subTracks[i];
+    if (!track || !track.supported) { showToast("⚠ That track is image-based (DVD/Blu-ray style) and can't be shown yet."); return; }
+    if (!quiet) showToast("💬 Loading subtitles…", 2500);
+    const r = await pywebview.api.get_subtitle_cues(playingSourcePath(), track);
+    if (tok !== _subToken) return;
+    if (!r || !r.success) { showToast("⚠ " + ((r && r.error) || "Couldn't load subtitles."), 6000); return; }
+    const t = subTrackObj();
+    subClearCues();
+    r.cues.forEach(([s, e, text]) => {
+        try {
+            const cue = new VTTCue(s, e, text);
+            t.addCue(cue);
+            subCueObjs.push({ cue, s, e });
+        } catch (err) {}
     });
+    subDelay = 0;
+    t.mode = "showing";
+    subActive = i;
+    try { localStorage.setItem("ph_sub_last", track.lang || "on"); } catch (e) {}
+    updateSubButton();
+    if (!quiet) showToast("💬 " + track.label, 2500);
+}
 
-    const result = await pywebview.api.export_notes(playingMovieObj.title, content);
-    if (result && result.success) {
-        showToast("✅ Notes exported!");
+function adjustSubDelay(d) {
+    subDelay = d === 0 ? 0 : Math.round((subDelay + d) * 10) / 10;
+    subCueObjs.forEach(o => {
+        o.cue.startTime = Math.max(0, o.s + subDelay);
+        o.cue.endTime = Math.max(o.cue.startTime + 0.05, o.e + subDelay);
+    });
+    renderSubMenu();
+}
+
+function adjustSubSize(d) {
+    subSize = Math.min(8, Math.max(1.8, Math.round((subSize + d) * 10) / 10));
+    try { localStorage.setItem("ph_sub_size", String(subSize)); } catch (e) {}
+    applySubStyle();
+    renderSubMenu();
+}
+
+async function loadSubtitleFile() {
+    closeSubMenu();
+    const r = await pywebview.api.pick_subtitle_file();
+    if (!r || !r.success) return;
+    subTracks.push(r.track);
+    await selectSubtitle(subTracks.length - 1);
+}
+
+function toggleSubsKey() {
+    if (subActive >= 0) { selectSubtitle(-1); showToast("💬 Subtitles off", 1500); return; }
+    const i = subTracks.findIndex(t => t.supported);
+    if (i >= 0) selectSubtitle(i);
+    else showToast("No subtitles found. Use the CC button to load a file.", 3500);
+}
+
+function closeSubMenu() {
+    const m = document.getElementById("sub-menu");
+    if (m) m.classList.remove("open");
+}
+
+function toggleSubMenu(ev) {
+    if (ev) ev.stopPropagation();
+    const m = document.getElementById("sub-menu");
+    if (m.classList.contains("open")) { closeSubMenu(); return; }
+    renderSubMenu();
+    m.classList.add("open");
+}
+
+function renderSubMenu() {
+    const m = document.getElementById("sub-menu");
+    if (!m) return;
+    m.innerHTML = "";
+    const item = (text, cls, onclick) => {
+        const d = document.createElement("div");
+        d.className = "sub-item " + (cls || "");
+        d.textContent = text;
+        if (onclick) d.onclick = onclick;
+        m.appendChild(d);
+    };
+    item((subActive < 0 ? "✓ " : "") + "Off", subActive < 0 ? "on" : "", () => selectSubtitle(-1));
+    subTracks.forEach((t, i) => item((i === subActive ? "✓ " : "") + t.label,
+        (i === subActive ? "on " : "") + (t.supported ? "" : "off-item"), t.supported ? () => selectSubtitle(i) : null));
+    item("📂 Load subtitle file…", "", loadSubtitleFile);
+    const sep = document.createElement("div"); sep.className = "sub-sep"; m.appendChild(sep);
+
+    const row = (label, controls) => {
+        const r = document.createElement("div"); r.className = "sub-row";
+        const l = document.createElement("span"); l.textContent = label; l.style.flex = "1";
+        r.appendChild(l);
+        controls.forEach(([txt, fn]) => { const b = document.createElement("button"); b.type = "button"; b.textContent = txt; b.onclick = (e) => { e.stopPropagation(); fn(); }; r.appendChild(b); });
+        m.appendChild(r);
+    };
+    row(`Size ${subSize.toFixed(1)}`, [["A−", () => adjustSubSize(-0.4)], ["A+", () => adjustSubSize(0.4)]]);
+    row(`Sync ${subDelay > 0 ? "+" : ""}${subDelay.toFixed(1)}s`, [["−0.5s", () => adjustSubDelay(-0.5)], ["+0.5s", () => adjustSubDelay(0.5)], ["Reset", () => adjustSubDelay(0)]]);
+}
+
+document.addEventListener("click", (e) => {
+    const wrap = document.getElementById("sub-wrap");
+    if (wrap && !wrap.contains(e.target)) closeSubMenu();
+});
+
+// ── Clip export ─────────────────────────────────────────
+function playingSourcePath() {
+    const m = playingMovieObj;
+    const c = (playingMovieId || "").indexOf(":");
+    if (c !== -1) return playingMovieId.substring(c + 1);
+    return (m.source_type === "dvd" && m.ripped_file) ? m.ripped_file : m.file;
+}
+
+async function exportClip(note) {
+    if (!playingMovieObj) return;
+    const video = document.getElementById("video");
+    const start = note.time;
+    let end = (note.end != null && note.end > note.time) ? note.end : note.time + 10;
+    if (video.duration && end > video.duration) end = video.duration;
+    if (end <= start) { showToast("⚠ Nothing to clip from that point."); return; }
+
+    showToast(`✂ Cutting ${fmtTime(start)} – ${fmtTime(end)}… pick where to save it.`, 4000);
+    const res = await pywebview.api.export_clip({
+        source_path: playingSourcePath(),
+        start, end,
+        title: playingMovieObj.title,
+        tag: note.tag || (note.isJumpScare ? "jump scare" : ""),
+        note: note.text || "",
+        citation: buildCitation(playingMovieObj, playingMovieId, note),
+        edition: editionString(playingMovieObj)
+    });
+    if (res && res.success) showToast("✅ Clip saved (with a source record beside it)!", 4000);
+    else if (res && res.cancelled) showToast("Clip cancelled.");
+    else showToast("⚠ " + ((res && res.error) || "Clip export failed."), 7000);
+}
+
+// Small in-page chooser (resolves to the chosen index, or null if cancelled)
+function pickFromList(title, labels) {
+    return new Promise(resolve => {
+        const wrap = document.createElement("div");
+        wrap.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9000;display:flex;align-items:center;justify-content:center;";
+        const box = document.createElement("div");
+        box.style.cssText = "background:var(--bg-main);border:1px solid var(--accent);padding:18px;max-width:min(560px,92vw);display:flex;flex-direction:column;gap:8px;font-family:OpenDyslexic,sans-serif;color:var(--text-main);";
+        const h = document.createElement("div");
+        h.textContent = title; h.style.cssText = "font-weight:bold;color:var(--highlight);margin-bottom:4px;";
+        box.appendChild(h);
+        const done = v => { document.body.removeChild(wrap); resolve(v); };
+        labels.forEach((t, i) => {
+            const b = document.createElement("button");
+            b.type = "button"; b.textContent = t; b.style.textAlign = "left"; b.style.margin = "0";
+            b.onclick = () => done(i);
+            box.appendChild(b);
+        });
+        const c = document.createElement("button");
+        c.type = "button"; c.textContent = "Cancel"; c.style.margin = "6px 0 0"; c.onclick = () => done(null);
+        box.appendChild(c);
+        wrap.appendChild(box);
+        document.body.appendChild(wrap);
+    });
+}
+
+// ── Wikidata lookup (scholarly metadata) ────────────────
+async function fetchWikidata() {
+    if (!editingMovie) return;
+    const title = document.getElementById("edit-title").value.trim();
+    const year = parseInt(document.getElementById("edit-year").value, 10) || 0;
+    if (!title) { showToast("Enter a title first."); return; }
+
+    showToast("🏛 Searching Wikidata…");
+    const res = await pywebview.api.search_wikidata(title, year);
+    if (!Array.isArray(res)) { showToast("⚠ Wikidata lookup failed: " + ((res && res.error) || "unknown error"), 6000); return; }
+    if (!res.length) { showToast("No film matches found on Wikidata."); return; }
+
+    const top = res.slice(0, 6);
+    const idx = await pickFromList("Which film is it?", top.map(c =>
+        `${c.title}${c.year ? " (" + c.year + ")" : ""}${c.director ? ", dir. " + c.director : ""}`));
+    if (idx === null) return;
+    const chosen = top[idx];
+
+    const info = await pywebview.api.fetch_wikidata_info(chosen.id);
+    if (!info || info.error) { showToast("⚠ " + ((info && info.error) || "Couldn't load that record."), 6000); return; }
+
+    document.getElementById("edit-wikidata").value = info.wikidata_id || "";
+    if (info.imdb_id) document.getElementById("edit-imdb").value = info.imdb_id;
+    if (info.studio) document.getElementById("edit-studio").value = info.studio;
+    if (info.country) document.getElementById("edit-country").value = info.country;
+    if (info.director && !document.getElementById("edit-director").value.trim())
+        document.getElementById("edit-director").value = info.director;
+    if (info.year && !document.getElementById("edit-year").value)
+        document.getElementById("edit-year").value = info.year;
+    showToast("✅ Filled from Wikidata. Check it over, then Save.", 4000);
+}
+
+// ── Library-wide annotation search ──────────────────────
+function collectAllNotes() {
+    const out = [];
+    movies.forEach(m => {
+        (m.timestamped_notes || []).forEach(n => out.push({ m, n, path: "" }));
+        Object.entries(m.episode_notes || {}).forEach(([path, arr]) =>
+            (arr || []).forEach(n => out.push({ m, n, path })));
+    });
+    return out;
+}
+
+function showAnnotations() {
+    const all = collectAllNotes();
+    const tags = [...new Set(all.map(x => x.n.tag || (x.n.isJumpScare ? "jump scare" : "")).filter(Boolean))].sort();
+    const sel = document.getElementById("annot-tag");
+    sel.innerHTML = '<option value="">All tags</option>' + tags.map(t => `<option value="${escHtml(t)}">${escHtml(t)}</option>`).join("");
+    document.getElementById("annot-modal").style.display = "flex";
+    document.getElementById("annot-q").value = "";
+    renderAnnotations();
+    document.getElementById("annot-q").focus();
+}
+
+function closeAnnotations() {
+    document.getElementById("annot-modal").style.display = "none";
+}
+
+function renderAnnotations() {
+    const q = document.getElementById("annot-q").value.toLowerCase().trim();
+    const tagF = document.getElementById("annot-tag").value;
+    const box = document.getElementById("annot-results");
+    const hits = collectAllNotes().filter(({ m, n }) => {
+        const tag = n.tag || (n.isJumpScare ? "jump scare" : "");
+        if (tagF && tag !== tagF) return false;
+        if (!q) return true;
+        return (n.text || "").toLowerCase().includes(q) || tag.includes(q) || (m.title || "").toLowerCase().includes(q);
+    }).sort((a, b) => (a.m.title || "").localeCompare(b.m.title || "") || a.n.time - b.n.time);
+
+    box.innerHTML = "";
+    if (!hits.length) {
+        box.innerHTML = '<div style="opacity:0.5; text-align:center; padding:20px;">No annotations found.</div>';
+        return;
     }
+    hits.slice(0, 200).forEach(({ m, n, path }) => {
+        const tag = n.tag || (n.isJumpScare ? "jump scare" : "");
+        const el = document.createElement("div");
+        el.className = "annot-hit";
+        el.innerHTML = `<div class="ah-head">${escHtml(m.title)}${m.year ? " (" + m.year + ")" : ""} · ${noteSpan(n)}${tag ? `<span class="note-tag">${escHtml(tag)}</span>` : ""}</div><div>${escHtml(n.text)}</div>`;
+        el.onclick = () => openAnnotation(m, path, n.time);
+        box.appendChild(el);
+    });
+    if (hits.length > 200) {
+        const more = document.createElement("div");
+        more.style.cssText = "opacity:0.5; text-align:center;";
+        more.textContent = `Showing 200 of ${hits.length}. Narrow your search to see the rest.`;
+        box.appendChild(more);
+    }
+}
+
+async function openAnnotation(m, path, time) {
+    closeAnnotations();
+    if (path) {
+        const ep = (m.episodes || []).find(e => e.path === path);
+        if (!ep) { showToast("⚠ Couldn't find that episode file."); return; }
+        await playEpisode(m, ep);
+    } else {
+        await playMovie(m);
+    }
+    const v = document.getElementById("video");
+    if (v && document.getElementById("player").style.display === "flex") v.currentTime = time;
 }
 
 // ── Editor ──────────────────────────────────────────────
@@ -2787,6 +3460,15 @@ function openEditor(movie) {
     document.getElementById("edit-desc").value = movie.desc || "";
     document.getElementById("edit-notes").value = movie.notes || "";
     document.getElementById("edit-content-warnings").value = (movie.content_warnings || []).join(", ");
+    document.getElementById("edit-ed-cut").value = movie.edition_cut || "";
+    document.getElementById("edit-ed-aspect").value = movie.edition_aspect || "";
+    document.getElementById("edit-ed-release").value = movie.edition_release || "";
+    document.getElementById("edit-ed-region").value = movie.edition_region || "";
+    document.getElementById("edit-ed-format").value = movie.edition_format || "";
+    document.getElementById("edit-studio").value = movie.studio || "";
+    document.getElementById("edit-country").value = movie.country || "";
+    document.getElementById("edit-wikidata").value = movie.wikidata_id || "";
+    document.getElementById("edit-imdb").value = movie.imdb_id || "";
 
     // Populate collection checkboxes
     const wrap = document.getElementById("edit-collections-wrap");
@@ -2818,7 +3500,7 @@ function openEditor(movie) {
     posterDiv.innerHTML = "";
     if (movie.poster) {
         const img = document.createElement("img");
-        img.src = movie.poster;
+        img.src = posterSrc(movie.poster);
         img.style.width = "100%";
         img.style.height = "100%";
         img.style.objectFit = "cover";
@@ -2843,6 +3525,15 @@ async function saveMovie() {
     editingMovie.desc = document.getElementById("edit-desc").value;
     editingMovie.notes = document.getElementById("edit-notes").value;
     editingMovie.content_warnings = document.getElementById("edit-content-warnings").value.split(",").map(s => s.trim()).filter(Boolean);
+    editingMovie.edition_cut = document.getElementById("edit-ed-cut").value.trim();
+    editingMovie.edition_aspect = document.getElementById("edit-ed-aspect").value.trim();
+    editingMovie.edition_release = document.getElementById("edit-ed-release").value.trim();
+    editingMovie.edition_region = document.getElementById("edit-ed-region").value.trim();
+    editingMovie.edition_format = document.getElementById("edit-ed-format").value.trim();
+    editingMovie.studio = document.getElementById("edit-studio").value.trim();
+    editingMovie.country = document.getElementById("edit-country").value.trim();
+    editingMovie.wikidata_id = document.getElementById("edit-wikidata").value.trim();
+    editingMovie.imdb_id = document.getElementById("edit-imdb").value.trim();
 
     if (editingMovie.source_type === "series") {
         editingMovie.episodes = await pywebview.api.list_episodes(editingMovie.file);
@@ -2965,7 +3656,7 @@ async function changePoster() {
         editingMovie.poster = result.poster_path;
         await pywebview.api.update_movie(editingMovie);
         const posterDiv = document.getElementById("edit-poster");
-        posterDiv.innerHTML = `<img src="${result.poster_path}" style="width:100%; height:100%; object-fit:cover;">`;
+        posterDiv.innerHTML = `<img src="${posterSrc(result.poster_path)}" style="width:100%; height:100%; object-fit:cover;">`;
         showToast("✅ Poster updated!");
     } else {
         showToast("⚠ Failed to save poster.");
@@ -2978,9 +3669,53 @@ async function selectPoster(url) {
     if (result && result.success) {
         editingMovie.poster = result.poster_path;
         const posterDiv = document.getElementById("edit-poster");
-        posterDiv.innerHTML = `<img src="${result.poster_path}" style="width:100%; height:100%; object-fit:cover;">`;
+        posterDiv.innerHTML = `<img src="${posterSrc(result.poster_path)}" style="width:100%; height:100%; object-fit:cover;">`;
         showToast("✅ Poster updated!");
     }
+}
+
+function pickTmdbMatch(cands) {
+    return new Promise(function(resolve) {
+        const back = document.createElement("div");
+        back.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:99999;display:flex;align-items:center;justify-content:center;";
+        const box = document.createElement("div");
+        box.style.cssText = "background:#111;color:#eee;border:1px solid var(--accent,#c00);border-radius:8px;width:min(640px,92vw);max-height:80vh;overflow:auto;padding:14px;";
+        const head = document.createElement("div");
+        head.textContent = "Which one is it?";
+        head.style.cssText = "font-weight:bold;margin-bottom:10px;";
+        box.appendChild(head);
+        function done(v) { back.remove(); resolve(v); }
+        cands.forEach(function(c) {
+            const row = document.createElement("div");
+            row.style.cssText = "display:flex;gap:10px;padding:8px;border-radius:6px;cursor:pointer;border-bottom:1px solid #333;";
+            row.onmouseenter = () => row.style.background = "#222";
+            row.onmouseleave = () => row.style.background = "";
+            if (c.thumb) {
+                const img = document.createElement("img");
+                img.src = c.thumb; img.style.cssText = "width:46px;height:69px;object-fit:cover;border-radius:3px;flex:none;";
+                row.appendChild(img);
+            }
+            const t = document.createElement("div");
+            const name = document.createElement("div");
+            name.textContent = c.title + (c.year ? " (" + c.year + ")" : "");
+            name.style.fontWeight = "bold";
+            const ov = document.createElement("div");
+            ov.textContent = c.overview;
+            ov.style.cssText = "font-size:.8em;opacity:.7;margin-top:2px;";
+            t.appendChild(name); t.appendChild(ov);
+            row.appendChild(t);
+            row.onclick = () => done(c);
+            box.appendChild(row);
+        });
+        const cancel = document.createElement("button");
+        cancel.textContent = "Cancel";
+        cancel.style.cssText = "margin-top:10px;";
+        cancel.onclick = () => done(null);
+        box.appendChild(cancel);
+        back.onclick = (e) => { if (e.target === back) done(null); };
+        back.appendChild(box);
+        document.body.appendChild(back);
+    });
 }
 
 async function autoFillMovieInfo(event) {
@@ -2992,18 +3727,32 @@ async function autoFillMovieInfo(event) {
         return;
     }
 
-    const title = document.getElementById("edit-title").value;
-    const year = document.getElementById("edit-year").value;
+    let title = document.getElementById("edit-title").value.trim();
+    let year = document.getElementById("edit-year").value;
     if (!title) {
         showToast("⚠ Enter a title first.");
         return;
     }
+    // Allow "Aladdin (1992)" in the title box
+    const ym = title.match(/^(.*?)\s*\((\d{4})\)\s*$/);
+    if (ym) { title = ym[1]; year = ym[2]; }
 
     const sourceType = document.getElementById("edit-source-type").value;
-    showToast("🎬 Fetching info…");
-    const info = await pywebview.api.fetch_tmdb_info(title, year, apiKey, sourceType);
-    if (!info) {
+    showToast("🎬 Searching TMDB…");
+    const cands = await pywebview.api.search_tmdb(title, year, apiKey, sourceType);
+    if (!cands || cands.length === 0) {
         showToast("⚠ No results found.");
+        return;
+    }
+    // Skip the picker only when the year is given and exactly one result matches it
+    const exact = year ? cands.filter(c => String(c.year) === String(year)) : [];
+    const chosen = (exact.length === 1) ? exact[0] : await pickTmdbMatch(cands);
+    if (!chosen) return;
+
+    showToast("🎬 Fetching info…");
+    const info = await pywebview.api.fetch_tmdb_info(title, year, apiKey, sourceType, chosen.id);
+    if (!info) {
+        showToast("⚠ Couldn't load that entry.");
         return;
     }
 
@@ -3290,6 +4039,11 @@ document.addEventListener("keydown", (e) => {
             e.preventDefault();
             toggleMute();
             break;
+        case "c":
+        case "C":
+            e.preventDefault();
+            toggleSubsKey();
+            break;
         case "ArrowRight":
             e.preventDefault();
             skipForward();
@@ -3378,7 +4132,7 @@ function renderSkullsOnScrubber() {
 async function addJumpScareBookmark() {
     if (!playingMovieObj) return;
     const video = document.getElementById("video");
-    const note = { time: video.currentTime, text: "💀 Jump Scare", isJumpScare: true };
+    const note = { time: video.currentTime, text: "💀 Jump Scare", isJumpScare: true, tag: "jump scare" };
 
     const colonIndex = playingMovieId.indexOf(":");
     if (colonIndex !== -1) {
