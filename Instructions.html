@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PubHorror | Local Media Manager</title>
-    
+
     <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
     <style>
         @font-face {
@@ -19,7 +19,7 @@
             --highlight: #ff4d4d;
             --discord: #5865F2;
             --text: #e0e0e0;
-            --lh: 2.1; 
+            --lh: 2.1;
             --ls: 0.06rem;
         }
 
@@ -56,7 +56,7 @@
         }
 
         .content-wrapper {
-            padding-top: 140px; 
+            padding-top: 140px;
             max-width: 850px;
             margin: 0 auto;
             padding-left: 20px;
@@ -70,6 +70,16 @@
             padding: 35px;
             margin-bottom: 40px;
             box-shadow: 0 0 30px rgba(139, 0, 0, 0.3);
+        }
+
+        .version-tag {
+            display: inline-block;
+            border: 1px solid var(--accent);
+            border-radius: 20px;
+            padding: 2px 16px;
+            font-size: 0.85rem;
+            color: var(--highlight);
+            margin-bottom: 10px;
         }
 
         .disclaimer-box {
@@ -101,6 +111,32 @@
 
         ul { padding-left: 20px; margin: 0; }
         li { margin-bottom: 20px; }
+        li:last-child { margin-bottom: 0; }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-grid h3 {
+            color: var(--highlight);
+            font-size: 1.1rem;
+            margin: 0 0 8px 0;
+        }
+
+        .feature-grid p {
+            margin: 0;
+            font-size: 0.95rem;
+            line-height: 1.9;
+        }
+
+        .note {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 20px;
+            margin-bottom: 0;
+        }
 
         .button-group {
             display: flex;
@@ -123,6 +159,7 @@
             border: 2px solid transparent;
         }
 
+        .btn-download { background: var(--accent); border-color: var(--highlight); }
         .btn-github { background: #24292e; border-color: #444; }
         .btn-discord { background: var(--discord); border-color: #7289da; }
 
@@ -131,11 +168,20 @@
             filter: brightness(1.2);
         }
 
+        .btn-top {
+            margin-top: 20px;
+        }
+
         footer {
             text-align: center;
             padding-bottom: 40px;
             font-size: 0.8rem;
             opacity: 0.5;
+        }
+
+        @media (max-width: 600px) {
+            .card { padding: 25px; }
+            .intro-card { padding: 25px; }
         }
     </style>
 </head>
@@ -146,54 +192,123 @@
 </header>
 
 <div class="content-wrapper">
-    
+
     <div class="intro-card">
+        <span class="version-tag">Version 1.0.5 · The Scholar Update</span>
         <p>
-            PubHorror is a program built to watch home movies <strong>entirely locally</strong>! 
-            While it features a horror aesthetic, it is designed for <strong>any and all media</strong>—not just horror. 
-            Rate your films, watch entire series, and mark jump scares to your heart's content.
-        </p>
-        
-        <p style="color: var(--highlight); margin-top: 15px;">
-            Check the Discord for the <strong>v1.1.0 - v1.9.0 Roadmap</strong>: 
-            Content warnings, Collections, and Watch Parties are coming soon!
+            PubHorror is a program built to watch home movies <strong>entirely locally</strong>!
+            While it features a horror aesthetic, it is designed for <strong>any and all media</strong>, not just horror.
+            Rate your films, watch entire series, play your own discs, and mark jump scares to your heart’s content.
+            If you write about film, the new notes tools are for you.
         </p>
 
+        <p style="color: var(--highlight); margin-top: 15px;">
+            Content warnings and Collections are out now. Check the Discord to see what’s coming next.
+        </p>
+
+        <a href="https://github.com/TrinketGoblin/PubHorror/releases/latest" class="btn btn-download btn-top">
+            Download for Windows
+        </a>
+
         <div class="disclaimer-box">
-            <strong>Legal Notice:</strong> This software is a personal organization tool. 
-            <strong>We do not encourage or condone piracy</strong> or any form of law-breaking. 
+            <strong>Legal Notice:</strong> This software is a personal organization tool.
+            <strong>We do not encourage or condone piracy</strong> or any form of law-breaking.
             Users are responsible for ensuring they have the legal right to the content they add to their library.
+            Only rip discs you own.
         </div>
     </div>
 
     <div class="card">
-        <h2>Step 1: Link Your Files</h2>
+        <h2>Step 1: Install</h2>
+        <ul>
+            <li>Download the installer from the latest release and run it. PubHorror installs for your user account, with no admin needed.</li>
+            <li>The installer also sets up the Edge WebView2 runtime and <strong>MakeMKV</strong> if you don’t have them. Windows will ask for permission when MakeMKV installs.</li>
+            <li>MakeMKV has its own license. Open it once after install and enter your registration key if you plan to play discs.</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Step 2: Link Your Files</h2>
         <ul>
             <li>Open <strong>Settings (⚙️)</strong> and click <strong>Set Library Path</strong>.</li>
             <li>Select the folder containing your media files (Movies, TV Shows, or Home Videos).</li>
-            <li>Add a TMDB API Key in settings to enable automatic metadata and trailer fetching.</li>
+            <li>Add a free TMDB API key in settings to enable automatic metadata, posters, and trailers.</li>
         </ul>
     </div>
 
     <div class="card">
-        <h2>Step 2: Scan & Import</h2>
+        <h2>Step 3: Scan &amp; Import</h2>
         <ul>
             <li>Click the <strong>Plus (+)</strong> icon to begin adding media.</li>
-            <li>Use <strong>Import Folder</strong> to automatically index your directory.</li>
-            <li>Supported formats include <code>.mp4</code>, <code>.mkv</code>, <code>.avi</code>, <code>.mov</code>, and <code>.ac3</code>.</li>
+            <li>Use <strong>Import Folder</strong> to automatically index your directory, or add a single movie, a series folder, or a disc.</li>
+            <li>Supported formats include <code>.mp4</code>, <code>.mkv</code>, <code>.avi</code>, <code>.mov</code>, and <code>.ac3</code>. Audio and video your player can’t handle are converted for you.</li>
+            <li>Series pick up their episodes automatically, track progress per episode, and offer an Up Next countdown.</li>
         </ul>
     </div>
 
     <div class="card">
-        <h2>Step 3: Track & Personalize</h2>
+        <h2>Step 4: Play Your Discs</h2>
+        <ul>
+            <li>Click <strong>Add Disc</strong> and pick the drive. DVDs and Blu-rays are both detected.</li>
+            <li>The first time you play a disc title, PubHorror rips it with MakeMKV. Expect 15 to 40 minutes.</li>
+            <li>After that, the movie plays from your library without the disc in the drive.</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Step 5: Track &amp; Personalize</h2>
         <ul>
             <li>Mark <strong>Jump Scares</strong> and take time-stamped notes on your films.</li>
+            <li>Sort movies into your own <strong>Collections</strong>, and set <strong>Content Warnings</strong> that show before a movie plays.</li>
             <li>Adjust the <strong>Font Size Slider</strong> for the best viewing experience.</li>
-            <li>Switch between <strong>Horror</strong>, <strong>Midnight</strong>, and <strong>Forest</strong> themes.</li>
+            <li>Switch between <strong>Horror</strong>, <strong>Midnight</strong>, <strong>Forest</strong>, and <strong>Classic</strong> themes, or build your own colors.</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>For Film Writers &amp; Students</h2>
+        <div class="feature-grid">
+            <div>
+                <h3>Tagged notes</h3>
+                <p>Tag notes as cinematography, sound, score, editing, theme, and more, or type your own tags. Mark a start and end to note a whole passage.</p>
+            </div>
+            <div>
+                <h3>Search every note</h3>
+                <p>Search all of your annotations across the whole library by text, title, or tag.</p>
+            </div>
+            <div>
+                <h3>Citations</h3>
+                <p>Turn a note into a Chicago or MLA citation that includes the director, studio, year, edition, and timestamp.</p>
+            </div>
+            <div>
+                <h3>Edition details</h3>
+                <p>Record which cut, aspect ratio, release, region, and format you watched.</p>
+            </div>
+            <div>
+                <h3>Export notes</h3>
+                <p>Save your notes as <code>.txt</code>, <code>.md</code>, or <code>.csv</code>.</p>
+            </div>
+            <div>
+                <h3>Export clips</h3>
+                <p>Cut a noted passage out as an <code>.mp4</code>. A source file with the film, passage, edition, and citation is saved next to it.</p>
+            </div>
+        </div>
+        <p class="note">Clip export needs ffmpeg. Put <code>ffmpeg.exe</code> next to PubHorror or add it to your PATH.</p>
+    </div>
+
+    <div class="card">
+        <h2>Your Library Stays Safe</h2>
+        <ul>
+            <li>PubHorror saves a backup every time it starts and keeps the 10 most recent.</li>
+            <li>Export a full backup to a file, or import one to move your library to another computer.</li>
+            <li>Everything runs on your machine. Nothing about your library is uploaded anywhere.</li>
         </ul>
     </div>
 
     <div class="button-group">
+        <a href="https://github.com/TrinketGoblin/PubHorror/releases/latest" class="btn btn-download">
+            Download
+        </a>
         <a href="https://github.com/TrinketGoblin/PubHorror/tree/main" class="btn btn-github">
             Source Code
         </a>
