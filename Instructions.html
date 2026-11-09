@@ -179,9 +179,98 @@
             opacity: 0.5;
         }
 
+        .btn-itch { background: #fa5c5c; border-color: #ff8a8a; }
+
+        a { color: var(--highlight); }
+
+        h3 { color: var(--highlight); font-size: 1.15rem; margin: 30px 0 10px 0; }
+        h3:first-of-type { margin-top: 0; }
+
+        ol { padding-left: 24px; margin: 0; }
+        ol li { margin-bottom: 14px; }
+
+        code, kbd {
+            font-family: Consolas, monospace;
+            letter-spacing: 0;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid #440000;
+            border-radius: 5px;
+            padding: 1px 7px;
+            font-size: 0.9em;
+            word-break: break-word;
+        }
+
+        kbd { border-bottom-width: 3px; color: #fff; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 10px 12px;
+            border-bottom: 1px solid #330000;
+            vertical-align: top;
+        }
+
+        th { color: var(--highlight); border-bottom: 2px solid var(--accent); }
+
+        .table-wrap { overflow-x: auto; }
+
+        .tip {
+            background: rgba(139, 0, 0, 0.15);
+            border-left: 4px solid var(--accent);
+            border-radius: 6px;
+            padding: 15px 20px;
+            margin-top: 25px;
+            font-size: 0.92rem;
+        }
+
+        nav.toc {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+
+        nav.toc a {
+            border: 1px solid var(--accent);
+            border-radius: 20px;
+            padding: 4px 14px;
+            font-size: 0.85rem;
+            text-decoration: none;
+        }
+
+        nav.toc a:hover { background: var(--accent); color: #fff; }
+
+        details {
+            border: 1px solid #330000;
+            border-radius: 8px;
+            padding: 12px 18px;
+            margin-bottom: 14px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        details[open] { border-color: var(--accent); }
+
+        summary {
+            cursor: pointer;
+            font-weight: bold;
+            color: var(--highlight);
+        }
+
+        details > *:not(summary) { margin-top: 12px; }
+
+        [id] { scroll-margin-top: 130px; }
+
         @media (max-width: 600px) {
             .card { padding: 25px; }
             .intro-card { padding: 25px; }
+            th, td { padding: 8px 6px; }
         }
     </style>
 </head>
@@ -194,122 +283,353 @@
 <div class="content-wrapper">
 
     <div class="intro-card">
-        <span class="version-tag">Version 1.0.5 · The Scholar Update</span>
+        <span class="version-tag">Version 1.0.7 · User Guide</span>
         <p>
-            PubHorror is a program built to watch home movies <strong>entirely locally</strong>!
-            While it features a horror aesthetic, it is designed for <strong>any and all media</strong>, not just horror.
-            Rate your films, watch entire series, play your own discs, and mark jump scares to your heart’s content.
-            If you write about film, the new notes tools are for you.
+            PubHorror is a library for the movies and shows you own, and it runs <strong>entirely on your own computer</strong>.
+            It has a horror look, but it works for <strong>any kind of media</strong>.
+            You can rate your films, watch whole series, play your own discs, mark jump scares, and take proper notes if you write about film.
         </p>
 
-        <p style="color: var(--highlight); margin-top: 15px;">
-            Content warnings and Collections are out now. Check the Discord to see what’s coming next.
+        <p>
+            This guide goes from installing all the way to fixing problems. The links under this box take you straight to each section.
         </p>
 
-        <a href="https://github.com/TrinketGoblin/PubHorror/releases/latest" class="btn btn-download btn-top">
+        <a href="https://trinketgoblin.itch.io/pubhorror" class="btn btn-download btn-top">
             Download for Windows
         </a>
 
         <div class="disclaimer-box">
-            <strong>Legal Notice:</strong> This software is a personal organization tool.
+            <strong>Legal Notice:</strong> PubHorror is a personal organization tool.
             <strong>We do not encourage or condone piracy</strong> or any form of law-breaking.
-            Users are responsible for ensuring they have the legal right to the content they add to their library.
+            You are responsible for having the legal right to the content in your library.
             Only rip discs you own.
         </div>
     </div>
 
-    <div class="card">
-        <h2>Step 1: Install</h2>
+    <nav class="toc">
+        <a href="#install">Install</a>
+        <a href="#adding">Adding movies</a>
+        <a href="#metadata">Details &amp; posters</a>
+        <a href="#watching">Watching</a>
+        <a href="#shortcuts">Shortcuts</a>
+        <a href="#series">Series</a>
+        <a href="#subtitles">Subtitles</a>
+        <a href="#discs">Discs</a>
+        <a href="#organizing">Organizing</a>
+        <a href="#notes">Notes &amp; research</a>
+        <a href="#backups">Backups</a>
+        <a href="#privacy">Privacy &amp; files</a>
+        <a href="#faq">Troubleshooting</a>
+        <a href="#support">Support</a>
+    </nav>
+
+    <div class="card" id="install">
+        <h2>1. Install</h2>
+        <ol>
+            <li>Download <code>PubHorror_Setup_1.0.7.exe</code> from <a href="https://trinketgoblin.itch.io/pubhorror">itch.io</a> or <a href="https://github.com/TrinketGoblin/PubHorror/releases/latest">GitHub</a>.</li>
+            <li>Run it. PubHorror installs just for your Windows account. It doesn't need admin rights.</li>
+            <li>If your computer is missing the Edge WebView2 runtime, the installer adds it. ffmpeg, which handles video conversion, comes included.</li>
+            <li>On the last screen, tick <strong>Launch PubHorror</strong> and you're in.</li>
+        </ol>
+
+        <h3>Want to play DVDs or Blu-rays?</h3>
+        <p>
+            You'll also need <strong>MakeMKV</strong>. It doesn't come with PubHorror, so you download it yourself from
+            <a href="https://www.makemkv.com/download/">makemkv.com</a>. If it's missing, the installer shows a checkbox that opens that page.
+            PubHorror also offers the link the first time you try to play a disc.
+            Install it in the default location. DVD ripping is free. Blu-ray needs a MakeMKV key once its trial runs out.
+        </p>
+
+        <div class="tip">
+            <strong>Upgrading?</strong> Run the new installer over the old one. Your library, notes and posters are kept.<br>
+            <strong>Uninstalling?</strong> Your <code>data</code>, <code>library</code> and <code>posters</code> folders are left behind on purpose so you can't lose your library by accident. Delete them yourself if you want everything gone.
+        </div>
+    </div>
+
+    <div class="card" id="adding">
+        <h2>2. Add Your Movies</h2>
+        <p>Click <strong>＋</strong> in the toolbar. You get four options:</p>
+        <div class="table-wrap">
+        <table>
+            <tr><th>Option</th><th>Use it for</th></tr>
+            <tr><td>🎬 <strong>Add Movie</strong></td><td>A single movie. A blank entry opens. Browse to the video file, then fill in the details by hand or with TMDB auto-fill.</td></tr>
+            <tr><td>📺 <strong>Add Series</strong></td><td>A TV show. Pick its folder and the episodes are found for you.</td></tr>
+            <tr><td>📁 <strong>Import Folder</strong></td><td>Lots of movies at once. Every video in the folder becomes its own entry.</td></tr>
+            <tr><td>💿 <strong>Add Disc…</strong></td><td>A DVD or Blu-ray in your drive. See <a href="#discs">Discs</a>.</td></tr>
+        </table>
+        </div>
+        <p class="note">
+            Works with <code>.mp4</code> <code>.mkv</code> <code>.avi</code> <code>.mov</code> <code>.webm</code> <code>.m4v</code> <code>.m4a</code> <code>.wav</code> <code>.ac3</code>.
+            Your files stay where they are. PubHorror only remembers where they live.
+        </p>
+
+        <h3>Source types</h3>
+        <p>Each title is one of these: <strong>File</strong> (a video on your computer), <strong>DVD</strong> (a disc), <strong>Series</strong> (a folder of episodes), or <strong>Wishlist</strong> (something you want but don't own yet).</p>
+    </div>
+
+    <div class="card" id="metadata">
+        <h2>3. Details, Posters &amp; Trailers</h2>
+        <p>To edit a title, click its <strong>✏</strong> button or right-click its poster.</p>
         <ul>
-            <li>Download the installer from the latest release and run it. PubHorror installs for your user account, with no admin needed.</li>
-            <li>The installer sets up the Edge WebView2 runtime if you don’t have it, and includes ffmpeg.</li>
-            <li>To play discs you also need <strong>MakeMKV</strong>, which you download yourself from <a href="https://www.makemkv.com/download/">makemkv.com</a>. The installer and the app both offer to open that page. Ripping DVDs with it is free; Blu-ray needs a MakeMKV key.</li>
+            <li><strong>🎬 Auto-fill TMDB</strong> looks the movie up and fills in the title, year, director, cast, genres, description and poster. If several films match, you pick the right one. It works straight away. If it ever stops working, get your own free key at <a href="https://www.themoviedb.org/settings/api">themoviedb.org</a> and paste it into <strong>⚙️ Settings</strong>.</li>
+            <li><strong>🏛 Look up on Wikidata</strong> adds the studio, country of origin, Wikidata ID and IMDb ID. Your citations use these.</li>
+            <li><strong>Upload Poster</strong> lets you use your own poster image instead.</li>
+            <li><strong>Edition</strong> records which version you watched: the cut, aspect ratio, release or restoration, region and format.</li>
+            <li><strong>Content warnings</strong>: type them separated by commas, like <em>Gore, Flashing Lights, Animal Death</em>. A warning screen with <strong>Play Anyway</strong> and <strong>Cancel</strong> shows up before the movie plays.</li>
+            <li><strong>Trailers</strong> play inside the app whenever TMDB has one listed.</li>
         </ul>
     </div>
 
-    <div class="card">
-        <h2>Step 2: Link Your Files</h2>
+    <div class="card" id="watching">
+        <h2>4. Watching</h2>
         <ul>
-            <li>Open <strong>Settings (⚙️)</strong> and click <strong>Set Library Path</strong>.</li>
-            <li>Select the folder containing your media files (Movies, TV Shows, or Home Videos).</li>
-            <li>Add a free TMDB API key in settings to enable automatic metadata, posters, and trailers.</li>
+            <li>Click a poster to play it. A series opens with its episode list next to the player, at the episode you were last on. If you stop partway, the <strong>🎬 Resume</strong> button in the toolbar takes you back to that spot.</li>
+            <li>Watched and in-progress status updates on its own as you watch.</li>
+            <li>Volume is remembered between sessions.</li>
+            <li>Some formats, like AC3 or DTS audio and DVD video, won't play in the player as they are. PubHorror converts them for you the first time you press play. This can take a few minutes on a long movie, but it only happens once per file.</li>
         </ul>
     </div>
 
-    <div class="card">
-        <h2>Step 3: Scan &amp; Import</h2>
+    <div class="card" id="shortcuts">
+        <h2>Keyboard Shortcuts</h2>
+        <p>These work while the player is open, as long as you aren't typing in a box.</p>
+        <div class="table-wrap">
+        <table>
+            <tr><th>Key</th><th>Does</th></tr>
+            <tr><td><kbd>Space</kbd> or <kbd>K</kbd></td><td>Play / pause</td></tr>
+            <tr><td><kbd>→</kbd></td><td>Forward 10 seconds</td></tr>
+            <tr><td><kbd>←</kbd></td><td>Back 10 seconds</td></tr>
+            <tr><td><kbd>↑</kbd></td><td>Volume up</td></tr>
+            <tr><td><kbd>↓</kbd></td><td>Volume down</td></tr>
+            <tr><td><kbd>M</kbd></td><td>Mute</td></tr>
+            <tr><td><kbd>F</kbd></td><td>Fullscreen</td></tr>
+            <tr><td><kbd>C</kbd></td><td>Subtitles on/off</td></tr>
+            <tr><td><kbd>Esc</kbd></td><td>Leave fullscreen, or close the player</td></tr>
+        </table>
+        </div>
+    </div>
+
+    <div class="card" id="series">
+        <h2>5. Series</h2>
         <ul>
-            <li>Click the <strong>Plus (+)</strong> icon to begin adding media.</li>
-            <li>Use <strong>Import Folder</strong> to automatically index your directory, or add a single movie, a series folder, or a disc.</li>
-            <li>Supported formats include <code>.mp4</code>, <code>.mkv</code>, <code>.avi</code>, <code>.mov</code>, and <code>.ac3</code>. Audio and video your player can’t handle are converted for you.</li>
-            <li>Series pick up their episodes automatically, track progress per episode, and offer an Up Next countdown.</li>
+            <li>Point <strong>Add Series</strong> at the show's folder. Episodes are sorted for you, and season folders named like <code>Season 1</code>, <code>S01</code> or <code>Series 2</code> are recognized.</li>
+            <li>Every episode has its own progress bar and watched tick.</li>
+            <li>When an episode ends, an <strong>Up next</strong> countdown starts. Hit <strong>▶ Play Now</strong> to skip the wait or <strong>✕ Cancel</strong> to stop there. There's also a <strong>Next ⏭</strong> button in the player.</li>
+            <li>Added new episodes to the folder? Click <strong>🔄 Rescan</strong> on the series' edit screen, or <strong>🔄 Rescan</strong> in the toolbar to update every series at once.</li>
         </ul>
     </div>
 
-    <div class="card">
-        <h2>Step 4: Play Your Discs</h2>
+    <div class="card" id="subtitles">
+        <h2>6. Subtitles</h2>
         <ul>
-            <li>Click <strong>Add Disc</strong> and pick the drive. DVDs and Blu-rays are both detected.</li>
-            <li>The first time you play a disc title, PubHorror rips it with MakeMKV. Expect 15 to 40 minutes.</li>
-            <li>After that, the movie plays from your library without the disc in the drive.</li>
+            <li>PubHorror finds subtitles built into the video, and subtitle files sitting next to it with the same name (<code>.srt</code>, <code>.vtt</code>, <code>.ass</code>, <code>.ssa</code>).</li>
+            <li>Click <strong>CC</strong> in the player to pick a track, or load a subtitle file yourself.</li>
+            <li>Out of sync? The <strong>Sync</strong> buttons in the CC menu move subtitles by half a second. If the words appear too late, press <strong>−0.5s</strong>.</li>
+            <li><strong>A−</strong> and <strong>A+</strong> change the text size. Your size is remembered.</li>
         </ul>
     </div>
 
-    <div class="card">
-        <h2>Step 5: Track &amp; Personalize</h2>
-        <ul>
-            <li>Mark <strong>Jump Scares</strong> and take time-stamped notes on your films.</li>
-            <li>Sort movies into your own <strong>Collections</strong>, and set <strong>Content Warnings</strong> that show before a movie plays.</li>
-            <li>Adjust the <strong>Font Size Slider</strong> for the best viewing experience.</li>
-            <li>Switch between <strong>Horror</strong>, <strong>Midnight</strong>, <strong>Forest</strong>, and <strong>Classic</strong> themes, or build your own colors.</li>
-        </ul>
+    <div class="card" id="discs">
+        <h2>7. Playing Discs</h2>
+        <p>The player can't play a disc directly, so the first time you play one, PubHorror makes a copy on your computer. After that, the disc can stay on the shelf.</p>
+        <ol>
+            <li>Make sure <a href="https://www.makemkv.com/download/">MakeMKV</a> is installed.</li>
+            <li>Put the disc in and choose <strong>＋ → 💿 Add Disc…</strong>. Pick the drive. Each drive shows whether it holds a DVD, a Blu-ray, or something PubHorror can't play.</li>
+            <li>Press play. PubHorror asks to rip the disc. Say yes.</li>
+            <li>Wait. A rip usually takes <strong>15 to 40 minutes</strong>, and then it converts for a little while longer. You can close the player while this runs.</li>
+            <li>When it finishes, the movie plays straight from your library, without the disc.</li>
+        </ol>
+        <div class="tip">
+            <strong>Low on space?</strong> A ripped DVD takes several GB. Rips are saved in <code>library\dvd_rips</code> inside the PubHorror folder.
+            To save them somewhere else, close PubHorror, open <code>data\config.json</code> in Notepad, and add a line like
+            <code>"dvd_rips_path": "D:/dvd_rips",</code> just after the opening <code>{</code>.
+        </div>
     </div>
 
-    <div class="card">
-        <h2>For Film Writers &amp; Students</h2>
+    <div class="card" id="organizing">
+        <h2>8. Organizing &amp; Personalizing</h2>
+        <ul>
+            <li><strong>Search</strong> finds titles, directors and cast.</li>
+            <li><strong>Filter</strong> by collection, by watch status (unwatched, watching, watched), by star rating, or by clicking the genre chips.</li>
+            <li><strong>Sort</strong> A→Z, Z→A, newest, oldest, top rated, or grouped by collection.</li>
+            <li><strong>Rate</strong> anything from 1 to 5 stars.</li>
+            <li><strong>📚 Collections</strong>: make your own lists (<em>Slashers</em>, <em>October 2026</em>, <em>Watched with friends</em>…). A movie can be in as many as you like. Choose collections for a movie on its edit screen.</li>
+            <li><strong>🎲 Random</strong> picks something for you when you can't decide.</li>
+            <li><strong>📊 Stats</strong> shows total titles, how many you've watched, your average rating and your top category.</li>
+            <li>The <strong>⊞</strong> slider resizes the posters and the <strong>A</strong> slider resizes the text.</li>
+            <li><strong>Themes</strong>: Horror, Midnight, Forest, Classic, or <strong>🎨 Custom</strong> with your own accent, highlight and background colors.</li>
+        </ul>
+        <p class="note">On a narrow window, some toolbar buttons move into the <strong>More ▾</strong> menu.</p>
+    </div>
+
+    <div class="card" id="notes">
+        <h2>9. Notes &amp; Research Tools</h2>
+        <p>Made for reviews, essays, coursework, or anyone who likes to take notes while they watch.</p>
         <div class="feature-grid">
             <div>
-                <h3>Tagged notes</h3>
-                <p>Tag notes as cinematography, sound, score, editing, theme, and more, or type your own tags. Mark a start and end to note a whole passage.</p>
+                <h3>Timestamped notes</h3>
+                <p>Type a note while watching and it's pinned to that moment. Notes on episodes stay with that episode.</p>
+            </div>
+            <div>
+                <h3>Tags</h3>
+                <p>Tag notes as cinematography, sound, score, editing, performance, theme, symbolism, production design, continuity or context. Or type your own.</p>
+            </div>
+            <div>
+                <h3>Passage notes</h3>
+                <p>Press <strong>⏱ In</strong> where a scene starts, then <strong>Add Note</strong> where it ends. The note covers the whole stretch.</p>
+            </div>
+            <div>
+                <h3>Jump scares</h3>
+                <p>Hit <strong>💀</strong> to mark one. A skull appears on the progress bar at each one.</p>
             </div>
             <div>
                 <h3>Search every note</h3>
-                <p>Search all of your annotations across the whole library by text, title, or tag.</p>
+                <p><strong>🔎 Annotations</strong> searches the notes across your whole library by text, title or tag.</p>
             </div>
             <div>
                 <h3>Citations</h3>
-                <p>Turn a note into a Chicago or MLA citation that includes the director, studio, year, edition, and timestamp.</p>
-            </div>
-            <div>
-                <h3>Edition details</h3>
-                <p>Record which cut, aspect ratio, release, region, and format you watched.</p>
+                <p>Turn a note into a <strong>Chicago</strong> or <strong>MLA</strong> citation, with the director, studio, year, edition and timestamp included.</p>
             </div>
             <div>
                 <h3>Export notes</h3>
-                <p>Save your notes as <code>.txt</code>, <code>.md</code>, or <code>.csv</code>.</p>
+                <p>Save a film's notes as <code>.txt</code>, <code>.md</code> or <code>.csv</code>.</p>
             </div>
             <div>
                 <h3>Export clips</h3>
-                <p>Cut a noted passage out as an <code>.mp4</code>. A source file with the film, passage, edition, and citation is saved next to it.</p>
+                <p>Save a passage note as an <code>.mp4</code> clip. A <code>_source.txt</code> file saved next to it records the film, passage, edition, tag, note and citation.</p>
             </div>
         </div>
-        <p class="note">Clip export uses ffmpeg, which the installer puts next to PubHorror.</p>
+        <p class="note">Tip: fill in the Edition fields and run the Wikidata lookup before you cite. The more details a title has, the more complete its citations are.</p>
     </div>
 
-    <div class="card">
-        <h2>Your Library Stays Safe</h2>
+    <div class="card" id="backups">
+        <h2>10. Backups</h2>
         <ul>
-            <li>PubHorror saves a backup every time it starts and keeps the 10 most recent.</li>
-            <li>Export a full backup to a file, or import one to move your library to another computer.</li>
-            <li>Everything runs on your machine. Nothing about your library is uploaded anywhere.</li>
+            <li>PubHorror saves a backup <strong>every time it starts</strong> and keeps the 10 most recent.</li>
+            <li>To roll back, open <strong>⚙️ Settings</strong>, look under <strong>Recent Auto-Backups</strong>, and restore one.</li>
+            <li><strong>📤 Export Backup</strong> saves your whole library (movies, ratings, collections and settings) to one file. <strong>📥 Import Backup</strong> loads it back in, on this computer or a new one.</li>
         </ul>
+        <div class="tip">
+            <strong>Moving to a new computer:</strong> Export Backup on the old one, install PubHorror on the new one, then Import Backup.
+            If your videos are in a different place on the new computer, edit each title and browse to its new location.
+        </div>
+    </div>
+
+    <div class="card" id="privacy">
+        <h2>11. Privacy &amp; Where Your Files Live</h2>
+        <p>PubHorror has no account, no tracking and no analytics. It only goes online when you use something that needs to:</p>
+        <div class="table-wrap">
+        <table>
+            <tr><th>When you…</th><th>It contacts</th></tr>
+            <tr><td>Use TMDB auto-fill or pick a TMDB poster</td><td>themoviedb.org</td></tr>
+            <tr><td>Look up a movie on Wikidata</td><td>wikidata.org</td></tr>
+            <tr><td>Watch a trailer</td><td>YouTube</td></tr>
+            <tr><td>Click a MakeMKV download link</td><td>Opens makemkv.com in your browser</td></tr>
+        </table>
+        </div>
+        <p>Everything else stays on your computer: playback, notes, ratings, backups, conversion and ripping. The built-in player streams through a private connection that only your own computer can reach.</p>
+
+        <h3>Your files</h3>
+        <p>Everything is stored next to PubHorror, in <code>%LocalAppData%\Programs\PubHorror</code> unless you picked a different folder when you installed. To open that folder, paste the path into the File Explorer address bar.</p>
+        <div class="table-wrap">
+        <table>
+            <tr><th>Folder / file</th><th>What's in it</th></tr>
+            <tr><td><code>data\</code></td><td>Your library, ratings, collections, progress and settings (<code>.json</code> files)</td></tr>
+            <tr><td><code>data\backups\</code></td><td>Automatic backups</td></tr>
+            <tr><td><code>data\rip_log.txt</code></td><td>What happened during disc rips</td></tr>
+            <tr><td><code>data\ffmpeg_last.log</code></td><td>Details of the most recent video conversion</td></tr>
+            <tr><td><code>posters\</code></td><td>Poster images</td></tr>
+            <tr><td><code>library\dvd_rips\</code></td><td>Your ripped discs</td></tr>
+        </table>
+        </div>
+    </div>
+
+    <div class="card" id="faq">
+        <h2>Troubleshooting</h2>
+
+        <details>
+            <summary>PubHorror opens to a blank white window</summary>
+            <p>The WebView2 runtime is missing or broken. Download the "Evergreen Bootstrapper" from <a href="https://developer.microsoft.com/microsoft-edge/webview2/">Microsoft's WebView2 page</a>, run it, then reopen PubHorror.</p>
+        </details>
+
+        <details>
+            <summary>A video has no sound, or won't play</summary>
+            <p>Its format probably needs converting, and that happens on its own when you press play. If it keeps failing:</p>
+            <ul>
+                <li>Check that <code>ffmpeg.exe</code> and <code>ffprobe.exe</code> are in the PubHorror folder. Reinstalling puts them back.</li>
+                <li>Check that you have free disk space. Converting makes a new copy of the file.</li>
+                <li><code>data\ffmpeg_last.log</code> has the details.</li>
+            </ul>
+        </details>
+
+        <details>
+            <summary>It says "MakeMKV not found"</summary>
+            <p>Install MakeMKV from <a href="https://www.makemkv.com/download/">makemkv.com</a> and keep the default install location. PubHorror looks for it there. Then press play again.</p>
+        </details>
+
+        <details>
+            <summary>The disc shows up but won't rip</summary>
+            <ul>
+                <li>Open MakeMKV on its own and see whether it can read the disc. If MakeMKV can't, PubHorror can't either.</li>
+                <li>Update MakeMKV. Old versions stop working on newer discs.</li>
+                <li>Blu-rays need a MakeMKV key once the trial ends.</li>
+                <li>Clean the disc. Scratches cause a lot of failed rips.</li>
+                <li><code>data\rip_log.txt</code> shows what went wrong.</li>
+            </ul>
+        </details>
+
+        <details>
+            <summary>A rip or conversion failed because the disk is full</summary>
+            <p>Free up some space, or send rips to another drive (see the tip under <a href="#discs">Playing Discs</a>). Then press play again. If the rip itself already finished, PubHorror only redoes the conversion, so you won't wait for the disc again.</p>
+        </details>
+
+        <details>
+            <summary>TMDB auto-fill finds nothing</summary>
+            <p>Try the title without the year, or check the spelling. If it never finds anything at all, get a free key at <a href="https://www.themoviedb.org/settings/api">themoviedb.org</a> and paste it into <strong>⚙️ Settings → TMDB API Key</strong>.</p>
+        </details>
+
+        <details>
+            <summary>Subtitles are out of sync, or too big or small</summary>
+            <p>Click <strong>CC</strong> in the player. <strong>Sync</strong> moves them by half a second, and <strong>A−</strong> and <strong>A+</strong> change the size.</p>
+        </details>
+
+        <details>
+            <summary>A series is missing new episodes</summary>
+            <p>Click <strong>🔄 Rescan</strong>, either on the series' edit screen or in the toolbar.</p>
+        </details>
+
+        <details>
+            <summary>A movie says its file can't be found</summary>
+            <p>The video was moved, renamed, or is on a drive that isn't plugged in. Reconnect the drive, or edit the title and browse to where the file is now.</p>
+        </details>
+
+        <details>
+            <summary>My library is empty after a crash</summary>
+            <p>Your video files are fine. Open <strong>⚙️ Settings</strong> and restore one of the <strong>Recent Auto-Backups</strong>.</p>
+        </details>
+
+        <p class="note">Still stuck? Ask in the <a href="https://discord.gg/NvfEq4myu3">Discord</a>. It helps to paste in what's in <code>data\ffmpeg_last.log</code> or <code>data\rip_log.txt</code>.</p>
+    </div>
+
+    <div class="card" id="support">
+        <h2>Support PubHorror</h2>
+        <p>
+            PubHorror is free and always will be. If it's earned a spot on your computer and you'd like to say thanks,
+            you can pay what you want on <a href="https://trinketgoblin.itch.io/pubhorror">itch.io</a>.
+            Bug reports and ideas in the Discord help just as much.
+        </p>
+        <p class="note">
+            PubHorror includes ffmpeg (GPL v3). Its license and source details are in the <code>licenses</code> folder next to the app.
+            MakeMKV is a separate program by GuinpinSoft and isn't included with PubHorror.
+            This product uses the TMDB API but is not endorsed or certified by TMDB.
+        </p>
     </div>
 
     <div class="button-group">
-        <a href="https://github.com/TrinketGoblin/PubHorror/releases/latest" class="btn btn-download">
-            Download
+        <a href="https://trinketgoblin.itch.io/pubhorror" class="btn btn-itch">
+            Download / Donate on itch.io
         </a>
-        <a href="https://github.com/TrinketGoblin/PubHorror/tree/main" class="btn btn-github">
+        <a href="https://github.com/TrinketGoblin/PubHorror" class="btn btn-github">
             Source Code
         </a>
         <a href="https://discord.gg/NvfEq4myu3" class="btn btn-discord">
