@@ -2,21 +2,18 @@
 
 A desktop library for your horror movie collection. It tracks what you own, what you've watched, and what you thought, plays files and discs you own inside the app, and has a notes system built for people who write about film.
 
-Version 1.0.5. Built with Python and pywebview, with the interface in a single HTML file. Windows installer included.
+Version 1.0.7. Built with Python and pywebview, with the interface in a single HTML file. Windows installer included.
 
 ## Install
 
-Run `PubHorror_Setup_1.0.5.exe`. It installs per-user (no admin needed for PubHorror itself) into `%LocalAppData%\Programs\PubHorror`.
+Run `PubHorror_Setup_1.0.7.exe`. It installs per-user (no admin needed for PubHorror itself) into `%LocalAppData%\Programs\PubHorror`.
 
 The installer also sets up what the app depends on:
 
-- **Microsoft Edge WebView2 runtime**, which draws the interface.
-- **MakeMKV**, which reads discs. Its installer needs admin, so Windows will show a UAC prompt.
+- **Microsoft Edge WebView2 runtime**, which draws the interface. Only installed if it's missing.
 - **ffmpeg**, which converts audio and video, extracts subtitles, and exports clips. It's installed next to PubHorror, so there's nothing to set up.
 
-WebView2 and MakeMKV are only installed if they're missing.
-
-MakeMKV is still on its own license. After install, open it once and enter your registration key.
+**MakeMKV is not included.** You only need it to play discs. Download it yourself from [makemkv.com](https://www.makemkv.com/download/); the installer and the app will both offer to open that page if it's missing. Ripping DVDs with MakeMKV is free. Blu-ray needs a MakeMKV key.
 
 Your data lives next to the exe in `data\`, `library\` and `posters\`. Upgrades and uninstalls leave those folders alone.
 
@@ -104,20 +101,20 @@ This is the part aimed at film writing and coursework.
 
 - Windows 10 or 11, 64-bit.
 - WebView2 runtime (the installer handles it).
-- MakeMKV, only for playing discs (the installer handles it).
+- MakeMKV, only for playing discs (download it from makemkv.com).
 - ffmpeg, for audio and video conversion, subtitle extraction, and clip export (the installer includes it).
 - A TMDB API key, only for auto-fill and trailers.
 
 ## Building
 
 1. Run `build.bat`. This produces `dist\PubHorror\`.
-2. Put `MicrosoftEdgeWebview2Setup.exe` and `MakeMKV_setup.exe` next to `PubHorror.iss`. Also add an `ffmpeg` folder there containing `ffmpeg.exe`, `ffprobe.exe` and the build's `LICENSE.txt`.
+2. Put `MicrosoftEdgeWebview2Setup.exe` and `THIRD_PARTY_NOTICES.txt` next to `PubHorror.iss`. Also add an `ffmpeg` folder there containing `ffmpeg.exe`, `ffprobe.exe` and the build's `LICENSE.txt`. Don't bundle MakeMKV.
 3. Compile `PubHorror.iss` with Inno Setup. The output is `PubHorror_Setup_<version>.exe`.
 
 ## Third-party software
 
-- **ffmpeg** is included under the GPL. The license text is installed in the `licenses` folder, and source code is available at https://ffmpeg.org.
-- **MakeMKV** is installed from its official installer and is covered by its own license.
+- **ffmpeg 9.0.2** (the "essentials" build from [gyan.dev](https://www.gyan.dev/ffmpeg/builds/)) is included under the GNU GPL v3. The license is installed in the `licenses` folder. The complete source code for this exact version, `ffmpeg-9.0.2.tar.xz`, is attached to every PubHorror release, and the build's configuration and library list are on gyan.dev. PubHorror runs ffmpeg as a separate program and doesn't modify it.
+- **MakeMKV** is not included or distributed with PubHorror. PubHorror uses it only if you've installed it yourself.
 
 ## Disclaimer
 

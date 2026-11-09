@@ -1,4 +1,4 @@
-('c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
+('C:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
  'code\\build\\PubHorror\\PubHorror.pkg',
  {'BINARY': True,
   'DATA': True,
@@ -11,27 +11,27 @@
   'SYMLINK': False},
  [('pyi-contents-directory _internal', '', 'OPTION'),
   ('PYZ-00.pyz',
-   'c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
+   'C:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
    'code\\build\\PubHorror\\PYZ-00.pyz',
    'PYZ'),
   ('struct',
-   'c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
+   'C:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
    'code\\build\\PubHorror\\localpycs\\struct.pyc',
    'PYMODULE'),
   ('pyimod01_archive',
-   'c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
+   'C:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
    'code\\build\\PubHorror\\localpycs\\pyimod01_archive.pyc',
    'PYMODULE'),
   ('pyimod02_importers',
-   'c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
+   'C:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
    'code\\build\\PubHorror\\localpycs\\pyimod02_importers.pyc',
    'PYMODULE'),
   ('pyimod03_ctypes',
-   'c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
+   'C:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
    'code\\build\\PubHorror\\localpycs\\pyimod03_ctypes.pyc',
    'PYMODULE'),
   ('pyimod04_pywin32',
-   'c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
+   'C:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
    'code\\build\\PubHorror\\localpycs\\pyimod04_pywin32.pyc',
    'PYMODULE'),
   ('pyiboot01_bootstrap',

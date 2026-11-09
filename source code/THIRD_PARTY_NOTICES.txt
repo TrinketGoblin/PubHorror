@@ -1,0 +1,27 @@
+PubHorror - third-party software
+================================
+
+PubHorror itself is released under CC0 1.0 (see LICENSE).
+
+FFmpeg
+------
+This copy of PubHorror includes ffmpeg.exe and ffprobe.exe from FFmpeg
+version 9.0.2, "essentials" build by gyan.dev (https://www.gyan.dev/ffmpeg/builds/).
+
+FFmpeg is licensed under the GNU General Public License version 3. The full
+license text is in ffmpeg-LICENSE.txt in this folder.
+
+PubHorror runs FFmpeg as a separate program. FFmpeg has not been modified.
+
+Source code: the complete source for FFmpeg 9.0.2 (ffmpeg-9.0.2.tar.xz) is
+attached to every PubHorror release at
+  https://github.com/TrinketGoblin/PubHorror/releases
+and is also on the itch.io download page. The build configuration and the list
+of libraries included in this build are published by gyan.dev at the link above.
+Upstream FFmpeg: https://ffmpeg.org
+
+MakeMKV
+-------
+MakeMKV is not included with PubHorror. If you install it yourself, PubHorror
+can use it to read discs you own. MakeMKV is made by GuinpinSoft inc. and is
+covered by its own license: https://www.makemkv.com

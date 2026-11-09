@@ -3,7 +3,7 @@
 ; Output: PubHorror_Setup_<version>.exe in the project root.
 
 #define MyAppName      "PubHorror"
-#define MyAppVersion   "1.0.6"
+#define MyAppVersion   "1.0.7"
 #define MyAppExeName   "PubHorror.exe"
 
 ; Paths in Inno are relative to this script. Detect where it was placed.
@@ -53,15 +53,15 @@ Name: "{app}\posters"; Flags: uninsneveruninstall
 Source: "{#Src}dist\PubHorror\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; WebView2 bootstrapper, only extracted if the runtime is missing
 Source: "{#Src}MicrosoftEdgeWebview2Setup.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall; Check: not WebView2Installed
-; MakeMKV installer (disc ripping), only extracted if MakeMKV is missing. Put the official
-; installer next to this script and name it MakeMKV_setup.exe.
-Source: "{#Src}MakeMKV_setup.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall; Check: not MakeMKVInstalled
+; MakeMKV is NOT bundled. It decrypts discs, so the user downloads it from makemkv.com
+; themselves. The installer only offers to open the download page (see [Run]).
 ; ffmpeg + ffprobe, installed next to PubHorror.exe where the app looks for them first.
 ; Needed for disc playback, audio conversion, subtitle extraction and clip export.
 ; Put ffmpeg.exe and ffprobe.exe in an "ffmpeg" folder next to this script, with the build's LICENSE.
 Source: "{#Src}ffmpeg\ffmpeg.exe";  DestDir: "{app}"; Flags: ignoreversion
 Source: "{#Src}ffmpeg\ffprobe.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#Src}ffmpeg\LICENSE.txt"; DestDir: "{app}\licenses"; DestName: "ffmpeg-LICENSE.txt"; Flags: ignoreversion
+Source: "{#Src}THIRD_PARTY_NOTICES.txt"; DestDir: "{app}\licenses"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
@@ -70,9 +70,8 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 
 [Run]
 Filename: "{tmp}\MicrosoftEdgeWebview2Setup.exe"; Parameters: "/silent /install"; StatusMsg: "Installing Microsoft WebView2 runtime..."; Flags: waituntilterminated; Check: not WebView2Installed
-; MakeMKV installs to Program Files, so its installer needs admin. shellexec lets Windows show the
-; UAC prompt even though PubHorror itself installs per-user.
-Filename: "{tmp}\MakeMKV_setup.exe"; Parameters: "/S"; StatusMsg: "Installing MakeMKV (needed for playing discs)..."; Flags: shellexec waituntilterminated; Check: not MakeMKVInstalled
+; Offer (unchecked by default) to open the official MakeMKV download page if it isn't installed.
+Filename: "https://www.makemkv.com/download/"; Description: "Open the MakeMKV download page (only needed to play discs)"; Flags: shellexec nowait postinstall skipifsilent unchecked; Check: not MakeMKVInstalled
 Filename: "{app}\{#MyAppExeName}"; Description: "Launch {#MyAppName}"; Flags: nowait postinstall skipifsilent
 
 [Code]

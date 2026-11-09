@@ -1,9 +1,9 @@
-('c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
+('C:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
  'code\\build\\PubHorror\\PubHorror.exe',
  False,
  False,
  True,
- ['c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
+ ['C:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
   'code\\app\\assets\\PubHorrorIcon.ico'],
  None,
  False,
@@ -31,31 +31,31 @@
  None,
  None,
  None,
- 'c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
+ 'C:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
  'code\\build\\PubHorror\\PubHorror.pkg',
  [('pyi-contents-directory _internal', '', 'OPTION'),
   ('PYZ-00.pyz',
-   'c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
+   'C:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
    'code\\build\\PubHorror\\PYZ-00.pyz',
    'PYZ'),
   ('struct',
-   'c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
+   'C:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
    'code\\build\\PubHorror\\localpycs\\struct.pyc',
    'PYMODULE'),
   ('pyimod01_archive',
-   'c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
+   'C:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
    'code\\build\\PubHorror\\localpycs\\pyimod01_archive.pyc',
    'PYMODULE'),
   ('pyimod02_importers',
-   'c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
+   'C:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
    'code\\build\\PubHorror\\localpycs\\pyimod02_importers.pyc',
    'PYMODULE'),
   ('pyimod03_ctypes',
-   'c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
+   'C:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
    'code\\build\\PubHorror\\localpycs\\pyimod03_ctypes.pyc',
    'PYMODULE'),
   ('pyimod04_pywin32',
-   'c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
+   'C:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
    'code\\build\\PubHorror\\localpycs\\pyimod04_pywin32.pyc',
    'PYMODULE'),
   ('pyiboot01_bootstrap',
@@ -82,7 +82,7 @@
  [],
  False,
  False,
- 1794159037,
+ 1794260743,
  [('runw.exe',
    'C:\\Users\\Cameron\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\PyInstaller\\bootloader\\Windows-64bit-intel\\runw.exe',
    'EXECUTABLE')],

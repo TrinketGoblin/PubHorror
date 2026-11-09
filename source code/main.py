@@ -519,6 +519,12 @@ class API:
     def has_makemkv(self):
         return bool(self._find_makemkv())
 
+    def open_makemkv_site(self):
+        """MakeMKV isn't bundled; send the user to the official download page."""
+        import webbrowser
+        webbrowser.open("https://www.makemkv.com/download/")
+        return True
+
     def _makemkv_disc_index(self, exe, drive_root):
         """Map a drive letter like 'D:\\' to MakeMKV's disc:N index."""
         out = subprocess.run([exe, "-r", "--cache=1", "info", "disc:9999"],
@@ -742,7 +748,7 @@ class API:
     def start_rip(self, movie_id, drive_root, label):
         exe = self._find_makemkv()
         if not exe:
-            return {"success": False, "error": "MakeMKV not found. Install it from makemkv.com."}
+            return {"success": False, "error": "MakeMKV not found. Download it from makemkv.com, then try again."}
         if self._rip.get(movie_id, {}).get("state") in ("running", "converting"):
             return {"success": True}
         safe = "".join(c for c in label if c.isalnum() or c in " -_").strip() or "disc"

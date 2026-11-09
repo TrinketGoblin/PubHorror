@@ -2319,7 +2319,8 @@ function closeDrivePicker() {
 
 async function ripAndPlayDisc(movie) {
     if (!await pywebview.api.has_makemkv()) {
-        showToast("⚠ Install MakeMKV (makemkv.com) to play discs.", 5000);
+        if (confirm("Playing discs needs MakeMKV, a free disc-reading tool you install yourself.\nOpen the MakeMKV download page now?"))
+            await pywebview.api.open_makemkv_site();
         return;
     }
     showToast("💿 Looking for the disc…", 3000);
