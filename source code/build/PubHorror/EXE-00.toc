@@ -1,11 +1,11 @@
-('C:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
+('c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
  'code\\build\\PubHorror\\PubHorror.exe',
  False,
  False,
  True,
- ['C:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
+ ['c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
   'code\\app\\assets\\PubHorrorIcon.ico'],
- None,
+ versioninfo.VSVersionInfo(ffi=versioninfo.FixedFileInfo(filevers=(1, 0, 8, 0), prodvers=(1, 0, 8, 0), mask=0x3f, flags=0x0, OS=0x40004, fileType=1, subtype=0x0, date=(0, 0)), kids=[versioninfo.StringFileInfo([versioninfo.StringTable('040904B0', [versioninfo.StringStruct('CompanyName', 'TrinketGoblin'), versioninfo.StringStruct('FileDescription', 'PubHorror - horror movie library'), versioninfo.StringStruct('FileVersion', '1.0.8'), versioninfo.StringStruct('InternalName', 'PubHorror'), versioninfo.StringStruct('LegalCopyright', 'Released under CC0 1.0'), versioninfo.StringStruct('OriginalFilename', 'PubHorror.exe'), versioninfo.StringStruct('ProductName', 'PubHorror'), versioninfo.StringStruct('ProductVersion', '1.0.8')])]), versioninfo.VarFileInfo([versioninfo.VarStruct('Translation', [1033, 1200])])]),
  False,
  False,
  b'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<assembly xmlns='
@@ -31,31 +31,31 @@
  None,
  None,
  None,
- 'C:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
+ 'c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
  'code\\build\\PubHorror\\PubHorror.pkg',
  [('pyi-contents-directory _internal', '', 'OPTION'),
   ('PYZ-00.pyz',
-   'C:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
+   'c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
    'code\\build\\PubHorror\\PYZ-00.pyz',
    'PYZ'),
   ('struct',
-   'C:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
+   'c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
    'code\\build\\PubHorror\\localpycs\\struct.pyc',
    'PYMODULE'),
   ('pyimod01_archive',
-   'C:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
+   'c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
    'code\\build\\PubHorror\\localpycs\\pyimod01_archive.pyc',
    'PYMODULE'),
   ('pyimod02_importers',
-   'C:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
+   'c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
    'code\\build\\PubHorror\\localpycs\\pyimod02_importers.pyc',
    'PYMODULE'),
   ('pyimod03_ctypes',
-   'C:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
+   'c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
    'code\\build\\PubHorror\\localpycs\\pyimod03_ctypes.pyc',
    'PYMODULE'),
   ('pyimod04_pywin32',
-   'C:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
+   'c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
    'code\\build\\PubHorror\\localpycs\\pyimod04_pywin32.pyc',
    'PYMODULE'),
   ('pyiboot01_bootstrap',
@@ -82,7 +82,7 @@
  [],
  False,
  False,
- 1794260743,
+ 1794332932,
  [('runw.exe',
    'C:\\Users\\Cameron\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\PyInstaller\\bootloader\\Windows-64bit-intel\\runw.exe',
    'EXECUTABLE')],

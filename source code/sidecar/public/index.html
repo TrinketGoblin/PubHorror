@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#050000">
+<title>PubHorror</title>
+<link rel="stylesheet" href="/static/app.css">
+<link rel="stylesheet" href="/static/theme.css">
+</head>
+<body>
+<header id="top">
+  <div class="bar">
+    <h1 id="host-name">🎞 PubHorror</h1>
+    <a href="/logout" class="icon-btn signout">🚪 Sign out</a>
+  </div>
+  <div class="bar tools">
+    <input id="search" type="search" placeholder="Search…" autocomplete="off" enterkeyhint="search">
+    <div class="chips" role="tablist">
+      <button class="chip on" data-type="">All</button>
+      <button class="chip" data-type="movie">Movies</button>
+      <button class="chip" data-type="series">Series</button>
+    </div>
+  </div>
+</header>
+
+<main id="grid-view">
+  <div id="parties"></div>
+  <div id="grid" class="grid"></div>
+  <p id="empty" class="empty" hidden></p>
+</main>
+
+<section id="detail" class="sheet" hidden aria-modal="true" role="dialog">
+  <button class="back" data-back>‹ Back</button>
+  <div class="detail-body">
+    <div class="detail-head">
+      <div id="d-poster" class="d-poster"></div>
+      <div class="d-meta">
+        <h2 id="d-title"></h2>
+        <div id="d-sub" class="muted"></div>
+        <div id="d-cats" class="cats"></div>
+      </div>
+    </div>
+    <div id="d-play-area"></div>
+    <p id="d-desc" class="desc"></p>
+    <p id="d-cast" class="muted small"></p>
+    <div id="d-episodes"></div>
+  </div>
+</section>
+
+<section id="player" class="player" hidden>
+  <div class="player-top">
+    <button class="back" data-back>‹ Back</button>
+    <div id="p-title" class="p-title"></div>
+    <button id="p-cast" class="next" hidden title="Play on a TV (AirPlay / Cast)">📺 TV</button>
+    <button id="p-party" class="next" title="Watch this together, from where you are">🎉 Party</button>
+    <button id="p-next" class="next" hidden>Next ›</button>
+  </div>
+  <video id="video" controls playsinline preload="metadata" x-webkit-airplay="allow"></video>
+  <div id="p-msg" class="p-msg" hidden></div>
+</section>
+
+<section id="party" class="player party" hidden>
+  <div class="player-top">
+    <button class="back" data-back>‹ Leave</button>
+    <div id="pt-title" class="p-title"></div>
+    <button id="pt-cast" class="next" hidden title="Play on a TV (AirPlay / Cast)">📺 TV</button>
+  </div>
+  <div class="pt-stage">
+    <video id="pt-video" controls playsinline preload="auto" x-webkit-airplay="allow"></video>
+    <div id="pt-notices" class="pt-notices"></div>
+    <div id="pt-reactions" class="pt-reactions"></div>
+    <div id="pt-banner" class="pt-banner" hidden></div>
+    <button id="pt-tap" class="play-btn pt-tap" hidden>▶ Tap to sync with the party</button>
+  </div>
+  <div class="pt-panel">
+    <div id="pt-join" class="pt-join"></div>
+    <div id="pt-room-ui" hidden>
+      <div class="pt-row"><span>Room <b id="pt-room-code"></b></span><span><button id="pt-copy" class="chip">Copy link</button> <button id="pt-end" class="chip end" hidden>End party</button></span></div>
+      <div id="pt-members" class="pt-members"></div>
+      <div id="pt-emoji" class="pt-emoji"></div>
+      <div id="pt-chat" class="pt-chat"></div>
+      <form id="pt-chat-form"><input id="pt-chat-input" maxlength="300" placeholder="Say something…" autocomplete="off" enterkeyhint="send"></form>
+    </div>
+  </div>
+</section>
+
+<div id="toast" class="toast" hidden></div>
+<script src="/static/party-sync.js"></script>
+<script src="/static/app.js"></script>
+<script src="/static/party.js"></script>
+</body>
+</html>

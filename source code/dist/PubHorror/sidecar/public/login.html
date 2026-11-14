@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>PubHorror</title>
+<link rel="stylesheet" href="/static/app.css">
+<link rel="stylesheet" href="/static/theme.css">
+<style>
+  main { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px 16px; }
+  form { width: 100%; max-width: 380px; background: var(--bg-main); border: 2px solid var(--accent); padding: 28px 22px;
+         box-shadow: 0 0 40px rgba(0,0,0,.6), 0 0 18px var(--accent); }
+  h1 { margin: 0 0 8px; color: var(--accent); text-shadow: 0 0 8px var(--glow); letter-spacing: 3px; font-size: 1.5em; text-align: center; }
+  p  { margin: 0 0 22px; text-align: center; opacity: .7; font-size: .85em; line-height: 1.5; }
+  label { display: block; font-size: .8em; margin-bottom: 6px; opacity: .8; }
+  input { width: 100%; font-size: 1.3em; letter-spacing: .18em; text-transform: uppercase; text-align: center; padding: 12px;
+          background: var(--bg-input); color: var(--highlight); border: 1px solid var(--border); box-shadow: inset 0 0 8px #000;
+          border-radius: 0; -webkit-appearance: none; }
+  input:focus { outline: none; border-color: var(--accent); }
+  form button { width: 100%; margin-top: 16px; padding: 14px; font-size: 1em; }
+  #msg { min-height: 1.4em; margin-top: 12px; text-align: center; color: var(--highlight); font-size: .85em; }
+</style>
+</head>
+<body>
+<main>
+  <form id="f" autocomplete="off">
+    <h1>🎞 PubHorror</h1>
+    <p>Enter the access code shown in the host's PubHorror settings.</p>
+    <label for="code">Access code</label>
+    <input id="code" name="code" inputmode="text" autocapitalize="characters" spellcheck="false" maxlength="16" required>
+    <button id="go" type="submit">Enter</button>
+    <div id="msg" role="status"></div>
+  </form>
+</main>
+<script>
+  const f = document.getElementById('f'), input = document.getElementById('code'),
+        msg = document.getElementById('msg'), go = document.getElementById('go');
+
+  async function submit() {
+    go.disabled = true; msg.textContent = '';
+    try {
+      const r = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({ code: input.value }) });
+      if (r.ok) { location.replace('/' + (dest ? '#/' + dest : '')); return; }
+      const j = await r.json().catch(() => ({}));
+      msg.textContent = j.error || 'Could not sign in.';
+    } catch { msg.textContent = 'Can’t reach PubHorror. Is sharing still on?'; }
+    go.disabled = false;
+  }
+  f.addEventListener('submit', e => { e.preventDefault(); submit(); });
+
+  // The QR code carries the code in the #fragment (never sent over the network); use it, then hide it.
+  // Invite links look like /login#code=XXXX-XXXX&go=party/ROOM ; a redirect from /#/party/ROOM keeps "#/party/ROOM".
+  const m = /(?:^#|&)code=([A-Za-z0-9-]+)/.exec(location.hash);
+  const g = /(?:^#|&)go=([A-Za-z0-9/_-]+)/.exec(location.hash) || /^#\/([A-Za-z0-9/_-]+)$/.exec(location.hash);
+  const dest = g ? g[1] : '';
+  if (m) { input.value = m[1]; history.replaceState(null, '', location.pathname); submit(); }
+  else input.focus();
+</script>
+</body>
+</html>

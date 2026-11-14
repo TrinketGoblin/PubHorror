@@ -1,4 +1,4 @@
-('C:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
+('c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
  'code\\build\\PubHorror\\PYZ-00.pyz',
  [('OpenSSL',
    'C:\\Users\\Cameron\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\OpenSSL\\__init__.py',
@@ -1125,6 +1125,10 @@
   ('random',
    'C:\\Users\\Cameron\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\random.py',
    'PYMODULE'),
+  ('remote_hosts',
+   'c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
+   'code\\remote_hosts.py',
+   'PYMODULE'),
   ('requests',
    'C:\\Users\\Cameron\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\requests\\__init__.py',
    'PYMODULE'),
@@ -1644,6 +1648,10 @@
    'PYMODULE'),
   ('setuptools.windows_support',
    'C:\\Users\\Cameron\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\setuptools\\windows_support.py',
+   'PYMODULE'),
+  ('share_bridge',
+   'c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\source '
+   'code\\share_bridge.py',
    'PYMODULE'),
   ('shlex',
    'C:\\Users\\Cameron\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\shlex.py',

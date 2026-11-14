@@ -9,6 +9,8 @@ import subprocess
 import ctypes
 import string
 import threading
+import time
+import unicodedata
 import re
 import csv
 from urllib.parse import quote
@@ -56,6 +58,31 @@ NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)
 WEB_AUDIO_OK = {"aac", "mp3", "opus", "vorbis", "flac"}
 # Video codecs WebView2 can play; DVD MPEG-2 is NOT one of them, so it gets re-encoded to H.264
 WEB_VIDEO_OK = {"h264", "vp8", "vp9", "av1"}
+
+def write_json_atomic(path, data, **dump_kw):
+    """Write JSON so the file is never left half-written: write a temp file in the same folder, flush it to
+    disk, then swap it in with one rename. If anything fails, the old file is untouched.
+    The rename is retried briefly because on Windows a reader (antivirus, the sharing sidecar,
+    another thread) can hold the file open for a moment."""
+    import tempfile, time
+    d = os.path.dirname(path) or "."
+    fd, tmp = tempfile.mkstemp(prefix="." + os.path.basename(path) + ".", suffix=".tmp", dir=d)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            json.dump(data, f, **dump_kw)
+            f.flush()
+            os.fsync(f.fileno())
+        for attempt in range(20):
+            try:
+                os.replace(tmp, path)
+                return
+            except PermissionError:
+                if attempt == 19: raise
+                time.sleep(0.05)
+    except BaseException:
+        try: os.remove(tmp)
+        except OSError: pass
+        raise
 
 def ensure_data_files():
     for folder in [DATA_DIR, POSTERS_DIR, LIBRARY_DIR]:
@@ -106,6 +133,9 @@ def _dialog_type(name):
         return getattr(fd, name)
     return getattr(webview, name + "_DIALOG")
 
+# pywebview runs each JS->Python call on its own thread; every read-modify-write of movies.json holds this.
+_LIB_LOCK = threading.RLock()
+
 class API:
     def __init__(self):
         self._window: Optional[webview.Window] = None
@@ -123,8 +153,7 @@ class API:
 
     def save_config(self, config):
         try:
-            with open(CONFIG_FILE, "w", encoding="utf-8") as f:
-                json.dump(config, f, indent=2)
+            write_json_atomic(CONFIG_FILE, config, indent=2)
             return {"success": True}
         except Exception as e:
             return {"success": False, "error": str(e)}
@@ -142,16 +171,47 @@ class API:
         except:
             return []
 
+    def _load_movies_strict(self):
+        """For read-modify-write only. Unlike get_movies(), this RAISES if the file exists but can't be read
+        or parsed (locked by antivirus, mid-save, damaged...). Returning [] there and then saving would wipe
+        the library down to nothing (or to just the one movie being added)."""
+        if not os.path.exists(MOVIES_FILE):
+            return []
+        last = None
+        for _ in range(10):
+            try:
+                with open(MOVIES_FILE, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                if not isinstance(data, list):
+                    raise ValueError("movies.json is not a list")
+                return data
+            except (OSError, ValueError) as e:
+                last = e
+                time.sleep(0.1)
+        raise RuntimeError(f"Couldn't read your library safely, so nothing was changed ({last}).")
+
     def save_movies(self, movies):
         try:
-            with open(MOVIES_FILE, "w", encoding="utf-8") as f:
-                json.dump(movies, f, indent=2, ensure_ascii=False)
+            with _LIB_LOCK:
+                # Movies from another PubHorror's shared library are display-only; they must never land in our file.
+                movies = [m for m in movies if not (isinstance(m, dict) and m.get("remote"))]
+                write_json_atomic(MOVIES_FILE, movies, indent=2, ensure_ascii=False)
+            share.notify_library_changed()
             return {"success": True}
         except Exception as e:
             return {"success": False, "error": str(e)}
 
     def add_movie(self, movie):
-        movies = self.get_movies()
+        if movie.get("remote"):
+            return {"success": False, "error": "Shared movies can't be added to your library."}
+        with _LIB_LOCK:
+            try:
+                movies = self._load_movies_strict()
+            except RuntimeError as e:
+                return {"success": False, "error": str(e)}
+            return self._add_movie_locked(movies, movie)
+
+    def _add_movie_locked(self, movies, movie):
         if "id" not in movie: movie["id"] = str(uuid.uuid4())
         defaults = {
             "categories": [], "source_type": "file", "disc_id": "",
@@ -165,17 +225,27 @@ class API:
         return self.save_movies(movies)
 
     def update_movie(self, update):
-        movies = self.get_movies()
-        movie_id, movie_file = update.get("id"), update.get("file")
-        for i, m in enumerate(movies):
-            if (movie_id and m.get("id") == movie_id) or (not movie_id and movie_file and m.get("file") == movie_file):
-                movies[i] = {**m, **update}
-                break
-        return self.save_movies(movies)
+        if update.get("remote"):
+            return {"success": False, "error": "Shared movies can't be edited."}
+        with _LIB_LOCK:
+            try:
+                movies = self._load_movies_strict()
+            except RuntimeError as e:
+                return {"success": False, "error": str(e)}
+            movie_id, movie_file = update.get("id"), update.get("file")
+            for i, m in enumerate(movies):
+                if (movie_id and m.get("id") == movie_id) or (not movie_id and movie_file and m.get("file") == movie_file):
+                    movies[i] = {**m, **update}
+                    return self.save_movies(movies)
+            return {"success": False, "error": "Movie not found"}   # nothing changed, so don't rewrite the file
 
     def delete_movie(self, movie_id):
-        movies = [m for m in self.get_movies() if m.get("id") != movie_id]
-        return self.save_movies(movies)
+        with _LIB_LOCK:
+            try:
+                movies = self._load_movies_strict()
+            except RuntimeError as e:
+                return {"success": False, "error": str(e)}
+            return self.save_movies([m for m in movies if m.get("id") != movie_id])
 
     def get_collections(self):
         try:
@@ -185,8 +255,7 @@ class API:
 
     def save_collections(self, collections):
         try:
-            with open(COLLECTIONS_FILE, "w", encoding="utf-8") as f:
-                json.dump(collections, f, indent=2, ensure_ascii=False)
+            write_json_atomic(COLLECTIONS_FILE, collections, indent=2, ensure_ascii=False)
             return {"success": True}
         except Exception as e:
             return {"success": False, "error": str(e)}
@@ -259,8 +328,7 @@ class API:
         ratings = self.get_ratings()
         ratings[movie_id] = rating
         try:
-            with open(RATINGS_FILE, "w", encoding="utf-8") as f:
-                json.dump(ratings, f, indent=2)
+            write_json_atomic(RATINGS_FILE, ratings, indent=2)
             return {"success": True}
         except Exception as e: return {"success": False, "error": str(e)}
 
@@ -279,8 +347,7 @@ class API:
             key = f"{base_id}_complete_count"
             progress[key] = progress.get(key, 0) + 1
         try:
-            with open(PROGRESS_FILE, "w", encoding="utf-8") as f:
-                json.dump(progress, f, indent=2)
+            write_json_atomic(PROGRESS_FILE, progress, indent=2)
             return {"success": True}
         except Exception as e: return {"success": False, "error": str(e)}
 
@@ -842,6 +909,7 @@ class API:
             detail = requests.get(f"https://api.themoviedb.org/3/{kind}/{tmdb_id}?api_key={api_key}&append_to_response=credits", timeout=10).json()
             creds = detail.get("credits", {})
             return {
+                "tmdb_id": int(tmdb_id), "tmdb_kind": kind,
                 "year": int((detail.get("first_air_date" if is_tv else "release_date") or "0")[:4]),
                 "director": ", ".join(c["name"] for c in creds.get("crew", []) if c.get("job") in ["Director", "Creator"])[:100],
                 "cast": [c["name"] for c in creds.get("cast", [])[:6]],
@@ -1243,8 +1311,12 @@ class API:
     # --- AUTO BACKUP ---
     def trigger_auto_backup(self):
         """Gather current library state and save a timestamped backup. Called from JS on init."""
+        try:
+            movies = self._load_movies_strict()
+        except RuntimeError as e:
+            return {"success": False, "error": str(e)}   # never write an empty backup over good ones
         backup = {
-            "movies":      self.get_movies(),
+            "movies":      movies,
             "ratings":     self.get_ratings(),
             "collections": self.get_collections_v2(),
             "config":      self.get_config(),
@@ -1312,8 +1384,7 @@ class API:
             if "movies" in b:
                 self.save_movies(b["movies"])
             if "ratings" in b:
-                with open(RATINGS_FILE, "w", encoding="utf-8") as f:
-                    json.dump(b["ratings"], f, indent=2)
+                write_json_atomic(RATINGS_FILE, b["ratings"], indent=2)
             if "collections" in b:
                 self.save_collections(b["collections"])
             if "config" in b:
@@ -1340,8 +1411,8 @@ class API:
             with open(res[0], "r", encoding="utf-8") as f:
                 b = json.load(f)
                 if "movies" in b: self.save_movies(b["movies"])
-                if "ratings" in b: 
-                    with open(RATINGS_FILE, "w", encoding="utf-8") as f: json.dump(b["ratings"], f, indent=2)
+                if "ratings" in b:
+                    write_json_atomic(RATINGS_FILE, b["ratings"], indent=2)
                 if "config" in b: self.save_config(b["config"])
             return {"success": True}
         return {"success": False}
@@ -1360,6 +1431,326 @@ class API:
 
     def toggle_fullscreen(self):
         if self._window: self._window.toggle_fullscreen()
+
+    # --- SHARING (Node sidecar; see share_bridge.py) ---
+    def share_status(self):
+        return share.status()
+
+    def share_enable(self):
+        return share.start()
+
+    def share_disable(self):
+        return share.stop()
+
+    def share_refresh(self):
+        """Restart sharing to pick up a changed Wi-Fi / Tailscale address."""
+        return share.restart() if share.running() else share.status()
+
+    def share_regen_code(self):
+        return share.regenerate_code()
+
+    def share_set_name(self, name):
+        return share.set_host_name(name)
+
+    def share_clear_cache(self):
+        return share.clear_cache()
+
+    # --- TMDB IDS (used to tell whether two PubHorror users own the same movie) ---
+    @staticmethod
+    def _norm_title(t):
+        t = unicodedata.normalize("NFKD", str(t or "")).encode("ascii", "ignore").decode().lower()
+        t = re.sub(r"\s*\((19|20)\d\d\)\s*$", "", t).replace("&", " and ")
+        t = re.sub(r"[^a-z0-9]+", " ", t).strip()
+        return re.sub(r"^(the|a|an) ", "", t)
+
+    @staticmethod
+    def _tmdb_kind(m):
+        return m.get("tmdb_kind") or ("tv" if m.get("source_type") == "series" else "movie")
+
+    def _tmdb_best_match(self, title, year, source_type):
+        """Only returns an id when the match is unambiguous: same title (ignoring case/punctuation/"The"),
+        and, if we know the year, within one year of it. Otherwise None -- never guess."""
+        key = (self.get_config() or {}).get("tmdb_api_key")
+        if not key or not title:
+            return None
+        cands = self.search_tmdb(title, year, key, source_type)
+        nt = self._norm_title(title)
+        same = [c for c in cands if self._norm_title(c.get("title")) == nt]
+        try:
+            y = int(year or 0)
+        except (TypeError, ValueError):
+            y = 0
+        if y:
+            close = [c for c in same if c.get("year") and abs(c["year"] - y) <= 1]
+            return close[0]["id"] if close else None
+        return same[0]["id"] if len(same) == 1 else None
+
+    def ensure_tmdb_id(self, movie_id):
+        """Make sure this library title has its TMDB id saved; look it up and save it if missing."""
+        if not hasattr(self, "_tmdb_miss"):
+            self._tmdb_miss = set()
+        m = next((x for x in self.get_movies() if x.get("id") == movie_id), None)
+        if not m:
+            return {"tmdb_id": None}
+        if m.get("tmdb_id"):
+            return {"tmdb_id": m["tmdb_id"], "tmdb_kind": self._tmdb_kind(m), "saved": False}
+        if movie_id in self._tmdb_miss:
+            return {"tmdb_id": None}
+        tid = self._tmdb_best_match(m.get("title"), m.get("year"), m.get("source_type"))
+        if not tid:
+            self._tmdb_miss.add(movie_id)          # don't hammer TMDB on every click this session
+            return {"tmdb_id": None}
+        kind = "tv" if m.get("source_type") == "series" else "movie"
+        r = self.update_movie({"id": movie_id, "tmdb_id": tid, "tmdb_kind": kind})
+        return {"tmdb_id": tid, "tmdb_kind": kind, "saved": bool(r.get("success"))}
+
+    def tmdb_backfill_start(self):
+        st = getattr(self, "_backfill", None)
+        if st and st.get("running"):
+            return st
+        self._tmdb_miss = set()
+        todo = [m["id"] for m in self.get_movies() if m.get("id") and not m.get("tmdb_id")]
+        self._backfill = st = {"running": True, "done": 0, "total": len(todo), "matched": 0, "error": None}
+        if not (self.get_config() or {}).get("tmdb_api_key"):
+            st.update(running=False, error="Set your TMDB API key first.")
+            return st
+
+        def work():
+            for mid in todo:
+                try:
+                    if self.ensure_tmdb_id(mid).get("tmdb_id"):
+                        st["matched"] += 1
+                except Exception:
+                    pass
+                st["done"] += 1
+                time.sleep(0.25)                   # stay well under TMDB's rate limit
+            st["running"] = False
+        threading.Thread(target=work, daemon=True).start()
+        return st
+
+    def tmdb_backfill_status(self):
+        return getattr(self, "_backfill", None) or {"running": False, "done": 0, "total": 0, "matched": 0}
+
+    def _locally_playable(self, m):
+        st = m.get("source_type")
+        if st == "series":
+            return any(os.path.exists(e.get("path") or "") for e in (m.get("episodes") or [])[:5])
+        p = m.get("ripped_file") if st == "dvd" else m.get("file")
+        return bool(p) and os.path.isfile(p)
+
+    def _local_match(self, tmdb_id, kind, title, year, is_series):
+        """Find this title in MY library. Saves TMDB ids for same-titled candidates first, then compares ids."""
+        movies = self.get_movies()
+        if tmdb_id:
+            for m in movies:
+                if str(m.get("tmdb_id")) == str(tmdb_id) and self._tmdb_kind(m) == kind and self._locally_playable(m):
+                    return m, "tmdb"
+            nt = self._norm_title(title)
+            for m in movies:
+                if (not m.get("tmdb_id") and (m.get("source_type") == "series") == is_series
+                        and self._norm_title(m.get("title")) == nt):
+                    r = self.ensure_tmdb_id(m["id"])
+                    if str(r.get("tmdb_id")) == str(tmdb_id) and self._locally_playable(m):
+                        return m, "tmdb"
+            return None, None
+        # No TMDB id available anywhere: fall back to exact title + same year.
+        nt = self._norm_title(title)
+        for m in movies:
+            if (year and m.get("year") and int(m["year"]) == int(year) and self._norm_title(m.get("title")) == nt
+                    and (m.get("source_type") == "series") == is_series and self._locally_playable(m)):
+                return m, "title"
+        return None, None
+
+    # --- OTHER PUBHORROR LIBRARIES (read-only; see remote_hosts.py) ---
+    @staticmethod
+    def _remote(fn, *a):
+        try:
+            return fn(*a)
+        except RemoteError as e:
+            return {"error": str(e), "kind": e.kind}
+
+    def remote_list(self):           return remotes.list()
+    def remote_discover(self):       return remotes.discover()
+    def remote_add(self, address, code):     return self._remote(remotes.add, address, code)
+    def remote_remove(self, host_id):        return remotes.remove(host_id)
+    def remote_set_code(self, host_id, code): return self._remote(remotes.set_code, host_id, code)
+    def remote_library(self, host_id):       return self._remote(remotes.library, host_id)
+    def remote_play(self, host_id, movie_id, ep=0):    return self._remote(remotes.play, host_id, movie_id, ep, False)
+    def remote_prepare(self, host_id, movie_id, ep=0): return self._remote(remotes.play, host_id, movie_id, ep, True)
+
+    def remote_open(self, host_id, movie_id):
+        """Clicking a title on another PubHorror: (1) get & save its TMDB id, THEN (2) check whether I own it too."""
+        try:
+            m = remotes.movie(host_id, movie_id)
+        except RemoteError as e:
+            return {"error": str(e), "kind": e.kind}
+        is_series = m.get("type") == "series"
+        kind = "tv" if is_series else "movie"
+        tid, source = m.get("tmdb_id"), "host"
+        if not tid:
+            cached = remotes.cached_tmdb(host_id, movie_id)
+            if cached:
+                tid, source = cached.get("tmdb_id"), "saved"
+            else:
+                tid = self._tmdb_best_match(m.get("title"), m.get("year"), "series" if is_series else "file")
+                if tid:
+                    remotes.remember_tmdb(host_id, movie_id, tid, kind)
+                    source = "looked_up"
+        m["tmdb_id"], m["tmdb_kind"] = tid, kind if tid else None
+        local, how = self._local_match(tid, kind, m.get("title"), m.get("year"), is_series)
+        return {"movie": m, "tmdb_source": source if tid else None,
+                "local": {"id": local["id"], "title": local.get("title"), "year": local.get("year")} if local else None,
+                "matched_by": how}
+
+    # --- WATCH PARTY ---
+    def party_get_name(self):
+        s = share._settings()
+        return s.get("party_name") or s.get("host_name") or "Host"
+
+    def party_set_name(self, name):
+        name = " ".join(str(name or "").split())[:24]
+        if name:
+            s = share._settings(); s["party_name"] = name; share._save_settings(s)
+        return self.party_get_name()
+
+    def _local_episode_path(self, m, episode):
+        """Path of MY file for this title (and, for a series, the matching episode)."""
+        if m.get("source_type") != "series":
+            p = m.get("ripped_file") if m.get("source_type") == "dvd" else m.get("file")
+            return p if p and os.path.isfile(p) else None
+        eps = m.get("episodes") or []
+        if not episode:
+            return None
+        hit = None
+        if episode.get("season") is not None and episode.get("episode") is not None:
+            hit = next((e for e in eps if e.get("season_num") == episode["season"] and e.get("ep_num") == episode["episode"]), None)
+        if hit is None and episode.get("index") is not None and 0 <= episode["index"] < len(eps):
+            hit = eps[episode["index"]]
+        p = hit and hit.get("path")
+        return p if p and os.path.isfile(p) else None
+
+    def _party_payload(self, room, ws_url, target, local_path, note=None):
+        """Everything the party player needs: where to connect, and whether to play my own file or stream."""
+        use_local = None
+        if local_path:
+            try:
+                if self.needs_audio_fix(local_path):          # AC3/MPEG-2 etc: our player can't use it as-is
+                    note = "Your copy uses a format PubHorror's player can't play directly, so you'll stream instead."
+                else:
+                    use_local = local_path.replace("\\", "/")
+            except Exception:
+                use_local = local_path.replace("\\", "/")
+        return {"room": room, "ws_url": ws_url, "target": target, "local_path": use_local,
+                "name": self.party_get_name(), "note": note}
+
+    def party_host_start(self, movie_id, ep=0, start_at=0):
+        """Start a party for one of MY titles. Turns sharing on if needed, saves the TMDB id first.
+        start_at: seconds, when turning what I'm already watching into a party."""
+        try:
+            if not share.running():
+                st = share.start()
+                if not st.get("running"):
+                    return {"error": st.get("error") or "Couldn't turn sharing on."}
+            t = self.ensure_tmdb_id(movie_id)                     # TMDB first, so friends can match their copies
+            room = share.local_call("POST", "/api/party", {"movie_id": movie_id, "ep": int(ep or 0),
+                                                           "name": self.party_get_name(), "tmdb_id": t.get("tmdb_id"),
+                                                           "start_at": float(start_at or 0)}, timeout=40)
+            return self._host_payload(room)
+        except Exception as e:
+            return {"error": str(e)}
+
+    def _host_payload(self, room):
+        """Join payload for a party running on MY sharing (started here, or by a phone / friend)."""
+        tok = share.local_tokens()
+        m = next((x for x in self.get_movies() if x.get("id") == room["movie"]["id"]), None) or {}
+        payload = self._party_payload(room, f"ws://127.0.0.1:{tok['port']}/ws/party?pt={quote(tok['party'] or '')}",
+                                      "local", self._local_episode_path(m, room["movie"].get("episode")))
+        payload["invites"] = share.invite_links(room["id"])
+        payload["host_name"] = share.status().get("host_name")
+        return payload
+
+    def party_local_list(self):
+        """Parties running on MY sharing right now (e.g. one a phone started), so this PC can join them."""
+        if not share.running():
+            return []
+        try:
+            return share.local_call("GET", "/api/parties", timeout=4).get("parties", [])
+        except Exception:
+            return []
+
+    def party_host_join(self, room_id):
+        """Join a party on MY sharing that someone else (a phone, a friend) started."""
+        try:
+            room = share.local_call("GET", "/api/party/" + quote(str(room_id).strip().upper(), safe=""))
+            self.ensure_tmdb_id(room["movie"]["id"])              # TMDB first, as everywhere else
+            return self._host_payload(room)
+        except Exception as e:
+            return {"error": str(e)}
+
+    def party_end(self, target, room_id, owner_key=None):
+        """End a party for everyone: any party on MY sharing, or one I started on another PubHorror."""
+        name = self.party_get_name()
+        if target == "local":
+            try:
+                share.local_call("POST", f"/api/party/{quote(str(room_id), safe='')}/end", {"name": name})
+                return {"ok": True}
+            except Exception as e:
+                return {"error": str(e)}
+        return self._remote(remotes.party_end, target, room_id, owner_key, name)
+
+    def party_remote_start(self, host_id, movie_id, ep=0):
+        """Start a party on another PubHorror for one of THEIR titles."""
+        try:
+            info = self.remote_open(host_id, movie_id)            # TMDB first (saved), then check if I own it
+            if info.get("error"):
+                return info
+            room = remotes.party_create(host_id, movie_id, ep, self.party_get_name(), info["movie"].get("tmdb_id"))
+            if room.get("owner_key"):                                 # so I can still end it if I leave and rejoin
+                self.__dict__.setdefault("_owner_keys", {})[(host_id, room["id"])] = room["owner_key"]
+            return self._party_join_room(host_id, room, info)
+        except RemoteError as e:
+            return {"error": str(e), "kind": e.kind}
+
+    def party_remote_join(self, host_id, room_id):
+        try:
+            room = remotes.party_get(host_id, room_id)
+            key = self.__dict__.get("_owner_keys", {}).get((host_id, room.get("id")))
+            if key:
+                room["owner_key"] = key
+            info = self.remote_open(host_id, room["movie"]["id"])   # TMDB first (saved), then check if I own it
+            if info.get("error"):
+                return info
+            return self._party_join_room(host_id, room, info)
+        except RemoteError as e:
+            return {"error": str(e), "kind": e.kind}
+
+    def party_remote_list(self, host_id):
+        return self._remote(remotes.parties, host_id)
+
+    def _party_join_room(self, host_id, room, info):
+        local = info.get("local") and next((x for x in self.get_movies() if x.get("id") == info["local"]["id"]), None)
+        path = self._local_episode_path(local, room["movie"].get("episode")) if local else None
+        note = None
+        if local and not path:
+            note = "You have this series, but not this episode, so you'll stream it."
+        p = self._party_payload(room, remotes.party_ws(host_id), host_id, path, note)
+        p["host_name"] = next((h["name"] for h in remotes.list() if h["id"] == host_id), "the host")
+        return p
+
+    def party_stream(self, target, movie_id, ep=0, prepare=False):
+        """Stream status/URL for the party's title, from my own sidecar ("local") or a remote host."""
+        if target == "local":
+            try:
+                path = f"/api/{'prepare' if prepare else 'play'}/{quote(movie_id, safe='')}?ep={int(ep)}&profile=desktop"
+                j = share.local_call("POST" if prepare else "GET", path, timeout=40)
+                if j.get("src"):
+                    tok = share.local_tokens()
+                    tail = "" if "&t=" in j["src"] else f"&t={quote(tok['media'] or '')}"
+                    j["src"] = f"http://127.0.0.1:{tok['port']}{j['src']}{tail}"
+                return j
+            except Exception as e:
+                return {"error": str(e)}
+        return self._remote(remotes.play, target, movie_id, ep, prepare)
 
 # --- LOCAL MEDIA SERVER (macOS/Linux) ---
 # WKWebView won't load file:// videos or images from a web page, so on non-Windows systems the app
@@ -1460,6 +1851,41 @@ def start_media_server():
     threading.Thread(target=srv.serve_forever, daemon=True).start()
     return f"http://127.0.0.1:{srv.server_address[1]}/"
 
+# --- SHARING SIDECAR ---
+# Off at every launch; the user turns it on in Settings. Node only ever READS the paths below.
+from share_bridge import ShareBridge
+import atexit
+
+def _sidecar_dir():
+    if getattr(sys, 'frozen', False):
+        return os.path.join(os.path.dirname(sys.executable), "sidecar")   # installed next to PubHorror.exe
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)), "sidecar")
+
+def _sidecar_paths():
+    ff = api._find_ffmpeg() if 'api' in globals() else None
+    probe = None
+    if ff:
+        cand = os.path.join(os.path.dirname(ff), "ffprobe.exe" if ff.lower().endswith(".exe") else "ffprobe")
+        probe = cand if os.path.exists(cand) else None
+    return {
+        "library_file": MOVIES_FILE,
+        "posters_dir": POSTERS_DIR,
+        "ffmpeg": ff,
+        "ffprobe": probe,
+        "cache_dir": os.path.join(DATA_DIR, "share", "cache"),
+        "party_client": os.path.join(os.path.dirname(INDEX_HTML), "shared", "party-sync.js"),
+        # read-only, so phones get the same theme and font as the app
+        "app_config": CONFIG_FILE,
+        "assets_dir": os.path.join(os.path.dirname(INDEX_HTML), "assets"),
+    }
+
+share = ShareBridge(DATA_DIR, _sidecar_dir(), _sidecar_paths)
+atexit.register(share.stop)
+
+from remote_hosts import RemoteHosts, RemoteError
+remotes = RemoteHosts(os.path.join(DATA_DIR, "share"), share._node_exe, _sidecar_dir(),
+                      lambda: share._settings()["host_id"])
+
 # --- START APP ---
 api = API()
 if USE_LOCAL_SERVER:
@@ -1469,6 +1895,8 @@ else:
 window = webview.create_window("PubHorror", url=start_url, js_api=api,
                                width=1400, height=900, background_color="#0a0a0a")
 api._window = window
+if window is not None:
+    window.events.closed += lambda *_: share.stop()
 if sys.platform == "win32":
     webview.start(gui="edgechromium", debug=False)
 else:

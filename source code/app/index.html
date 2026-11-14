@@ -1128,7 +1128,74 @@ video {
 .backup-row .br-count { color: var(--accent); min-width: 60px; text-align: right; }
 .backup-row .br-btn { margin: 0; padding: 4px 10px; font-size: 11px; }
 
+/* ── Sharing in Settings ──────────────────────────────── */
+#share-details { margin-top: 12px; }
+.share-grid { display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+#share-qr { width: 168px; height: 168px; flex-shrink: 0; background: #fff; padding: 6px; box-sizing: border-box; }
+#share-qr svg { width: 100%; height: 100%; display: block; }
+.share-k { font-size: 0.75em; opacity: 0.6; margin-bottom: 4px; }
+.share-addr { display: flex; align-items: center; gap: 8px; font-size: 0.85em; margin-bottom: 4px; }
+.share-addr code { color: var(--highlight); word-break: break-all; user-select: all; }
+.share-addr .tag { font-size: 0.75em; opacity: 0.6; white-space: nowrap; }
+.share-code { font-family: Consolas, monospace; font-size: 1.3em; letter-spacing: 0.12em; color: var(--highlight); }
+.share-small { margin: 0; padding: 4px 10px; font-size: 11px; }
+.share-error { margin-top: 8px; padding: 8px 10px; border: 1px solid var(--accent); color: var(--highlight); font-size: 0.85em; }
+.share-warn { font-size: 0.8em; opacity: 0.75; margin-top: 8px; }
+
+/* ── Other PubHorror libraries ────────────────────────── */
+.remote-status { padding: 10px 20px; font-size: 0.85em; opacity: 0.85; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.remote-status input { padding: 6px 10px; background: var(--bg-input); border: 1px solid var(--border); color: var(--highlight); }
+#remote-grid .card.unplayable { opacity: 0.45; }
+#remote-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 3100; }
+.remote-modal-box { max-width: 640px; }
+.remote-head { display: flex; gap: 16px; align-items: flex-start; }
+.rm-poster { width: 120px; flex-shrink: 0; aspect-ratio: 2/3; background: var(--bg-input); border: 1px solid var(--border); overflow: hidden; }
+.rm-poster img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.rm-match { padding: 10px 12px; border: 1px solid var(--border); background: var(--bg-input); font-size: 0.85em; line-height: 1.45; }
+.rm-match.have { border-color: #2e7d32; }
+.rm-ep { display: flex; align-items: center; gap: 10px; width: 100%; margin: 0 0 5px; padding: 8px 10px; text-align: left; font-size: 0.85em; }
+#remote-player { position: fixed; inset: 0; background: #000; display: none; flex-direction: column; z-index: 3200; }
+#remote-player .rp-top { display: flex; align-items: center; gap: 12px; padding: 8px 12px; color: #aaa; font-size: 0.9em; }
+#remote-player .rp-top button { margin: 0; padding: 6px 12px; }
+#rp-video { flex: 1; width: 100%; min-height: 0; background: #000; }
+.remote-host-row { display: flex; align-items: center; gap: 8px; padding: 6px 10px; margin-top: 6px; background: var(--bg-input); border: 1px solid var(--border); font-size: 0.85em; flex-wrap: wrap; }
+.remote-host-row .rh-name { flex: 1; min-width: 0; }
+.remote-host-row .rh-url { opacity: 0.55; font-size: 0.85em; }
+.remote-host-row input { padding: 4px 8px !important; width: 120px !important; }
+
+/* ── Watch Party ──────────────────────────────────────── */
+.card-party-btn { margin-left: 6px; }
+#party-player { position: fixed; inset: 0; z-index: 3300; background: #000; display: none; color: var(--text-main); }
+#party-player .pp-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+#party-player .pp-top { display: flex; align-items: center; gap: 12px; padding: 8px 12px; font-size: 0.9em; }
+#party-player .pp-top button { margin: 0; padding: 6px 12px; }
+#party-player .pp-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--highlight); }
+#party-player .pp-stage { position: relative; flex: 1; min-height: 0; display: flex; }
+#pp-video { width: 100%; height: 100%; background: #000; }
+.pp-hint { font-size: 0.78em; opacity: 0.6; }
+.pp-notices { position: absolute; top: 12px; left: 12px; display: flex; flex-direction: column; gap: 6px; pointer-events: none; max-width: 60%; }
+.pp-notice { background: rgba(10,0,0,0.85); border-left: 3px solid var(--accent); padding: 6px 10px; font-size: 0.85em; transition: opacity 0.6s; }
+.pp-reactions { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.pp-react { position: absolute; bottom: 70px; font-size: 38px; animation: ppFloat 2.6s ease-out forwards; }
+@keyframes ppFloat { from { transform: translateY(0) scale(0.8); opacity: 1; } to { transform: translateY(-260px) scale(1.3); opacity: 0; } }
+.pp-banner { position: absolute; left: 50%; top: 14px; transform: translateX(-50%); max-width: 80%; background: rgba(20,0,0,0.92);
+    border: 1px solid var(--accent); padding: 8px 14px; font-size: 0.85em; display: flex; gap: 10px; align-items: center; }
+.pp-banner[hidden] { display: none; }
+.pp-tap { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: 14px 22px; font-size: 1.1em; }
+.pp-side { width: 300px; flex-shrink: 0; display: flex; flex-direction: column; gap: 6px; padding: 12px; background: var(--bg-main);
+    border-left: 1px solid var(--border); overflow: hidden; }
+.pp-h { font-size: 0.8em; color: var(--accent); margin-top: 6px; }
+.pp-inv-row { display: flex; justify-content: space-between; align-items: center; gap: 6px; font-size: 0.8em; margin-bottom: 4px; }
+.pp-member { display: flex; justify-content: space-between; font-size: 0.85em; padding: 2px 0; }
+.pp-chat { flex: 1; min-height: 80px; overflow-y: auto; font-size: 0.85em; line-height: 1.4; background: var(--bg-input); padding: 6px; border: 1px solid var(--border); }
+.pp-msg b { color: var(--highlight); }
+.pp-emoji { display: flex; flex-wrap: wrap; gap: 4px; }
+.pp-emoji button { margin: 0; padding: 2px 6px; font-size: 18px; background: none; border: 1px solid var(--border); }
+#pp-chat-input { width: 100%; box-sizing: border-box; padding: 8px; background: var(--bg-input); border: 1px solid var(--border); color: var(--highlight); }
+
 </style>
+<script src="./vendor/qrcode.js"></script>
+<script src="./shared/party-sync.js"></script>
 </head>
 
 <body>
@@ -1145,6 +1212,10 @@ video {
         <option value="">All Collections</option>
     </select>
 
+    <select id="library-source" onchange="switchLibrarySource()" title="Which library to browse" style="display:none; padding:8px 10px; background:var(--bg-input); border:1px solid var(--border); color:var(--highlight); font-family:OpenDyslexic,sans-serif; font-size:0.85em; flex-shrink:0; max-width:220px;">
+        <option value="">📚 My library</option>
+    </select>
+
     <div id="action-icons">
         <!-- Add Dropdown (click-based) -->
         <div class="dropdown" id="add-dropdown">
@@ -1159,6 +1230,7 @@ video {
 
         <button class="icon-btn" id="btn-continue-watching" onclick="resumePlayback()" style="display:none; background:var(--accent); border-color:var(--highlight); color:#fff;">🎬 Resume</button>
         
+        <button class="icon-btn" id="btn-parties" onclick="showLocalParties()" title="Start or join a watch party">🎉 Watch party</button>
         <button class="icon-btn" onclick="showSettings()" title="Settings">⚙️ Settings</button>
         <button class="icon-btn" id="btn-toggle-options" onclick="toggleOptions()" title="Options">🎛 Options ▾</button>
     </div>
@@ -1255,6 +1327,70 @@ video {
 <!-- ── Main Grid ──────────────────────────────────────── -->
 <div class="grid" id="grid"></div>
 
+<!-- ── Another PubHorror's library (read-only) ───────────── -->
+<div id="remote-view" style="display:none;">
+    <div id="remote-status" class="remote-status"></div>
+    <div class="grid" id="remote-grid"></div>
+</div>
+
+<div id="remote-modal" onclick="if (event.target === this) closeRemoteModal()">
+    <div class="modal-content remote-modal-box">
+        <div class="remote-head">
+            <div id="rm-poster" class="rm-poster"></div>
+            <div style="min-width:0; flex:1;">
+                <h2 id="rm-title" style="text-align:left; margin-bottom:4px;"></h2>
+                <div id="rm-sub" style="opacity:0.7; font-size:0.85em;"></div>
+                <div id="rm-from" style="opacity:0.6; font-size:0.75em; margin-top:6px;"></div>
+            </div>
+        </div>
+        <div id="rm-match" class="rm-match"></div>
+        <div id="rm-actions" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
+        <div id="rm-desc" style="font-size:0.85em; line-height:1.5; opacity:0.85;"></div>
+        <div id="rm-episodes"></div>
+        <div class="modal-actions"><button onclick="closeRemoteModal()">Close</button></div>
+    </div>
+</div>
+
+<div id="remote-player">
+    <div class="rp-top">
+        <button onclick="closeRemotePlayer()">‹ Back</button>
+        <span id="rp-title"></span>
+    </div>
+    <video id="rp-video" controls autoplay></video>
+</div>
+
+<!-- ── Watch Party player ────────────────────────────── -->
+<div id="party-player">
+    <div class="pp-main">
+        <div class="pp-top">
+            <button onclick="leaveParty()">‹ Leave party</button>
+            <span id="pp-title" class="pp-title"></span>
+            <span id="pp-source" class="pp-hint"></span>
+            <button onclick="togglePartySide()" title="Show/hide chat">💬</button>
+        </div>
+        <div class="pp-stage">
+            <video id="pp-video" controls></video>
+            <div id="pp-notices" class="pp-notices"></div>
+            <div id="pp-reactions" class="pp-reactions"></div>
+            <div id="pp-banner" class="pp-banner" hidden></div>
+            <button id="pp-tap" class="pp-tap" hidden onclick="partySync && partySync.unlock(); this.hidden = true;">▶ Click to sync with the party</button>
+        </div>
+    </div>
+    <aside id="pp-side" class="pp-side">
+        <div class="pp-h" style="display:flex;justify-content:space-between;align-items:center;">
+            <span>🎉 Room <b id="pp-room" class="share-code"></b></span>
+            <button id="pp-end" class="share-small" style="display:none;" onclick="endParty()">⛔ End party</button>
+        </div>
+        <div id="pp-invites"></div>
+        <div class="pp-h">Watching</div>
+        <div id="pp-members"></div>
+        <div class="pp-h">Chat</div>
+        <div id="pp-chat" class="pp-chat"></div>
+        <div id="pp-emoji" class="pp-emoji"></div>
+        <form onsubmit="sendPartyChat(event)"><input id="pp-chat-input" maxlength="300" placeholder="Say something…" autocomplete="off"></form>
+    </aside>
+</div>
+
 <!-- ── Video Player ───────────────────────────────────── -->
 <div id="player">
     <div id="player-main">
@@ -1291,6 +1427,7 @@ video {
                     <button class="control-btn" id="btn-subs" onclick="toggleSubMenu(event)" title="Subtitles (C)">CC</button>
                     <div id="sub-menu"></div>
                 </div>
+                <button class="control-btn" onclick="partyFromPlayer()" title="Make this a watch party (starts from right here)">🎉</button>
                 <button class="control-btn" onclick="toggleFullscreen()">⛶</button>
             </div>
         </div>
@@ -1365,7 +1502,66 @@ video {
                     <button onclick="saveTmdbKey()">Save</button>
                 </div>
                 <small style="color:#555;">Get a free key at <span style="color:var(--accent);">themoviedb.org</span> → Settings → API</small>
+                <div style="display:flex; gap:8px; align-items:center; margin-top:8px; flex-wrap:wrap;">
+                    <button class="share-small" onclick="startTmdbBackfill()">🔗 Match all titles to TMDB</button>
+                    <span id="tmdb-backfill-status" class="share-warn" style="margin-top:0;">Lets PubHorror tell when a friend has the same movie as you.</span>
+                </div>
             </div>
+            <hr style="border:0.5px solid #333; width:100%;">
+            <div id="share-section">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+                    <label>📡 Share my library</label>
+                    <button id="share-toggle" onclick="toggleShare()" style="min-width:110px;">Turn on</button>
+                </div>
+                <small style="color:#777; display:block; margin-top:4px;">Lets your phone and friends on the same Wi-Fi (or your Tailscale network) browse and watch your library. Read-only — nothing can change your library. Turns off when PubHorror closes.</small>
+                <div id="share-error" class="share-error" style="display:none;"></div>
+                <div id="share-details" style="display:none;">
+                    <div class="share-grid">
+                        <div id="share-qr" title="Scan with your phone's camera"></div>
+                        <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:10px;">
+                            <div>
+                                <div class="share-k">Open on your phone</div>
+                                <div id="share-addresses"></div>
+                            </div>
+                            <div>
+                                <div class="share-k">Access code</div>
+                                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                                    <span id="share-code" class="share-code"></span>
+                                    <button class="share-small" onclick="copyShareCode()">Copy</button>
+                                    <button class="share-small" onclick="regenShareCode()">New code</button>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="share-k">Shown to others as</div>
+                                <div style="display:flex; gap:8px;">
+                                    <input id="share-name" maxlength="60" style="flex:1; padding:6px 10px;">
+                                    <button class="share-small" onclick="saveShareName()">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="share-warnings" class="share-warn"></div>
+                    <div style="display:flex; gap:10px; margin-top:8px; align-items:center; flex-wrap:wrap;">
+                        <button class="share-small" onclick="refreshShareAddresses()">↻ Refresh addresses</button>
+                        <button class="share-small" onclick="clearShareCache()">🗑 Clear phone copies</button>
+                        <span id="share-cache" class="share-warn" style="margin-top:0;"></span>
+                    </div>
+                </div>
+            </div>
+            <hr style="border:0.5px solid #333; width:100%;">
+            <div id="remotes-section">
+                <label>🔗 Other PubHorror libraries</label>
+                <small style="color:#777; display:block; margin-top:4px;">Watch from another PubHorror on your Wi-Fi or Tailscale. Added libraries appear in the library menu at the top. They're read-only and never mix into your own library.</small>
+                <div id="remote-hosts-list"></div>
+                <div style="margin-top:8px;"><button class="share-small" onclick="discoverRemotes()">🔍 Find on my network</button></div>
+                <div id="remote-found"></div>
+                <div style="display:flex; gap:6px; margin-top:8px; flex-wrap:wrap;">
+                    <input id="remote-addr" placeholder="Address, e.g. 192.168.1.20 or 100.x.x.x" style="flex:2; min-width:170px; padding:6px 10px;">
+                    <input id="remote-code" placeholder="Access code" style="flex:1; min-width:110px; padding:6px 10px;">
+                    <button class="share-small" onclick="addRemoteManual()">Add</button>
+                </div>
+            </div>
+            <hr style="border:0.5px solid #333; width:100%;">
             <div style="display:flex; gap:10px;">
                 <button onclick="exportBackup()" style="flex:1;">📤 Export Backup</button>
                 <button onclick="importBackup()" style="flex:1;">📥 Import Backup</button>
@@ -1582,6 +1778,7 @@ async function init() {
         collections = [];
     }
     favCounts = await pywebview.api.get_favorites();
+    loadRemoteSources();
     applyFilters();
     populateCollectionFilter();
     populateGenreChips();
@@ -1855,6 +2052,7 @@ function sortKey(title) {
 // applyFilters below
 
 function applyFilters() {
+    if (librarySource) { renderRemoteGrid(); return; }   // browsing another PubHorror's library
     const search = document.getElementById("search").value.toLowerCase().trim();
     const colFilter = document.getElementById("filter-collection").value;
     const statusFilter = document.getElementById("filter-status").value;
@@ -2066,6 +2264,12 @@ function renderMovies() {
         if ((movie.categories || []).length > 0) content.appendChild(cats);
         if (cwBadges) content.appendChild(cwBadges);
         content.appendChild(editBtn);
+        const partyBtn = document.createElement("button");
+        partyBtn.className = "card-edit-btn card-party-btn";
+        partyBtn.textContent = "🎉";
+        partyBtn.title = "Start a watch party";
+        partyBtn.onclick = (e) => { e.stopPropagation(); startPartyForMovie(movie); };
+        content.appendChild(partyBtn);
 
         card.appendChild(poster);
         card.appendChild(content);
@@ -2112,6 +2316,7 @@ function closeCwModal() {
 }
 
 async function playMovieWithCwCheck(movie) {
+    tmdbOnClick(movie);
     const warnings = movie.content_warnings || [];
     if (warnings.length > 0) {
         showCwModal(warnings, () => playMovie(movie));
@@ -2121,6 +2326,7 @@ async function playMovieWithCwCheck(movie) {
 }
 
 async function playSeries(movie) {
+    tmdbOnClick(movie);
     const warnings = movie.content_warnings || [];
     if (warnings.length > 0) {
         showCwModal(warnings, () => openSeriesPlayer(movie));
@@ -2833,6 +3039,680 @@ function closeStats() {
     document.getElementById("stats-modal").style.display = "none";
 }
 
+// ── Other PubHorror libraries (read-only; never mixed into `movies`) ─────
+let librarySource = "";      // "" = my library, otherwise a remote host id
+let remoteData = null;       // { host_id, host_name, items }
+let remoteHosts = [];
+let remotePoll = null;
+
+function mk(tag, props, ...kids) {
+    const n = document.createElement(tag);
+    Object.entries(props || {}).forEach(([k, v]) => {
+        if (k === "text") n.textContent = v;
+        else if (k === "class") n.className = v;
+        else if (k === "style") n.style.cssText = v;
+        else if (k.startsWith("on")) n[k] = v;
+        else if (v != null && v !== false) n.setAttribute(k, v);
+    });
+    kids.forEach(c => { if (c != null) n.append(c); });
+    return n;
+}
+
+// When sharing is on, clicking one of my titles saves its TMDB id (so friends can match it to their copies).
+function tmdbOnClick(movie) {
+    if (!shareRunning || !movie || movie.tmdb_id) return;
+    pywebview.api.ensure_tmdb_id(movie.id).then(r => {
+        if (r && r.tmdb_id) { movie.tmdb_id = r.tmdb_id; movie.tmdb_kind = r.tmdb_kind; }
+    }).catch(() => {});
+}
+
+async function loadRemoteSources() {
+    try { remoteHosts = await pywebview.api.remote_list(); } catch (e) { remoteHosts = []; }
+    const sel = document.getElementById("library-source");
+    const cur = librarySource;
+    sel.innerHTML = "";
+    sel.append(new Option("📚 My library", ""));
+    remoteHosts.forEach(h => sel.append(new Option("📡 " + h.name, h.id)));
+    sel.style.display = remoteHosts.length ? "" : "none";
+    if (cur && remoteHosts.some(h => h.id === cur)) sel.value = cur;
+    else if (cur) { sel.value = ""; switchLibrarySource(); }
+}
+
+async function switchLibrarySource() {
+    librarySource = document.getElementById("library-source").value;
+    const remote = !!librarySource;
+    document.getElementById("grid").style.display = remote ? "none" : "";
+    document.getElementById("remote-view").style.display = remote ? "block" : "none";
+    const chips = document.getElementById("genre-chips");
+    if (chips) chips.style.visibility = remote ? "hidden" : "";
+    if (!remote) { remoteData = null; applyFilters(); return; }
+    document.getElementById("empty-state").style.display = "none";
+    document.getElementById("remote-grid").innerHTML = "";
+    await refreshRemoteLibrary();
+}
+
+function remoteHostName(id) {
+    const h = remoteHosts.find(x => x.id === id);
+    return (remoteData && remoteData.host_id === id && remoteData.host_name) || (h && h.name) || "the other PC";
+}
+
+async function refreshRemoteLibrary() {
+    const hostId = librarySource;
+    const status = document.getElementById("remote-status");
+    status.replaceChildren(mk("span", { text: `Loading ${remoteHostName(hostId)}'s library…` }));
+    const r = await pywebview.api.remote_library(hostId);
+    if (hostId !== librarySource) return;            // switched away meanwhile
+    if (r.error) {
+        remoteData = null;
+        document.getElementById("remote-grid").innerHTML = "";
+        const kids = [mk("span", { text: "⚠ " + r.error })];
+        if (r.kind === "code") {
+            const inp = mk("input", { placeholder: "New access code" });
+            kids.push(inp, mk("button", { class: "share-small", text: "Save code", onclick: async () => {
+                const x = await pywebview.api.remote_set_code(hostId, inp.value);
+                if (x.error) showToast("⚠ " + x.error, 5000); else refreshRemoteLibrary();
+            } }));
+        } else {
+            kids.push(mk("button", { class: "share-small", text: "↻ Try again", onclick: refreshRemoteLibrary }));
+        }
+        status.replaceChildren(...kids);
+        return;
+    }
+    remoteData = r;
+    loadRemoteSources();                              // the host may have been renamed
+    status.replaceChildren(
+        mk("span", { text: `📡 ${r.host_name} — ${r.items.length} title${r.items.length === 1 ? "" : "s"}. Streams from their PC; nothing here is added to your library.` }),
+        mk("button", { class: "share-small", text: "↻ Refresh", onclick: refreshRemoteLibrary }));
+    renderRemoteGrid();
+    renderRemoteParties(hostId);
+}
+
+function renderRemoteGrid() {
+    const grid = document.getElementById("remote-grid");
+    if (!remoteData) return;
+    const q = document.getElementById("search").value.toLowerCase().trim();
+    const list = remoteData.items.filter(i => !q || i.title.toLowerCase().includes(q) ||
+        (i.categories || []).some(c => c.toLowerCase().includes(q)));
+    grid.replaceChildren(...list.map(item => {
+        const poster = mk("div", { class: "poster" });
+        poster.append(mk("div", { class: "poster-fallback", text: "📡", style: "font-size:40px;opacity:.25;" }));
+        if (item.poster) {
+            const img = mk("img", { src: item.poster, alt: item.title, referrerpolicy: "no-referrer",
+                style: "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" });
+            img.onerror = () => img.remove();
+            poster.append(img);
+            poster.classList.add("has-poster");
+        }
+        const meta = [item.year, item.type === "series" ? "📺 Series" : null, item.playable ? null : "not available"]
+            .filter(Boolean).join(" • ");
+        return mk("div", { class: "card" + (item.playable ? "" : " unplayable"), onclick: () => openRemoteTitle(item) },
+            poster,
+            mk("div", { class: "card-content" },
+                mk("div", { class: "title", text: item.title }),
+                mk("div", { class: "meta", text: meta }),
+                mk("div", { class: "desc", text: (item.categories || []).join(", ") })));
+    }));
+    if (!list.length) grid.append(mk("div", { style: "padding:20px;opacity:.6;", text: q ? "Nothing matches that search." : "This library is empty." }));
+}
+
+// Clicking a title: Python first gets & saves its TMDB id, THEN checks whether I own it too.
+async function openRemoteTitle(item) {
+    const hostId = librarySource;
+    const host = remoteHostName(hostId);
+    const modal = document.getElementById("remote-modal");
+    document.getElementById("rm-title").textContent = item.title;
+    document.getElementById("rm-sub").textContent = item.year || "";
+    document.getElementById("rm-from").textContent = "From " + host;
+    document.getElementById("rm-poster").replaceChildren(item.poster ? mk("img", { src: item.poster, referrerpolicy: "no-referrer" }) : "");
+    const match = document.getElementById("rm-match");
+    match.className = "rm-match";
+    match.textContent = "🔎 Looking it up on TMDB and checking your library…";
+    document.getElementById("rm-actions").replaceChildren();
+    document.getElementById("rm-desc").textContent = "";
+    document.getElementById("rm-episodes").replaceChildren();
+    modal.style.display = "flex";
+
+    const r = await pywebview.api.remote_open(hostId, item.id);
+    if (modal.style.display !== "flex") return;
+    if (r.error) { match.textContent = "⚠ " + r.error; return; }
+    const m = r.movie;
+    document.getElementById("rm-sub").textContent = [m.year, m.director].filter(Boolean).join(" · ");
+    document.getElementById("rm-desc").textContent = m.desc || "";
+    const mine = r.local && movies.find(x => x.id === r.local.id);
+    const actions = document.getElementById("rm-actions");
+
+    if (mine) {
+        match.className = "rm-match have";
+        match.textContent = `✔ You have this too ("${mine.title}"${mine.year ? ", " + mine.year : ""}). ` +
+            (r.matched_by === "tmdb" ? "Matched by TMDB id. " : "Matched by title and year. ") +
+            "Playing your own copy uses no network at all.";
+        actions.append(mk("button", { text: "▶ Play my copy", onclick: () => {
+            closeRemoteModal();
+            if (mine.source_type === "series") playSeries(mine); else playMovieWithCwCheck(mine);
+        } }));
+    } else {
+        match.textContent = m.tmdb_id
+            ? `You don't have this one, so it will stream from ${host}.`
+            : `Couldn't match it on TMDB, and there's no same-titled copy in your library, so it will stream from ${host}.`;
+    }
+
+    if (m.type === "series") {
+        const box = document.getElementById("rm-episodes");
+        let season = null;
+        (m.episodes || []).forEach(e => {
+            const sname = e.season_name || (e.season != null ? "Season " + e.season : null);
+            if (sname && sname !== season) { season = sname; box.append(mk("div", { text: sname, style: "margin:10px 0 5px;color:var(--accent);font-size:.85em;" })); }
+            const b = mk("button", { class: "rm-ep", disabled: !e.playable,
+                onclick: () => remoteStream(hostId, m.id, e.index, `${m.title} — ${e.title}`) },
+                mk("span", { text: e.episode != null ? "E" + e.episode : String(e.index + 1), style: "opacity:.6;min-width:2.2em;" }),
+                mk("span", { text: e.title, style: "flex:1;" }),
+                e.playable ? mk("span", { text: "🎉", title: "Start a watch party for this episode",
+                    onclick: ev => { ev.stopPropagation(); startRemoteParty(hostId, m.id, e.index); } }) : null);
+            box.append(b);
+        });
+    } else if (m.playable) {
+        actions.append(mk("button", { text: `📡 Stream from ${host}`, onclick: () => remoteStream(hostId, m.id, 0, m.title) }));
+        actions.append(mk("button", { text: "🎉 Start watch party", onclick: () => startRemoteParty(hostId, m.id, 0) }));
+    } else if (!mine) {
+        match.textContent += " (It isn't available on their PC right now — e.g. a disc that hasn't been ripped.)";
+    }
+}
+
+function closeRemoteModal() {
+    document.getElementById("remote-modal").style.display = "none";
+    clearTimeout(remotePoll);
+}
+
+async function remoteStream(hostId, movieId, ep, title) {
+    clearTimeout(remotePoll);
+    const match = document.getElementById("rm-match");
+    const r = await pywebview.api.remote_play(hostId, movieId, ep);
+    if (r.error) { showToast("⚠ " + r.error, 5000); return; }
+    if (r.state === "ready") { openRemotePlayer(r.src, title); return; }
+    const why = (r.reasons || []).join(", ") || "its format";
+    if (r.state === "needs_prepare" || r.state === "error") {
+        const slow = r.mode === "transcode" ? " This one needs a full re-encode, which can take about as long as the movie." : " It's a quick repackage (usually a minute or two).";
+        if (!confirm(`This file has to be converted on ${remoteHostName(hostId)}'s PC before it can stream (${why}).${slow}\n\nStart converting now?`)) return;
+        const p = await pywebview.api.remote_prepare(hostId, movieId, ep);
+        if (p.error) { showToast("⚠ " + p.error, 5000); return; }
+    } else if (r.state !== "queued" && r.state !== "converting") {
+        showToast("⚠ " + (r.error || "This file can't be streamed."), 5000);
+        return;
+    }
+    // poll until ready, showing progress in the details box
+    const tick = async () => {
+        const s = await pywebview.api.remote_play(hostId, movieId, ep);
+        if (s.error) { match.textContent = "⚠ " + s.error; return; }
+        if (s.state === "ready") { match.textContent = "✔ Ready."; openRemotePlayer(s.src, title); return; }
+        if (s.state === "error" || s.state === "unsupported") { match.textContent = "⚠ " + (s.error || "Conversion failed."); return; }
+        match.textContent = s.state === "queued" ? `⏳ Waiting for another conversion on their PC (#${s.position} in line)…`
+                                                 : `⏳ Converting on their PC… ${s.percent}%`;
+        remotePoll = setTimeout(tick, 2500);
+    };
+    tick();
+}
+
+function openRemotePlayer(src, title) {
+    closeRemoteModal();
+    document.getElementById("rp-title").textContent = title + " · streaming";
+    const v = document.getElementById("rp-video");
+    v.src = src;
+    document.getElementById("remote-player").style.display = "flex";
+    v.onerror = () => showToast("⚠ Couldn't play this stream. The other PC may have stopped sharing.", 6000);
+    v.play().catch(() => {});
+}
+
+function closeRemotePlayer() {
+    const v = document.getElementById("rp-video");
+    v.pause(); v.removeAttribute("src"); v.load();   // drop the network connection
+    document.getElementById("remote-player").style.display = "none";
+}
+
+document.addEventListener("keydown", e => {
+    if (e.key !== "Escape") return;
+    if (document.getElementById("remote-player").style.display === "flex") closeRemotePlayer();
+    else if (document.getElementById("remote-modal").style.display === "flex") closeRemoteModal();
+});
+
+// ── Settings: managing other libraries ───────────────────
+async function renderRemoteHosts() {
+    await loadRemoteSources();
+    const box = document.getElementById("remote-hosts-list");
+    box.replaceChildren(...remoteHosts.map(h => mk("div", { class: "remote-host-row" },
+        mk("span", { class: "rh-name" }, mk("span", { text: "📡 " + h.name + " " }), mk("span", { class: "rh-url", text: h.url })),
+        mk("button", { class: "share-small", text: "Remove", onclick: async () => {
+            if (!confirm(`Remove ${h.name} from your libraries? (This doesn't touch anything on their PC or yours.)`)) return;
+            await pywebview.api.remote_remove(h.id);
+            renderRemoteHosts();
+        } }))));
+}
+
+async function addRemote(address, code, btn) {
+    if (btn) btn.disabled = true;
+    const r = await pywebview.api.remote_add(address, code);
+    if (btn) btn.disabled = false;
+    if (r.error) { showToast("⚠ " + r.error, 6000); return false; }
+    showToast(`✅ Added ${r.name}. Pick it from the library menu at the top.`, 5000);
+    renderRemoteHosts();
+    return true;
+}
+
+async function addRemoteManual() {
+    const a = document.getElementById("remote-addr"), c = document.getElementById("remote-code");
+    if (await addRemote(a.value, c.value)) { a.value = ""; c.value = ""; }
+}
+
+async function discoverRemotes() {
+    const box = document.getElementById("remote-found");
+    box.replaceChildren(mk("div", { class: "share-warn", text: "🔍 Looking for PubHorror on your network (a few seconds)…" }));
+    const r = await pywebview.api.remote_discover();
+    const found = (r.hosts || []);
+    if (!found.length) {
+        box.replaceChildren(mk("div", { class: "share-warn", text: r.error ? "⚠ " + r.error :
+            "None found. The other PC needs PubHorror open with sharing on. Over Tailscale, or if Windows Firewall blocked the search, add it by address below." }));
+        return;
+    }
+    box.replaceChildren(...found.map(h => {
+        if (h.saved) return mk("div", { class: "remote-host-row" }, mk("span", { class: "rh-name", text: `📡 ${h.name} — already added` }));
+        const code = mk("input", { placeholder: "Access code" });
+        const btn = mk("button", { class: "share-small", text: "Add" });
+        btn.onclick = async () => { if (await addRemote(h.url, code.value, btn)) discoverRemotes(); };
+        return mk("div", { class: "remote-host-row" },
+            mk("span", { class: "rh-name" }, mk("span", { text: "📡 " + h.name + " " }), mk("span", { class: "rh-url", text: h.url })),
+            code, btn);
+    }));
+}
+
+async function startTmdbBackfill() {
+    const label = document.getElementById("tmdb-backfill-status");
+    let st = await pywebview.api.tmdb_backfill_start();
+    if (st.error) { label.textContent = "⚠ " + st.error; return; }
+    const tick = async () => {
+        st = await pywebview.api.tmdb_backfill_status();
+        label.textContent = st.running
+            ? `Matching… ${st.done}/${st.total} (${st.matched} matched)`
+            : `Done: ${st.matched} of ${st.total} unmatched titles matched. Titles with unclear matches were left alone — set those with "Auto-fill" in the editor.`;
+        if (st.running) setTimeout(tick, 1000);
+    };
+    tick();
+}
+
+// ── Watch Party (desktop) ────────────────────────────────
+// Uses its own player overlay so the main player (progress saving, auto-next, bookmarks) is untouched.
+let partySync = null;
+let partyCtx = null;
+let partyStreamPoll = null;
+
+async function askPartyName() {
+    const current = await pywebview.api.party_get_name();
+    const n = prompt("Your name in the watch party (others see it next to what you do):", current);
+    if (n === null) return null;
+    return await pywebview.api.party_set_name(n.trim() || current);
+}
+
+function pickEpisodeIndex(title, episodes) {
+    return new Promise(resolve => {
+        const wrap = mk("div", { style: "position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9500;display:flex;align-items:center;justify-content:center;" });
+        const box = mk("div", { style: "background:var(--bg-main);border:1px solid var(--accent);padding:18px;width:min(520px,92vw);max-height:80vh;overflow:auto;display:flex;flex-direction:column;gap:6px;" });
+        const done = v => { wrap.remove(); resolve(v); };
+        box.append(mk("div", { text: title, style: "font-weight:bold;color:var(--highlight);margin-bottom:6px;" }));
+        (episodes || []).forEach((e, i) => {
+            const label = e.season_name || e.season_num != null || e.season != null
+                ? `${e.season_name || "Season " + (e.season_num ?? e.season)} · ${e.title}` : e.title;
+            box.append(mk("button", { text: label, style: "text-align:left;margin:0;", disabled: e.playable === false, onclick: () => done(i) }));
+        });
+        box.append(mk("button", { text: "Cancel", style: "margin-top:6px;", onclick: () => done(null) }));
+        wrap.append(box);
+        wrap.onclick = ev => { if (ev.target === wrap) done(null); };
+        document.body.append(wrap);
+    });
+}
+
+// 🎉 on one of MY titles
+async function startPartyForMovie(movie, opts) {
+    opts = opts || {};
+    let ep = opts.ep != null ? opts.ep : 0;
+    if (movie.source_type === "missing") { showToast("⚠ That one is on your wishlist — there's no file to watch yet.", 5000); return; }
+    if (movie.source_type === "series" && opts.ep == null) {
+        ep = await pickEpisodeIndex(`Watch party: which episode of ${movie.title}?`, movie.episodes);
+        if (ep === null) return;
+    }
+    if (!await askPartyName()) return;
+    showToast(shareRunning ? "🎉 Starting the party…" : "📡 Turning sharing on and starting the party…", 4000);
+    const r = await pywebview.api.party_host_start(movie.id, ep, opts.at || 0);
+    if (r.error) { showToast("⚠ " + r.error, 6000); return; }
+    if (typeof opts.onStarted === "function") opts.onStarted();
+    refreshShareUI();
+    localPartiesSeen = new Set([...(localPartiesSeen || []), r.room.id]);   // don't toast my own party
+    openPartyPlayer(r);
+}
+
+// 🎉 on another PubHorror's title, or joining one of their parties
+async function startRemoteParty(hostId, movieId, ep) {
+    if (!await askPartyName()) return;
+    closeRemoteModal();
+    showToast("🎉 Starting the party…", 4000);
+    const r = await pywebview.api.party_remote_start(hostId, movieId, ep || 0);
+    if (r.error) { showToast("⚠ " + r.error, 6000); return; }
+    openPartyPlayer(r);
+}
+
+async function joinRemoteParty(hostId, roomId) {
+    if (!roomId) return;
+    if (!await askPartyName()) return;
+    showToast("🎉 Joining…", 3000);
+    const r = await pywebview.api.party_remote_join(hostId, roomId);
+    if (r.error) { showToast("⚠ " + r.error, 6000); return; }
+    openPartyPlayer(r);
+}
+
+async function renderRemoteParties(hostId) {
+    const status = document.getElementById("remote-status");
+    const r = await pywebview.api.party_remote_list(hostId);
+    if (hostId !== librarySource || !Array.isArray(r)) return;
+    const box = mk("div", { style: "width:100%;display:flex;flex-direction:column;gap:6px;margin-top:4px;" });
+    r.forEach(p => box.append(mk("div", { class: "remote-host-row" },
+        mk("span", { class: "rh-name", text: `🎉 ${p.created_by}'s party: ${p.movie.title}${p.movie.episode ? " — " + p.movie.episode.title : ""} · ${p.members} watching` }),
+        mk("button", { class: "share-small", text: "Join", onclick: () => joinRemoteParty(hostId, p.id) }))));
+    const code = mk("input", { placeholder: "Room code or link", style: "width:180px;" });
+    box.append(mk("div", { style: "display:flex;gap:6px;align-items:center;" }, mk("span", { text: "Join a party by code:", style: "opacity:.7;" }), code,
+        mk("button", { class: "share-small", text: "Join", onclick: () => joinRemoteParty(hostId, partyCodeFrom(code.value)) })));
+    status.append(box);
+}
+
+// ---------------------------------------------------------------- the party player
+function ppEl(id) { return document.getElementById(id); }
+
+function copyPlain(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).catch(() => fallbackCopy(text, () => {}));
+    else fallbackCopy(text, () => {});
+}
+
+async function openPartyPlayer(p) {
+    if (partySync) leaveParty(true);
+    partyCtx = p;
+    const m = p.room.movie;
+    ppEl("pp-title").textContent = m.title + (m.episode ? " — " + m.episode.title : "");
+    ppEl("pp-room").textContent = p.room.id;
+    ppEl("pp-members").replaceChildren();
+    ppEl("pp-chat").replaceChildren();
+    ppEl("pp-notices").replaceChildren();
+    ppEl("pp-banner").hidden = true;
+    ppEl("pp-tap").hidden = true;
+    ppEl("pp-end").style.display = "none";
+    const inv = ppEl("pp-invites");
+    inv.replaceChildren();
+    if (p.invites && p.invites.length) {
+        p.invites.forEach(i => inv.append(mk("div", { class: "pp-inv-row" },
+            mk("span", { text: i.label }),
+            mk("button", { class: "share-small", text: "Copy invite link", onclick: () => { copyPlain(i.url); showToast("📋 Invite link copied (it includes your access code — only send it to friends)", 5000); } }))));
+        inv.append(mk("div", { class: "pp-hint", text: "Friends with PubHorror can also join from their library menu with room code " + p.room.id + "." }));
+    } else {
+        inv.append(mk("div", { class: "pp-hint", text: `Share room code ${p.room.id}. Friends join from ${p.host_name}'s library in PubHorror, or from the party link the host sends.` }));
+    }
+    ppEl("pp-emoji").replaceChildren(...PartySync.EMOJI.map(e => mk("button", { text: e, title: "React", onclick: () => partySync && partySync.react(e) })));
+    ppEl("party-player").style.display = "flex";
+
+    const video = ppEl("pp-video");
+    video.removeAttribute("src"); video.load();
+
+    partySync = new PartySync({
+        url: p.ws_url, room: p.room.id, name: p.name, kind: "app", video, ownerKey: p.room.owner_key,
+        source: p.local_path ? "local" : "stream",
+        on: {
+            welcome: w => { partyCtx.me = w.you; ppEl("pp-end").style.display = w.you.can_end ? "" : "none"; (w.chat || []).forEach(addPartyChat); },
+            notice: t => partyNotice(t),
+            members: list => renderPartyMembers(list),
+            chat: addPartyChat,
+            react: r => floatReaction(r.emoji, r.from),
+            hold: h => partyBanner(h.active ? `⏸ Waiting for ${h.waiting_for.join(", ")}…` : null),
+            needTap: () => { ppEl("pp-tap").hidden = false; },
+            connection: c => { if (!c.connected) partyBanner("Reconnecting to the party…"); else partyBanner(null); },
+            error: e => { partyBanner("⚠ " + e.text); showToast("⚠ " + e.text, 6000); },
+            closed: e => {
+                showToast((e.ended ? "🎬 " : "⚠ ") + e.text, 6000);
+                if (e.ended) leaveParty(true); else partyBanner("⚠ " + e.text);
+                pollLocalParties();
+            },
+        },
+    });
+    partySync.start();
+    if (p.note) partyNotice(p.note);
+    await loadPartySource(p.local_path ? "local" : "stream");
+}
+
+async function loadPartySource(kind) {
+    const p = partyCtx, video = ppEl("pp-video"), m = p.room.movie;
+    clearTimeout(partyStreamPoll);
+    if (kind === "local") {
+        ppEl("pp-source").textContent = "▶ Your own copy";
+        video.src = toFileUrl(await resolvePlayPath(p.local_path));
+        partySync && partySync.setSource("local");
+        video.onloadedmetadata = () => {
+            const d = m.duration;
+            if (d && Number.isFinite(video.duration) && Math.abs(video.duration - d) > Math.max(5, d * 0.02)) {
+                const diff = Math.round((video.duration - d) / 60);
+                partyBanner(`Your copy is ${Math.abs(diff) || "<1"} min ${video.duration > d ? "longer" : "shorter"} than the host's (a different cut?). Sync may be off.`,
+                    { label: "Stream the host's copy instead", fn: () => loadPartySource("stream") });
+            }
+        };
+        return;
+    }
+    video.onloadedmetadata = null;
+    ppEl("pp-source").textContent = `📡 Streaming from ${p.target === "local" ? "this PC" : p.host_name}`;
+    partySync && partySync.setSource("stream");
+    const tick = async (prepare) => {
+        const s = await pywebview.api.party_stream(p.target, m.id, m.ep || 0, !!prepare);
+        if (partyCtx !== p) return;
+        if (s.error) { partyBanner("⚠ " + s.error); return; }
+        if (s.state === "ready") {
+            partyBanner(null);
+            if (video.getAttribute("src") !== s.src) video.src = s.src;
+            return;
+        }
+        if (s.state === "needs_prepare") {
+            partyBanner(`This file has to be converted before it can stream (${(s.reasons || []).join(", ")}). The party carries on meanwhile.`,
+                { label: "Convert now", fn: () => tick(true) });
+            return;
+        }
+        if (s.state === "queued" || s.state === "converting") {
+            partyBanner(s.state === "queued" ? "⏳ Waiting for another conversion to finish…" : `⏳ Converting for streaming… ${s.percent}%. You'll join automatically.`);
+            partyStreamPoll = setTimeout(() => tick(false), 2500);
+            return;
+        }
+        partyBanner("⚠ " + (s.error || "This file can't be streamed."));
+    };
+    await tick(false);
+}
+
+function leaveParty(silent) {
+    clearTimeout(partyStreamPoll);
+    if (partySync) { partySync.stop(); partySync = null; }
+    const v = ppEl("pp-video");
+    v.pause(); v.removeAttribute("src"); v.load();
+    ppEl("party-player").style.display = "none";
+    partyCtx = null;
+    if (!silent) showToast("👋 You left the party");
+}
+
+function partyBanner(text, action) {
+    const b = ppEl("pp-banner");
+    if (!text) { b.hidden = true; return; }
+    b.replaceChildren(mk("span", { text }));
+    if (action) b.append(mk("button", { class: "share-small", text: action.label, onclick: action.fn }));
+    b.hidden = false;
+}
+
+function partyNotice(text) {
+    const box = ppEl("pp-notices");
+    const n = mk("div", { class: "pp-notice", text });
+    box.append(n);
+    while (box.children.length > 4) box.firstChild.remove();
+    setTimeout(() => { n.style.opacity = "0"; setTimeout(() => n.remove(), 600); }, 4000);
+}
+
+function renderPartyMembers(list) {
+    ppEl("pp-members").replaceChildren(...list.map(x => mk("div", { class: "pp-member" },
+        mk("span", { text: (x.buffering ? "⏳ " : "") + x.name + (partyCtx && partyCtx.me && x.id === partyCtx.me.id ? " (you)" : "") }),
+        mk("span", { class: "pp-hint", text: x.source === "local" ? "own copy" : (x.kind === "browser" ? "browser" : "streaming") }))));
+}
+
+function addPartyChat(m) {
+    const box = ppEl("pp-chat");
+    box.append(mk("div", { class: "pp-msg" }, mk("b", { text: m.from + ": " }), mk("span", { text: m.text })));
+    while (box.children.length > 200) box.firstChild.remove();
+    box.scrollTop = box.scrollHeight;
+}
+
+function sendPartyChat(ev) {
+    ev.preventDefault();
+    const i = ppEl("pp-chat-input");
+    if (partySync && i.value.trim()) partySync.chat(i.value.trim());
+    i.value = "";
+}
+
+function floatReaction(emoji, from) {
+    const layer = ppEl("pp-reactions");
+    const e = mk("div", { class: "pp-react", title: from, text: emoji, style: `left:${10 + Math.random() * 75}%;` });
+    layer.append(e);
+    setTimeout(() => e.remove(), 2600);
+}
+
+
+// Accepts "ABC123" or a pasted link like http://192.168.1.3:47420/#/party/ABC123 (or an invite link).
+function partyCodeFrom(text) {
+    const t = String(text || "").trim();
+    const m = /party\/([A-Za-z0-9]{6})\b/.exec(t);
+    return (m ? m[1] : t).toUpperCase();
+}
+
+async function endParty() {
+    if (!partyCtx) return;
+    if (!confirm("End the party for everyone?")) return;
+    if (partySync) partySync.end();                 // the server checks you're allowed
+}
+
+// ---- parties running on MY sharing (e.g. one my phone started): show 🎉 in the top bar so this PC can join
+let localPartiesSeen = null;
+async function pollLocalParties() {
+    const btn = document.getElementById("btn-parties");
+    if (!shareRunning) { btn.textContent = "🎉 Watch party"; btn.title = "Start or join a watch party"; localPartiesSeen = null; return []; }
+    let list = [];
+    try { list = await pywebview.api.party_local_list(); } catch (e) { list = []; }
+    btn.textContent = list.length ? `🎉 Watch party (${list.length} on now)` : "🎉 Watch party";
+    btn.title = list.length ? `${list.length} watch part${list.length === 1 ? "y" : "ies"} on this PC — click to join` : "Start or join a watch party";
+    const ids = new Set(list.map(p => p.id));
+    if (localPartiesSeen) {
+        const mine = partyCtx ? partyCtx.room.id : null;
+        list.filter(p => !localPartiesSeen.has(p.id) && p.id !== mine).forEach(p =>
+            showToast(`🎉 ${p.created_by} started a watch party on your PC: ${p.movie.title}. Click 🎉 at the top to join.`, 7000));
+    }
+    localPartiesSeen = ids;
+    return list;
+}
+setInterval(() => { if (shareRunning) pollLocalParties(); }, 8000);
+
+// 🎉 in the main player: turn what I'm watching into a party, starting from where I am.
+async function partyFromPlayer() {
+    const movie = playingMovieObj;
+    if (!movie) return;
+    const video = document.getElementById("video");
+    const at = video.currentTime || 0;
+    let ep = 0;
+    if (movie.source_type === "series") {
+        const path = String(playingMovieId || "").slice(String(movie.id).length + 1);
+        ep = Math.max(0, (movie.episodes || []).findIndex(e => e.path === path));
+    }
+    video.pause();
+    await startPartyForMovie(movie, { ep, at, onStarted: () => closePlayer() });
+}
+
+// Join by a room code or a pasted link: tries this PC's parties first, then every saved PubHorror library.
+async function joinPartyByCode(text) {
+    const code = partyCodeFrom(text);
+    if (!/^[A-Z0-9]{6}$/.test(code)) { showToast("⚠ Enter the 6-character room code (or paste the party link).", 5000); return; }
+    if (!await askPartyName()) return;
+    showToast("🎉 Looking for party " + code + "…", 4000);
+    if (shareRunning) {
+        const local = await pollLocalParties();
+        if (local.some(p => p.id === code)) {
+            const r = await pywebview.api.party_host_join(code);
+            if (!r.error) { openPartyPlayer(r); return; }
+        }
+    }
+    let hosts = [];
+    try { hosts = await pywebview.api.remote_list(); } catch (e) { hosts = []; }
+    for (const h of (hosts || [])) {
+        const r = await pywebview.api.party_remote_join(h.id, code);
+        if (r && !r.error) { openPartyPlayer(r); return; }
+    }
+    showToast(hosts && hosts.length
+        ? "⚠ Couldn't find party " + code + " on this PC or your saved libraries. Has it ended?"
+        : "⚠ Couldn't find party " + code + ". If it's on a friend's PC, add their library first (Settings → Other PubHorror libraries).", 8000);
+}
+
+async function showLocalParties() {
+    const list = await pollLocalParties();
+    const wrap = mk("div", { style: "position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9500;display:flex;align-items:center;justify-content:center;" });
+    const box = mk("div", { style: "background:var(--bg-main);border:1px solid var(--accent);padding:18px;width:min(560px,92vw);max-height:80vh;overflow:auto;display:flex;flex-direction:column;gap:8px;" });
+    const close = () => wrap.remove();
+    wrap.onclick = ev => { if (ev.target === wrap) close(); };
+    const head = t => mk("div", { text: t, style: "font-weight:bold;color:var(--highlight);margin-top:6px;" });
+
+    // 1) start one: pick any of my titles
+    box.append(head("🎉 Start a watch party"));
+    const find = mk("input", { placeholder: "Search your library…", style: "width:100%;box-sizing:border-box;" });
+    const results = mk("div", { style: "display:flex;flex-direction:column;gap:4px;max-height:220px;overflow:auto;" });
+    const showResults = () => {
+        const q = find.value.trim().toLowerCase();
+        const pick = movies.filter(m => !m.remote && m.source_type !== "missing" && (!q || String(m.title || "").toLowerCase().includes(q)))
+            .sort((a, b) => String(a.title).localeCompare(String(b.title))).slice(0, 40);
+        results.replaceChildren(...pick.map(m => mk("button", {
+            text: `${m.title}${m.year ? " (" + m.year + ")" : ""}${m.source_type === "series" ? " · series" : ""}`,
+            style: "text-align:left;margin:0;", onclick: () => { close(); startPartyForMovie(m); } })));
+        if (!pick.length) results.append(mk("div", { text: "No matching titles.", style: "opacity:.7;" }));
+    };
+    find.oninput = showResults;
+    box.append(find, results);
+    box.append(mk("div", { class: "pp-hint", style: "opacity:.7;font-size:.85em;",
+        text: "Tip: you can also press 🎉 on any card, or 🎉 in the player to turn what you're watching into a party." }));
+    showResults();
+
+    // 2) join one by code or link (this PC, or any saved PubHorror library)
+    box.append(head("🔗 Join a party"));
+    const code = mk("input", { placeholder: "Room code or party link", style: "flex:1;" });
+    const joinBtn = mk("button", { class: "share-small", text: "Join", onclick: () => { const c = code.value; close(); joinPartyByCode(c); } });
+    code.onkeydown = e => { if (e.key === "Enter") joinBtn.click(); };
+    box.append(mk("div", { style: "display:flex;gap:6px;align-items:center;" }, code, joinBtn));
+
+    // 3) parties running on this PC (e.g. one my phone started)
+    box.append(head("📡 Running on this PC"));
+    if (!list.length) box.append(mk("div", { text: shareRunning ? "No parties are running right now." : "None (sharing is off — starting a party turns it on).", style: "opacity:.7;" }));
+    list.forEach(p => box.append(mk("div", { class: "remote-host-row" },
+        mk("span", { class: "rh-name", text: `${p.movie.title}${p.movie.episode ? " — " + p.movie.episode.title : ""} · started by ${p.created_by} · ${p.members} watching` }),
+        mk("button", { class: "share-small", text: "Join", onclick: async () => {
+            close();
+            if (!await askPartyName()) return;
+            const r = await pywebview.api.party_host_join(p.id);
+            if (r.error) { showToast("⚠ " + r.error, 6000); return; }
+            openPartyPlayer(r);
+        } }),
+        mk("button", { class: "share-small", text: "End", title: "End this party for everyone", onclick: async () => {
+            if (!confirm(`End "${p.movie.title}" for everyone watching?`)) return;
+            const r = await pywebview.api.party_end("local", p.id);
+            if (r.error) showToast("⚠ " + r.error, 6000); else showToast("🎬 Party ended");
+            close(); pollLocalParties();
+        } }))));
+    box.append(mk("button", { text: "Close", style: "margin-top:6px;", onclick: close }));
+    wrap.append(box);
+    document.body.append(wrap);
+}
+
+function togglePartySide() {
+    const s = ppEl("pp-side");
+    s.style.display = s.style.display === "none" ? "" : "none";
+}
+
 // ── Settings ────────────────────────────────────────────
 async function showSettings() {
     const config = await pywebview.api.get_config();
@@ -2840,6 +3720,117 @@ async function showSettings() {
     document.getElementById("setting-tmdb-key").value = config.tmdb_api_key || "";
     document.getElementById("settings-modal").style.display = "flex";
     loadBackupHistory();
+    refreshShareUI();
+    renderRemoteHosts();
+}
+
+// ── Sharing (Node sidecar) ──────────────────────────────
+let shareBusy = false;
+let shareRunning = false;
+
+function renderShare(st) {
+    const toggle = document.getElementById("share-toggle");
+    const err = document.getElementById("share-error");
+    const details = document.getElementById("share-details");
+    if (!st) return;
+    shareRunning = !!st.running;
+    document.body.classList.toggle("sharing-on", shareRunning);
+    pollLocalParties();
+    toggle.disabled = shareBusy || !st.available;
+    toggle.textContent = shareBusy ? "Working…" : (st.running ? "Turn off" : "Turn on");
+    toggle.style.background = st.running ? "var(--accent)" : "";
+    const msg = !st.available ? "The sharing component isn't installed with this copy of PubHorror." : st.error;
+    err.style.display = msg ? "block" : "none";
+    err.textContent = msg ? "⚠ " + msg : "";
+    details.style.display = st.running ? "block" : "none";
+    if (!st.running) return;
+
+    const list = document.getElementById("share-addresses");
+    list.innerHTML = "";
+    const addrs = st.addresses.length ? st.addresses : [{ label: "This PC only", url: st.local_url }];
+    for (const a of addrs) {
+        const row = document.createElement("div");
+        row.className = "share-addr";
+        const code = document.createElement("code");
+        code.textContent = a.url;
+        const tag = document.createElement("span");
+        tag.className = "tag";
+        tag.textContent = a.label;
+        row.append(code, tag);
+        list.appendChild(row);
+    }
+    document.getElementById("share-code").textContent = st.access_code;
+    const nameInput = document.getElementById("share-name");
+    if (document.activeElement !== nameInput) nameInput.value = st.host_name || "";
+    document.getElementById("share-warnings").textContent = (st.warnings || []).join(" ");
+    const c = st.cache || { bytes: 0, files: 0 };
+    document.getElementById("share-cache").textContent = c.files
+        ? `Phone-friendly copies: ${c.files} file${c.files === 1 ? "" : "s"}, ${(c.bytes / 1e9).toFixed(1)} GB (in data/share/cache)`
+        : "No phone-friendly copies yet";
+
+    const qrBox = document.getElementById("share-qr");
+    try {
+        const qr = qrcode(0, "M");
+        qr.addData(st.qr_url);
+        qr.make();
+        qrBox.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+    } catch (e) {
+        qrBox.textContent = "";
+    }
+}
+
+async function refreshShareUI() {
+    try { renderShare(await pywebview.api.share_status()); } catch (e) { console.error(e); }
+}
+
+async function shareAction(fn, okMsg) {
+    if (shareBusy) return;
+    shareBusy = true;
+    refreshShareUI();
+    let st = null;
+    try { st = await fn(); } catch (e) { showToast("⚠ " + e, 5000); }
+    shareBusy = false;
+    renderShare(st || await pywebview.api.share_status());
+    if (st && !st.error && okMsg) showToast(okMsg);
+}
+
+async function toggleShare() {
+    const st = await pywebview.api.share_status();
+    if (st.running) await shareAction(() => pywebview.api.share_disable(), "📡 Sharing is off");
+    else await shareAction(() => pywebview.api.share_enable(), "📡 Sharing is on");
+}
+
+async function regenShareCode() {
+    if (!confirm("Make a new access code? Everyone currently connected will have to enter the new one.")) return;
+    await shareAction(() => pywebview.api.share_regen_code(), "🔑 New access code made");
+}
+
+async function refreshShareAddresses() {
+    await shareAction(() => pywebview.api.share_refresh(), "↻ Addresses refreshed");
+}
+
+async function saveShareName() {
+    const name = document.getElementById("share-name").value.trim();
+    if (!name) return;
+    await shareAction(() => pywebview.api.share_set_name(name), "✅ Name saved");
+}
+
+async function clearShareCache() {
+    if (!confirm("Delete the converted phone copies? Your original movie files are not touched. Titles will need converting again for phones.")) return;
+    const r = await pywebview.api.share_clear_cache();
+    showToast(`🗑 Removed ${r.removed} converted cop${r.removed === 1 ? "y" : "ies"}`);
+    refreshShareUI();
+}
+
+async function copyShareCode() {
+    const text = document.getElementById("share-code").textContent;
+    try { await navigator.clipboard.writeText(text); }
+    catch (e) {
+        const t = document.createElement("textarea");
+        t.value = text; document.body.appendChild(t); t.select();
+        document.execCommand("copy"); t.remove();
+    }
+    showToast("📋 Code copied");
 }
 
 function closeSettings() {
@@ -3749,6 +4740,8 @@ async function autoFillMovieInfo(event) {
     const exact = year ? cands.filter(c => String(c.year) === String(year)) : [];
     const chosen = (exact.length === 1) ? exact[0] : await pickTmdbMatch(cands);
     if (!chosen) return;
+    editingMovie.tmdb_id = chosen.id;                       // lets PubHorror match this title with friends' copies
+    editingMovie.tmdb_kind = sourceType === "series" ? "tv" : "movie";
 
     showToast("🎬 Fetching info…");
     const info = await pywebview.api.fetch_tmdb_info(title, year, apiKey, sourceType, chosen.id);

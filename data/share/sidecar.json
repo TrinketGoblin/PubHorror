@@ -1,0 +1,23 @@
+{
+  "protocol": 1,
+  "access_code": "ZQQ5-8AS2",
+  "control_token": "nZSiyeXwuN_lwgYAdz7bFMKyinIjd2gy",
+  "host_name": "DESKTOP-4QTSSUQ",
+  "host_id": "5f978cc2f4f840a7b1de5e0a07075b96",
+  "port": 47421,
+  "bind": [
+    {
+      "address": "127.0.0.1"
+    },
+    {
+      "address": "192.168.1.3"
+    }
+  ],
+  "extra_hostnames": [],
+  "parent_pid": 47500,
+  "library_file": "c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\data\\movies.json",
+  "posters_dir": "c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\posters",
+  "ffmpeg": "C:\\Users\\Cameron\\AppData\\Local\\Microsoft\\WinGet\\Links\\ffmpeg.EXE",
+  "ffprobe": "C:\\Users\\Cameron\\AppData\\Local\\Microsoft\\WinGet\\Links\\ffprobe.exe",
+  "cache_dir": "c:\\Users\\Cameron\\Documents\\GitHub\\PubHorror\\data\\share\\cache"
+}

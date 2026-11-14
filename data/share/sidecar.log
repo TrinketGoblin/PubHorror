@@ -1,0 +1,24 @@
+
+=== 2026-11-09 21:16:19 starting sidecar (C:\Program Files\nodejs\node.EXE) ===
+[sidecar] listening on port 47420: 127.0.0.1 (loopback), 192.168.1.3 (lan)
+[sidecar] shutting down: requested by PubHorror
+
+=== 2026-11-09 21:27:19 starting sidecar (C:\Program Files\nodejs\node.EXE) ===
+[sidecar] listening on port 47421: 127.0.0.1 (loopback), 192.168.1.3 (lan)
+[sidecar] library loaded: 0 titles (v1)
+[sidecar] access code changed; existing sessions signed out
+[sidecar] library loaded: 1 titles (v2)
+[sidecar] library loaded: 1 titles (v3)
+[sidecar] shutting down: requested by PubHorror
+
+=== 2026-11-09 21:42:44 starting sidecar (C:\Program Files\nodejs\node.EXE) ===
+[sidecar] listening on port 47421: 127.0.0.1 (loopback), 192.168.1.3 (lan)
+[sidecar] advertising on the LAN as "DESKTOP-4QTSSUQ" (192.168.1.3:47421)
+[sidecar] library loaded: 1 titles (v1)
+[sidecar] shutting down: requested by PubHorror
+
+=== 2026-11-09 21:43:39 starting sidecar (C:\Program Files\nodejs\node.EXE) ===
+[sidecar] listening on port 47421: 127.0.0.1 (loopback), 192.168.1.3 (lan)
+[sidecar] advertising on the LAN as "DESKTOP-4QTSSUQ" (192.168.1.3:47421)
+[sidecar] library loaded: 1 titles (v1)
+[sidecar] shutting down: requested by PubHorror
